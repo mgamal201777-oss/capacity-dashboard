@@ -10834,6 +10834,11 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .comment-reply-header { background:#e3f2fd; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-size:12px; display:flex; justify-content:space-between; align-items:center; }
     .comment-reply-header .reply-to { color:#1976d2; font-weight:600; }
     .comment-reply-header button { background:none; border:none; color:#757575; cursor:pointer; font-size:16px; }
+    .comment-context-banner { background:linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding:12px 16px; margin:-20px -20px 16px -20px; border-bottom:2px solid #66bb6a; font-size:13px; color:#2e7d32; }
+    .comment-context-banner strong { display:block; font-size:14px; margin-bottom:4px; color:#1b5e20; }
+    .comment-context-banner .context-location { font-size:11px; opacity:0.9; }
+    .commentable-section.highlight-pulse { animation:highlightPulse 2s ease-out; }
+    @keyframes highlightPulse { 0%{box-shadow:0 0 0 0 rgba(25,118,210,0.7);} 50%{box-shadow:0 0 20px 10px rgba(25,118,210,0.3);} 100%{box-shadow:0 0 0 0 rgba(25,118,210,0);} }
     .comment-input-area button { width:100%; padding:12px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s; }
     .comment-input-area button:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(25,118,210,0.4); }
     .comment-input-area button:disabled { opacity:0.5; cursor:not-allowed; }
@@ -29867,7 +29872,7 @@ const monthlyData = {
     var currentSection = '';
     var userName = localStorage.getItem('dashboardUserName') || '';
     
-    function openComments(section) {
+    function openComments(section, scrollToComponent) {
       currentSection = section;
       document.getElementById('commentPanel').classList.add('open');
       document.getElementById('commentOverlay').classList.add('show');
@@ -29881,7 +29886,50 @@ const monthlyData = {
         'partnersStrat': '👥 Partners Stratification',
         'cityLevel': '🏙️ City Level Data'
       };
+      
+      var sectionDescriptions = {
+        'totalOverview-mtd': 'Commenting on the MTD Achievement Card in Total Overview section',
+        'totalOverview-w1': 'Commenting on the W1 Performance Card in Total Overview section',
+        'totalOverview-w2': 'Commenting on the W2 Performance Card in Total Overview section',
+        'totalOverview-gap': 'Commenting on the Total GAP Card in Total Overview section',
+        'totalOverview-table': 'Commenting on the Performance Summary Table in Total Overview section',
+        'partnersStrat': 'Commenting on the Partners Stratification section',
+        'cityLevel': 'Commenting on the City Level Data section'
+      };
+      
       document.getElementById('currentSectionName').textContent = sectionNames[section] || section;
+      
+      // Add context banner
+      var contextBanner = document.getElementById('commentContextBanner');
+      if(contextBanner) {
+        if(sectionDescriptions[section]) {
+          contextBanner.innerHTML = '<strong>' + sectionNames[section] + '</strong><div class="context-location">' + sectionDescriptions[section] + '</div>';
+          contextBanner.style.display = 'block';
+        } else {
+          contextBanner.style.display = 'none';
+        }
+      }
+      
+      // Scroll to and highlight the component if requested
+      if(scrollToComponent !== false) {
+        var componentSelector = '[onclick*="openComments(\'' + section + '\')"]';
+        var component = document.querySelector(componentSelector);
+        
+        if(component) {
+          // Find the parent commentable section
+          var commentableSection = component.closest('.commentable-section');
+          if(commentableSection) {
+            // Scroll to it
+            commentableSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Add highlight animation
+            commentableSection.classList.add('highlight-pulse');
+            setTimeout(function() {
+              commentableSection.classList.remove('highlight-pulse');
+            }, 2000);
+          }
+        }
+      }
       
       // Re-enable input fields (in case coming from hub view)
       document.getElementById('commentUserName').disabled = false;
@@ -29900,6 +29948,10 @@ const monthlyData = {
     function closeComments() {
       document.getElementById('commentPanel').classList.remove('open');
       document.getElementById('commentOverlay').classList.remove('show');
+      
+      // Hide context banner
+      var contextBanner = document.getElementById('commentContextBanner');
+      if(contextBanner) contextBanner.style.display = 'none';
     }
     
     function loadComments(section) {
@@ -30011,7 +30063,9 @@ const monthlyData = {
                   var sectionHeader = document.createElement('div');
                   sectionHeader.style.cssText = 'background:#e3f2fd; padding:8px 12px; margin:10px -16px 10px -16px; font-weight:700; font-size:12px; color:#0d47a1; border-left:4px solid #1976d2; cursor:pointer;';
                   sectionHeader.textContent = currentSec;
-                  sectionHeader.onclick = function() { openComments(comment.sectionId); };
+                  (function(secId) {
+                    sectionHeader.onclick = function() { openComments(secId, true); };
+                  })(comment.sectionId);
                   commentList.appendChild(sectionHeader);
                 }
                 
@@ -30030,7 +30084,7 @@ const monthlyData = {
                 item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + pinBadge + resolvedBadge + '</div>' +
                                '<div class="comment-text">' + textWithMentions.replace(/\n/g, '<br>') + '</div>' +
                                '<div class="comment-time">' + timeStr + '</div>' +
-                               '<button class="comment-action-btn" onclick="openComments(\'' + comment.sectionId + '\')" style="margin-top:6px;">View Thread →</button>';
+                               '<button class="comment-action-btn" onclick="openComments(\'' + comment.sectionId + '\', true)" style="margin-top:6px;">📍 View Thread & Highlight →</button>';
                 commentList.appendChild(item);
               });
             }
@@ -30392,6 +30446,7 @@ const monthlyData = {
     <h3>💬 Comments: <span id="currentSectionName"></span></h3>
     <button class="comment-close" onclick="closeComments()">×</button>
   </div>
+  <div id="commentContextBanner" class="comment-context-banner" style="display:none;"></div>
   <div id="commentList" class="comment-list">
     <div class="comment-empty">💬<br>Loading comments...</div>
   </div>
