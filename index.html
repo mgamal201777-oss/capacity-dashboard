@@ -11427,7 +11427,7 @@ function renderCityMetric(metric) {
   var title = (metric==='gap') ? '📉 City GAP % (Delivery vs Capacity)' : '📊 City Achievement Rate';
   var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.6%), Riyadh (3.3%), and Dammam (1.8%). Negative W1 values indicate delivery exceeded capacity in shorter window. Day 1 shows extreme spikes (Yanbu -13.5%, multiple cities <-8%) suggesting initialization or data timing issues. Most cities stabilize at <-2% daily gap by Day 3 onwards.' : 'Achievement rates show strong performers: Al Kharj (100.7%), Hafar Albatin (100.1%), Madinah (97.3%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.8% MTD with W1=W2=89.5%, indicating systemic underperformance. Jazan volatile (93.4% W1 → 100.2% W2). Taif improves dramatically (92.5% W1 → 98.9% W2).';
   
-  var bestCity = '', bestVal = (metric==='ach' ? -999 : 999), worstCity = '', worstVal = (metric==='ach' ? 999 : -999);
+  var bestCity = '', bestVal = (metric==='ach' ? -999 : 999), worstCity = '', worstVal = (metric==='ach' ? 999 : 0);
   for(var i=0; i<cities.length; i++) {
     var val = data.mtd[i];
     if(metric==='ach') {
