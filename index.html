@@ -10990,7 +10990,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
       <strong>📊 Key Insights:</strong> MTD achievement at 93.5% remains below the 100% target. Performance stable across both weeks (W1: 92.9%, W2: 92.9%), suggesting consistent underperformance. Day 1 shows highest GAP (1,372 riders) due to online spike. Improvement needed: Daily achievement ranges 90.5%-94.5% - target ≥95% for optimal performance.
     </div>
 
-    <details class="adv-chart-details">
+    <details class="adv-chart-details" id="totalOverviewChartDetails">
       <summary>📈 Daily Achievement Trend Chart</summary>
       <div class="adv-chart-wrap">
         <div class="adv-chart-canvas"><canvas id="totalOverviewChart"></canvas></div>
@@ -11091,9 +11091,12 @@ function getGapColorClass(val) {
   return 'val-critical';
 }
 
+var advChartInited = false;
 function initAdvCharts() {
+  if(advChartInited) return;
   var ctx = document.getElementById('totalOverviewChart');
   if(!ctx) return;
+  advChartInited = true;
   ctx = ctx.getContext('2d');
   
   new Chart(ctx, {
@@ -11615,6 +11618,14 @@ function toggleCityTier(tier, metric) {
     if(b.textContent.indexOf(tier) >= 0) b.classList.toggle('active');
   });
   renderCityChart(metric, cityChartData[metric], cityNames);
+}
+
+// Render chart when details is toggled open
+var ovChartDet = document.getElementById('totalOverviewChartDetails');
+if(ovChartDet) {
+  ovChartDet.addEventListener('toggle', function() {
+    if(this.open) setTimeout(initAdvCharts, 50);
+  });
 }
 </script>
 
