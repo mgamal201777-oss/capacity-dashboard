@@ -10796,19 +10796,44 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .comment-list { flex:1; overflow-y:auto; padding:16px; background:#f5f5f5; }
     .comment-item { background:#fff; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.1); animation:slideIn 0.3s ease; position:relative; }
     .comment-item.pinned { background:linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%); border-left:4px solid #ffa726; }
+    .comment-item.resolved { opacity:0.6; background:#f5f5f5; }
+    .comment-item.reply { margin-left:30px; border-left:3px solid #bbdefb; padding-left:10px; }
     @keyframes slideIn { from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);} }
-    .comment-user { font-weight:700; color:#1976d2; font-size:13px; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+    .comment-user { font-weight:700; color:#1976d2; font-size:13px; margin-bottom:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
     .comment-pin-badge { background:#ffa726; color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:600; }
-    .comment-text { font-size:13px; color:#424242; line-height:1.5; margin-bottom:6px; }
-    .comment-time { font-size:11px; color:#9e9e9e; }
+    .comment-resolved-badge { background:#4caf50; color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:600; }
+    .comment-edited-badge { background:#9e9e9e; color:#fff; font-size:9px; padding:2px 4px; border-radius:3px; }
+    .comment-text { font-size:13px; color:#424242; line-height:1.5; margin-bottom:6px; word-wrap:break-word; }
+    .comment-text .mention { color:#1976d2; font-weight:600; background:#e3f2fd; padding:1px 4px; border-radius:3px; }
+    .comment-time { font-size:11px; color:#9e9e9e; margin-bottom:8px; }
     .comment-pin-btn { position:absolute; top:8px; right:8px; background:transparent; border:1px solid #e0e0e0; color:#757575; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; transition:all 0.2s; }
     .comment-pin-btn:hover { background:#f5f5f5; border-color:#bdbdbd; }
     .comment-pin-btn.pinned { background:#ffa726; color:#fff; border-color:#ffa726; }
     .comment-pin-btn.pinned:hover { background:#ff9800; }
-    .comment-input-area { padding:16px; background:#fff; border-top:1px solid #e0e0e0; }
+    .comment-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:6px; }
+    .comment-reaction-bar { display:flex; gap:4px; margin-right:auto; }
+    .comment-reaction { background:#f5f5f5; border:1px solid #e0e0e0; border-radius:12px; padding:3px 8px; font-size:11px; cursor:pointer; display:flex; align-items:center; gap:3px; transition:all 0.2s; }
+    .comment-reaction:hover { background:#e3f2fd; border-color:#1976d2; }
+    .comment-reaction.active { background:#1976d2; color:#fff; border-color:#1976d2; }
+    .comment-action-btn { background:none; border:none; color:#757575; font-size:11px; cursor:pointer; padding:4px 8px; border-radius:4px; transition:all 0.2s; }
+    .comment-action-btn:hover { background:#f5f5f5; color:#1976d2; }
+    .comment-edit-area { margin-top:8px; }
+    .comment-edit-area textarea { width:100%; border:1px solid #bdbdbd; border-radius:6px; padding:8px; font-size:13px; font-family:inherit; resize:vertical; min-height:60px; }
+    .comment-edit-btns { display:flex; gap:6px; margin-top:6px; }
+    .comment-edit-btns button { padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer; border:none; font-weight:600; }
+    .comment-save-btn { background:#1976d2; color:#fff; }
+    .comment-cancel-btn { background:#e0e0e0; color:#424242; }
+    .mention-autocomplete { position:absolute; bottom:120px; left:16px; right:16px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15); max-height:150px; overflow-y:auto; z-index:10; }
+    .mention-item { padding:8px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f5f5f5; }
+    .mention-item:hover { background:#e3f2fd; }
+    .mention-item:last-child { border-bottom:none; }
+    .comment-input-area { padding:16px; background:#fff; border-top:1px solid #e0e0e0; position:relative; }
     .comment-input-area input, .comment-input-area textarea { width:100%; border:1px solid #bdbdbd; border-radius:8px; padding:10px; font-size:13px; font-family:inherit; margin-bottom:10px; }
     .comment-input-area input { height:38px; }
     .comment-input-area textarea { height:80px; resize:none; }
+    .comment-reply-header { background:#e3f2fd; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-size:12px; display:flex; justify-content:space-between; align-items:center; }
+    .comment-reply-header .reply-to { color:#1976d2; font-weight:600; }
+    .comment-reply-header button { background:none; border:none; color:#757575; cursor:pointer; font-size:16px; }
     .comment-input-area button { width:100%; padding:12px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s; }
     .comment-input-area button:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(25,118,210,0.4); }
     .comment-input-area button:disabled { opacity:0.5; cursor:not-allowed; }
@@ -29840,25 +29865,22 @@ const monthlyData = {
         if(comments.length === 0) {
           commentList.innerHTML = '<div class="comment-empty">💬<br>No comments yet.<br>Be the first to comment!</div>';
         } else {
-          // Separate pinned and unpinned
-          var pinned = comments.filter(c => c.data.pinned);
-          var unpinned = comments.filter(c => !c.data.pinned);
-          var sorted = pinned.concat(unpinned);
+          // Separate by status and organize threads
+          var pinned = comments.filter(c => c.data.pinned && !c.data.parentId);
+          var active = comments.filter(c => !c.data.pinned && !c.data.resolved && !c.data.parentId);
+          var resolved = comments.filter(c => c.data.resolved && !c.data.parentId);
+          var sorted = pinned.concat(active, resolved);
           
           sorted.forEach(function(comment) {
-            var item = document.createElement('div');
-            item.className = 'comment-item';
-            if(comment.data.pinned) item.classList.add('pinned');
-            
-            var timeStr = getRelativeTime(comment.data.timestamp);
-            var pinBadge = comment.data.pinned ? '<span class="comment-pin-badge">📌 PINNED</span>' : '';
-            var pinBtn = '<button class="comment-pin-btn' + (comment.data.pinned ? ' pinned' : '') + '" onclick="togglePin(\'' + section + '\', \'' + comment.key + '\', ' + !comment.data.pinned + ')">' + (comment.data.pinned ? '📌 Unpin' : '📌 Pin') + '</button>';
-            
-            item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + pinBadge + '</div>' +
-                           '<div class="comment-text">' + escapeHtml(comment.data.text).replace(/\n/g, '<br>') + '</div>' +
-                           '<div class="comment-time">' + timeStr + '</div>' + pinBtn;
-            commentList.appendChild(item);
+            renderComment(comment, section, commentList, comments);
             count++;
+            
+            // Render replies
+            var replies = comments.filter(c => c.data.parentId === comment.key);
+            replies.forEach(function(reply) {
+              renderComment(reply, section, commentList, comments, true);
+              count++;
+            });
           });
         }
         
@@ -29866,6 +29888,61 @@ const monthlyData = {
         var badge = document.getElementById(section + 'CommentCount');
         if(badge) badge.textContent = count;
       });
+    }
+    
+    var replyToComment = null;
+    
+    function renderComment(comment, section, container, allComments, isReply) {
+      var item = document.createElement('div');
+      item.className = 'comment-item';
+      item.setAttribute('data-comment-id', comment.key);
+      if(comment.data.pinned) item.classList.add('pinned');
+      if(comment.data.resolved) item.classList.add('resolved');
+      if(isReply) item.classList.add('reply');
+      
+      var timeStr = getRelativeTime(comment.data.timestamp);
+      var pinBadge = comment.data.pinned ? '<span class="comment-pin-badge">📌 PINNED</span>' : '';
+      var resolvedBadge = comment.data.resolved ? '<span class="comment-resolved-badge">✓ RESOLVED</span>' : '';
+      var editedBadge = comment.data.edited ? '<span class="comment-edited-badge">edited</span>' : '';
+      var pinBtn = !isReply ? '<button class="comment-pin-btn' + (comment.data.pinned ? ' pinned' : '') + '" onclick="togglePin(\'' + section + '\', \'' + comment.key + '\', ' + !comment.data.pinned + ')">' + (comment.data.pinned ? '📌 Unpin' : '📌 Pin') + '</button>' : '';
+      
+      var textWithMentions = highlightMentions(escapeHtml(comment.data.text));
+      
+      // Reactions
+      var reactions = comment.data.reactions || {};
+      var reactionsHtml = '<div class="comment-reaction-bar">';
+      ['👍', '❤️', '🎯'].forEach(function(emoji) {
+        var users = reactions[emoji] || [];
+        var count = users.length;
+        var isActive = users.indexOf(userName) !== -1;
+        if(count > 0 || true) {
+          reactionsHtml += '<div class="comment-reaction' + (isActive ? ' active' : '') + '" onclick="toggleReaction(\'' + section + '\', \'' + comment.key + '\', \'' + emoji + '\')"><span>' + emoji + '</span>' + (count > 0 ? '<span>' + count + '</span>' : '') + '</div>';
+        }
+      });
+      reactionsHtml += '</div>';
+      
+      // Action buttons
+      var isOwn = comment.data.userName === userName;
+      var actionsHtml = '<div class="comment-actions">' + reactionsHtml;
+      if(!isReply) {
+        actionsHtml += '<button class="comment-action-btn" onclick="startReply(\'' + section + '\', \'' + comment.key + '\', \'' + escapeHtml(comment.data.userName).replace(/'/g, "\\'") + '\')">💬 Reply</button>';
+      }
+      if(isOwn) {
+        actionsHtml += '<button class="comment-action-btn" onclick="startEdit(\'' + section + '\', \'' + comment.key + '\')">✏️ Edit</button>';
+        actionsHtml += '<button class="comment-action-btn" onclick="deleteComment(\'' + section + '\', \'' + comment.key + '\')">🗑️ Delete</button>';
+      }
+      if(!isReply && !comment.data.resolved) {
+        actionsHtml += '<button class="comment-action-btn" onclick="resolveComment(\'' + section + '\', \'' + comment.key + '\', true)">✓ Resolve</button>';
+      } else if(!isReply && comment.data.resolved) {
+        actionsHtml += '<button class="comment-action-btn" onclick="resolveComment(\'' + section + '\', \'' + comment.key + '\', false)">↶ Unresolve</button>';
+      }
+      actionsHtml += '</div>';
+      
+      item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + pinBadge + resolvedBadge + editedBadge + '</div>' +
+                     '<div class="comment-text" id="text-' + comment.key + '">' + textWithMentions.replace(/\n/g, '<br>') + '</div>' +
+                     '<div class="comment-time">' + timeStr + '</div>' +
+                     actionsHtml + pinBtn;
+      container.appendChild(item);
     }
     
     function submitComment() {
@@ -29893,15 +29970,22 @@ const monthlyData = {
       userName = name;
       localStorage.setItem('dashboardUserName', name);
       
-      var commentsRef = firebase.database().ref('comments/' + currentSection);
-      commentsRef.push({
+      var commentData = {
         userName: name,
         text: text,
         timestamp: Date.now()
-      }).then(function() {
+      };
+      
+      if(replyToComment) {
+        commentData.parentId = replyToComment.id;
+      }
+      
+      var commentsRef = firebase.database().ref('comments/' + currentSection);
+      commentsRef.push(commentData).then(function() {
         textInput.value = '';
         submitBtn.disabled = false;
         submitBtn.textContent = 'Post Comment';
+        cancelReply();
       }).catch(function(error) {
         alert('Error posting comment: ' + error.message);
         submitBtn.disabled = false;
@@ -29940,6 +30024,162 @@ const monthlyData = {
       });
     }
     
+    function toggleReaction(section, commentKey, emoji) {
+      if(!userName) {
+        alert('Please enter your name first');
+        return;
+      }
+      
+      var ref = firebase.database().ref('comments/' + section + '/' + commentKey + '/reactions/' + emoji);
+      ref.once('value').then(function(snapshot) {
+        var users = snapshot.val() || [];
+        var index = users.indexOf(userName);
+        
+        if(index !== -1) {
+          users.splice(index, 1);
+        } else {
+          users.push(userName);
+        }
+        
+        ref.set(users.length > 0 ? users : null);
+      });
+    }
+    
+    function startEdit(section, commentKey) {
+      var textElem = document.getElementById('text-' + commentKey);
+      firebase.database().ref('comments/' + section + '/' + commentKey).once('value').then(function(snapshot) {
+        var comment = snapshot.val();
+        var originalText = comment.text;
+        
+        textElem.innerHTML = '<div class="comment-edit-area">' +
+          '<textarea id="edit-textarea-' + commentKey + '">' + escapeHtml(originalText) + '</textarea>' +
+          '<div class="comment-edit-btns">' +
+          '<button class="comment-save-btn" onclick="saveEdit(\'' + section + '\', \'' + commentKey + '\')">✔ Save</button>' +
+          '<button class="comment-cancel-btn" onclick="cancelEdit(\'' + section + '\', \'' + commentKey + '\', \'' + escapeHtml(originalText).replace(/'/g, "\\'").replace(/\n/g, '\\n') + '\')">✖ Cancel</button>' +
+          '</div></div>';
+      });
+    }
+    
+    function saveEdit(section, commentKey) {
+      var textarea = document.getElementById('edit-textarea-' + commentKey);
+      var newText = textarea.value.trim();
+      
+      if(!newText) {
+        alert('Comment cannot be empty');
+        return;
+      }
+      
+      firebase.database().ref('comments/' + section + '/' + commentKey).update({
+        text: newText,
+        edited: true
+      }).then(function() {
+        var textElem = document.getElementById('text-' + commentKey);
+        textElem.innerHTML = highlightMentions(escapeHtml(newText)).replace(/\n/g, '<br>');
+      });
+    }
+    
+    function cancelEdit(section, commentKey, originalText) {
+      var textElem = document.getElementById('text-' + commentKey);
+      textElem.innerHTML = highlightMentions(originalText).replace(/\n/g, '<br>');
+    }
+    
+    function deleteComment(section, commentKey) {
+      if(!confirm('Are you sure you want to delete this comment?')) return;
+      
+      firebase.database().ref('comments/' + section + '/' + commentKey).remove().catch(function(error) {
+        alert('Error deleting comment: ' + error.message);
+      });
+    }
+    
+    function resolveComment(section, commentKey, resolveState) {
+      firebase.database().ref('comments/' + section + '/' + commentKey).update({
+        resolved: resolveState
+      }).catch(function(error) {
+        alert('Error updating resolve status: ' + error.message);
+      });
+    }
+    
+    function startReply(section, commentKey, toUserName) {
+      replyToComment = {id: commentKey, userName: toUserName};
+      var replyHeader = document.getElementById('replyHeader');
+      replyHeader.style.display = 'flex';
+      replyHeader.querySelector('.reply-to').textContent = 'Replying to ' + toUserName;
+      document.getElementById('commentText').focus();
+    }
+    
+    function cancelReply() {
+      replyToComment = null;
+      var replyHeader = document.getElementById('replyHeader');
+      replyHeader.style.display = 'none';
+    }
+    
+    function highlightMentions(text) {
+      return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+    }
+    
+    // @Mention autocomplete
+    var knownUsers = [];
+    document.addEventListener('DOMContentLoaded', function() {
+      var textarea = document.getElementById('commentText');
+      if(textarea) {
+        textarea.addEventListener('input', function(e) {
+          var text = this.value;
+          var cursorPos = this.selectionStart;
+          var textBeforeCursor = text.substring(0, cursorPos);
+          var lastAtIndex = textBeforeCursor.lastIndexOf('@');
+          
+          if(lastAtIndex !== -1) {
+            var afterAt = textBeforeCursor.substring(lastAtIndex + 1);
+            if(!/\s/.test(afterAt) && afterAt.length > 0) {
+              showMentionAutocomplete(afterAt, lastAtIndex);
+              return;
+            }
+          }
+          hideMentionAutocomplete();
+        });
+      }
+    });
+    
+    function showMentionAutocomplete(query, atIndex) {
+      var matches = knownUsers.filter(u => u.toLowerCase().startsWith(query.toLowerCase()));
+      if(matches.length === 0) {
+        hideMentionAutocomplete();
+        return;
+      }
+      
+      var existing = document.getElementById('mentionAutocomplete');
+      if(!existing) {
+        existing = document.createElement('div');
+        existing.id = 'mentionAutocomplete';
+        existing.className = 'mention-autocomplete';
+        document.querySelector('.comment-input-area').appendChild(existing);
+      }
+      
+      existing.innerHTML = matches.slice(0, 5).map(u => 
+        '<div class="mention-item" onclick="insertMention(\'' + u + '\')">' + u + '</div>'
+      ).join('');
+      existing.style.display = 'block';
+    }
+    
+    function hideMentionAutocomplete() {
+      var elem = document.getElementById('mentionAutocomplete');
+      if(elem) elem.style.display = 'none';
+    }
+    
+    function insertMention(username) {
+      var textarea = document.getElementById('commentText');
+      var text = textarea.value;
+      var cursorPos = textarea.selectionStart;
+      var textBeforeCursor = text.substring(0, cursorPos);
+      var lastAtIndex = textBeforeCursor.lastIndexOf('@');
+      
+      var newText = text.substring(0, lastAtIndex + 1) + username + ' ' + text.substring(cursorPos);
+      textarea.value = newText;
+      textarea.selectionStart = textarea.selectionEnd = lastAtIndex + username.length + 2;
+      textarea.focus();
+      hideMentionAutocomplete();
+    }
+    
     // Load comment counts on page load for all sections
     setTimeout(function() {
       loadComments('totalOverview');
@@ -29950,6 +30190,18 @@ const monthlyData = {
           var count = snapshot.numChildren();
           var badge = document.getElementById(sec + 'CommentCount');
           if(badge) badge.textContent = count;
+        });
+      });
+      
+      // Build known users list for @mentions
+      ['totalOverview', 'partnersStrat', 'cityLevel'].forEach(function(sec) {
+        firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
+          snapshot.forEach(function(child) {
+            var userName = child.val().userName;
+            if(userName && knownUsers.indexOf(userName) === -1) {
+              knownUsers.push(userName);
+            }
+          });
         });
       });
     }, 1000);
@@ -29967,8 +30219,12 @@ const monthlyData = {
     <div class="comment-empty">💬<br>Loading comments...</div>
   </div>
   <div class="comment-input-area">
+    <div id="replyHeader" class="comment-reply-header" style="display:none;">
+      <span class="reply-to"></span>
+      <button onclick="cancelReply()">×</button>
+    </div>
     <input type="text" id="commentUserName" placeholder="Your name" maxlength="30">
-    <textarea id="commentText" placeholder="Write your comment..." maxlength="500"></textarea>
+    <textarea id="commentText" placeholder="Write your comment... (Use @ to mention someone)" maxlength="500"></textarea>
     <button id="submitCommentBtn" onclick="submitComment()">Post Comment</button>
   </div>
 </div>
