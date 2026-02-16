@@ -11104,16 +11104,24 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
       <strong>📊 Key Insights:</strong> MTD achievement at 93.5% remains below the 100% target. Performance stable across both weeks (W1: 92.9%, W2: 92.9%), suggesting consistent underperformance. Day 1 shows highest GAP (1,372 riders) due to online spike. Improvement needed: Daily achievement ranges 90.5%-94.5% - target ≥95% for optimal performance.
     </div>
 
-    <details class="adv-chart-details" id="totalOverviewChartDetails">
-      <summary>📈 Daily Achievement Trend Chart</summary>
-      <div class="adv-chart-wrap">
-        <div class="adv-chart-canvas"><canvas id="totalOverviewChart"></canvas></div>
-      </div>
-    </details>
+    <div class="commentable-section">
+      <button id="comment-indicator-totalOverview-chart" class="comment-indicator" onclick="openComments('totalOverview-chart')" title="Add Comment">
+        💬 <span id="badge-totalOverview-chart" class="comment-count-badge"></span>
+      </button>
+      <details class="adv-chart-details" id="totalOverviewChartDetails">
+        <summary>📈 Daily Achievement Trend Chart</summary>
+        <div class="adv-chart-wrap">
+          <div class="adv-chart-canvas"><canvas id="totalOverviewChart"></canvas></div>
+        </div>
+      </details>
+    </div>
   </div>
 
   <!-- PARTNERS STRATIFICATION SECTION -->
-  <div id="partnersStratContent" class="adv-content-box">
+  <div id="partnersStratContent" class="adv-content-box commentable-section">
+    <button id="comment-indicator-partnersStrat" class="comment-indicator" onclick="openComments('partnersStrat')" title="Add Comment">
+      💬 <span id="badge-partnersStrat" class="comment-count-badge"></span>
+    </button>
     <h3 style="margin:0 0 16px 0; font-size:18px; color:#0d47a1; font-weight:700;">👥 Partners Stratification</h3>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-cat="good" onclick="switchPartnerCat('good', this)">✅ Good Partners</button>
@@ -11129,7 +11137,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
   </div>
 
   <!-- CITY LEVEL DATA SECTION -->
-  <div id="cityLevelContent" class="adv-content-box">
+  <div id="cityLevelContent" class="adv-content-box commentable-section">
+    <button id="comment-indicator-cityLevel" class="comment-indicator" onclick="openComments('cityLevel')" title="Add Comment">
+      💬 <span id="badge-cityLevel" class="comment-count-badge"></span>
+    </button>
     <h3 style="margin:0 0 16px 0; font-size:18px; color:#0d47a1; font-weight:700;">🏙️ City Level Data</h3>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-city="gap" onclick="switchCityMetric('gap', this)">📉 GAP % (Del vs Capacity)</button>
@@ -29883,6 +29894,7 @@ const monthlyData = {
         'totalOverview-w2': '📊 W2 Performance',
         'totalOverview-gap': '📊 Total GAP',
         'totalOverview-table': '📊 Performance Summary',
+        'totalOverview-chart': '📈 Daily Achievement Trend Chart',
         'partnersStrat': '👥 Partners Stratification',
         'cityLevel': '🏙️ City Level Data'
       };
@@ -29893,6 +29905,7 @@ const monthlyData = {
         'totalOverview-w2': 'Commenting on the W2 Performance Card in Total Overview section',
         'totalOverview-gap': 'Commenting on the Total GAP Card in Total Overview section',
         'totalOverview-table': 'Commenting on the Performance Summary Table in Total Overview section',
+        'totalOverview-chart': 'Commenting on the Daily Achievement Trend Chart in Total Overview section',
         'partnersStrat': 'Commenting on the Partners Stratification section',
         'cityLevel': 'Commenting on the City Level Data section'
       };
@@ -30022,6 +30035,7 @@ const monthlyData = {
         {id: 'totalOverview-w2', name: '📊 W2 Performance'},
         {id: 'totalOverview-gap', name: '📊 Total GAP'},
         {id: 'totalOverview-table', name: '📊 Performance Summary'},
+        {id: 'totalOverview-chart', name: '📈 Daily Achievement Trend Chart'},
         {id: 'partnersStrat', name: '👥 Partners Stratification'},
         {id: 'cityLevel', name: '🏙️ City Level Data'}
       ];
@@ -30391,7 +30405,7 @@ const monthlyData = {
     
     // Load comment counts on page load for all sections
     setTimeout(function() {
-      var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-gap', 'totalOverview-table', 'partnersStrat', 'cityLevel'];
+      var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-gap', 'totalOverview-table', 'totalOverview-chart', 'partnersStrat', 'cityLevel'];
       var totalComments = 0;
       
       allSections.forEach(function(sec) {
