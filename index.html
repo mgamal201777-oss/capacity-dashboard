@@ -10816,7 +10816,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
   </div>
 </div>
 <div class="daily-chart-box-full">
-  <div class="daily-chart-title">&#128201; Achievement Gap Analysis (Delivery vs Online) by Category</div>
+    <div class="daily-chart-title" id="dailyGapChartTitle">&#128201; Achievement Gap Analysis (Delivery vs Online) by Category &#8212; All Partners</div>
   <div class="daily-chart-canvas-wrap-sm"><canvas id="dailyGapChart"></canvas></div>
 </div>
 
@@ -11116,14 +11116,18 @@ function initDailyCharts() {
 
   var ctx3 = document.getElementById('dailyGapChart');
   if (!ctx3) return;
+    var gapTitle = document.getElementById('dailyGapChartTitle');
+    if (gapTitle) gapTitle.innerHTML = '&#128201; Achievement Gap Analysis (Delivery vs Online) by Category &#8212; ' + (cat === 'total' ? 'All Partners' : perfLabel(cat));
   try {
   if (dailyGapChart) dailyGapChart.destroy();
-  var gapDs = [
-    { label: 'Good Gap', data: dGap.good, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.1)', borderWidth: cat==='good'||cat==='total'?2.5:1.5, pointRadius: cat==='good'||cat==='total'?4:2, fill: false, tension: 0.3 },
-    { label: 'Average Gap', data: dGap.average, borderColor: '#f39c12', backgroundColor: 'rgba(243,156,18,0.1)', borderWidth: cat==='average'||cat==='total'?2.5:1.5, pointRadius: cat==='average'||cat==='total'?4:2, fill: false, tension: 0.3 },
-    { label: 'Bad Gap', data: dGap.bad, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)', borderWidth: cat==='bad'||cat==='total'?2.5:1.5, pointRadius: cat==='bad'||cat==='total'?4:2, fill: false, tension: 0.3 },
-    { label: 'New Gap', data: dGap.new, borderColor: '#8e44ad', backgroundColor: 'rgba(142,68,173,0.1)', borderWidth: cat==='new'||cat==='total'?2.5:1.5, pointRadius: cat==='new'||cat==='total'?4:2, fill: false, tension: 0.3 }
-  ];
+    var gapDs = cat === 'total' ? [
+        { label: 'Good Gap', data: dGap.good, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.1)', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { label: 'Average Gap', data: dGap.average, borderColor: '#f39c12', backgroundColor: 'rgba(243,156,18,0.1)', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { label: 'Bad Gap', data: dGap.bad, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { label: 'New Gap', data: dGap.new, borderColor: '#8e44ad', backgroundColor: 'rgba(142,68,173,0.1)', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 }
+    ] : [
+        { label: perfLabel(cat)+' Gap', data: dGap[cat], borderColor: cat==='good'?'#27ae60':cat==='average'?'#f39c12':cat==='bad'?'#e74c3c':'#8e44ad', backgroundColor: cat==='good'?'rgba(39,174,96,0.15)':cat==='average'?'rgba(243,156,18,0.15)':cat==='bad'?'rgba(231,76,60,0.15)':'rgba(142,68,173,0.15)', borderWidth: 2.5, pointRadius: 4, fill: false, tension: 0.3 }
+    ];
   dailyGapChart = new Chart(ctx3, {
     type: 'line',
     data: { labels: dDates, datasets: gapDs },
