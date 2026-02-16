@@ -10795,6 +10795,17 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-expand-btn:hover { background:#1976d2; color:#fff; }
 .adv-daily-cols { display:none; }
     .adv-daily-cols.expanded { display:table-cell; }
+    .adv-table .bkdn-high { color:#2e7d32; font-weight:700; }
+    .adv-table .bkdn-mid { color:#558b2f; font-weight:600; }
+    .adv-table .bkdn-low { color:#f57c00; font-weight:600; }
+    .adv-table .bkdn-vlow { color:#c62828; font-weight:700; }
+    .adv-city-slicer { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; padding:10px; background:#f5f7fa; border-radius:8px; border:1px solid #e0e0e0; align-items:center; }
+    .adv-city-slicer .slicer-label { font-size:11px; font-weight:700; color:#0d47a1; margin-right:6px; }
+    .adv-city-chip { padding:4px 10px; border-radius:14px; font-size:10.5px; font-weight:600; cursor:pointer; border:2px solid #bbdefb; background:#fff; color:#1565c0; transition:all 0.2s; user-select:none; }
+    .adv-city-chip.active { background:#1565c0; color:#fff; border-color:#1565c0; }
+    .adv-city-chip:hover { border-color:#1565c0; }
+    .adv-city-chip.tier-btn { background:#e8eaf6; color:#283593; border-color:#9fa8da; font-weight:700; }
+    .adv-city-chip.tier-btn.active { background:#283593; color:#fff; border-color:#283593; }
   </style>
 
   <div class="adv-toggle-row">
@@ -11139,6 +11150,7 @@ function renderPartnerCat(cat) {
     w1: '95.2%',
     w2: '94.4%',
     gap: '210',
+    count: 252,
     insight: 'Good partners maintain strong performance above 94%, with W1 at 95.2%. 45% of partners achieving ≥100%, and 82% above 90%. Only 5% fall below 80%, indicating solid fundamentals.',
     data: [[10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104],
            [9784,9861,9717,10406,9830,9850,9695,9764,9759,9720,9657,9671,9685,9705,9782,9759,9757,9635],
@@ -11157,6 +11169,7 @@ function renderPartnerCat(cat) {
     w1: '93.0%',
     w2: '91.6%',
     gap: '221',
+    count: 261,
     insight: 'Average partners show declining trend from W1 (93.0%) to W2 (91.6%). Only 37% achieving ≥100%, with 12% below 80%. Performance concentration in 90-95% range suggests need for targeted improvement interventions.',
     data: [[8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346],
            [7925,8004,7839,8575,8005,8007,7842,7911,7848,7843,7755,7798,7832,7816,7861,7894,7920,7808],
@@ -11175,6 +11188,7 @@ function renderPartnerCat(cat) {
     w1: '91.5%',
     w2: '92.2%',
     gap: '8',
+    count: 20,
     insight: 'Bad partners show improvement from W1 (91.5%) to W2 (92.2%). Despite "bad" classification, 54% achieve ≥100%, indicating potential for rehabilitation. Only 19.3% below 80% - relatively small absolute numbers allow focused intervention.',
     data: [[375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375],
            [353,355,351,374,349,352,351,355,347,354,350,343,351,351,351,356,355,352],
@@ -11193,6 +11207,7 @@ function renderPartnerCat(cat) {
     w1: '91.3%',
     w2: '92.5%',
     gap: '134',
+    count: 84,
     insight: 'Partners with >20 increase show recovery from W1 (91.3%) to W2 (92.5%). Only 21% achieve ≥100%, suggesting aggressive targets. 74% maintain >90%, indicating targets are challenging but largely achievable with effort.',
     data: [[6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112],
            [5836,5721,5773,5882,5696,5727,5656,5701,5682,5704,5672,5720,5757,5767,5811,5824,5859,5793],
@@ -11211,6 +11226,7 @@ function renderPartnerCat(cat) {
     w1: '90.9%',
     w2: '93.3%',
     gap: '32',
+    count: 47,
     insight: 'Moderate increase group shows strong improvement W1→W2 (90.9% to 93.3%). 44% achieve ≥100%, highest among increase slabs. 82% above 80% indicates well-calibrated targets with room for optimization.',
     data: [[1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584],
            [1514,1469,1508,1511,1459,1458,1446,1464,1474,1469,1468,1489,1509,1511,1525,1531,1523,1502],
@@ -11229,6 +11245,7 @@ function renderPartnerCat(cat) {
     w1: '93.5%',
     w2: '93.2%',
     gap: '66',
+    count: 100,
     insight: 'Minor increase group maintains stable performance (W1: 93.5%, W2: 93.2%). 35% achieve ≥100%, 72% above 90%, 91% above 80%. Small target increases appear well-absorbed with consistent execution.',
     data: [[3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166],
            [3026,3031,3011,3192,3013,3028,2990,2993,3004,2998,2981,2987,2998,2997,3032,3039,3041,3011],
@@ -11247,6 +11264,7 @@ function renderPartnerCat(cat) {
     w1: '94.3%',
     w2: '92.9%',
     gap: '216',
+    count: 325,
     insight: 'Partners with flat/reduced targets show declining trend (W1: 94.3% to W2: 92.9%). 48% achieve ≥100%, highest overall. 88% above 80%. May indicate capacity adjustment or operational challenges offsetting target reduction benefit.',
     data: [[8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543],
            [8209,8307,8111,8972,8268,8291,8117,8199,8153,8150,8057,8059,8091,8111,8158,8148,8153,8047],
@@ -11298,19 +11316,39 @@ function renderPartnerCat(cat) {
   
   // Achievement breakdown rows
   var breakdownRows = ['achievement rate ≥100%','achievement rate >95%','achievement rate >90%','achievement rate >80%','achievement rate <80%'];
+  var totalP = d.count;
+  function getBkdnColor(pct, isNeg) {
+    if(isNeg) { // <80% row: lower is better
+      if(pct <= 5) return 'bkdn-high';
+      if(pct <= 10) return 'bkdn-mid';
+      if(pct <= 20) return 'bkdn-low';
+      return 'bkdn-vlow';
+    } else { // ≥100%, >95%, >90%, >80%: higher is better
+      if(pct >= 80) return 'bkdn-high';
+      if(pct >= 60) return 'bkdn-mid';
+      if(pct >= 40) return 'bkdn-low';
+      return 'bkdn-vlow';
+    }
+  }
   for(var b=0; b<5; b++) {
+    var isNeg = (b === 4); // <80% row
     html += '<tr><td>'+breakdownRows[b]+'</td>';
-    // MTD column (index 0) is a percentage
+    // MTD column (index 0) is already a percentage
     var mtdVal = d.breakdown[b][0];
-    html += '<td class="period-col">'+(mtdVal % 1 !== 0 ? mtdVal.toFixed(1) : mtdVal)+'%</td>';
+    var mtdCls = getBkdnColor(mtdVal, isNeg);
+    html += '<td class="period-col '+mtdCls+'">'+(mtdVal % 1 !== 0 ? mtdVal.toFixed(1) : mtdVal)+'%</td>';
     // W1 and W2 columns (index 1,2) are counts
     for(var c=1; c<3; c++) {
       var val = d.breakdown[b][c];
-      html += '<td class="period-col">'+val+'</td>';
+      var pct = (val/totalP*100);
+      var cls = getBkdnColor(pct, isNeg);
+      html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     for(var c=3; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
-      html += '<td class="adv-daily-cols">'+val+'</td>';
+      var pct = (val/totalP*100);
+      var cls = getBkdnColor(pct, isNeg);
+      html += '<td class="adv-daily-cols '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     html += '</tr>';
   }
@@ -11482,48 +11520,101 @@ function renderCityMetric(metric) {
   
   html += '<div class="adv-highlight-box amber"><strong>📊 Key Insights:</strong> '+insight+'</div>';
   
-  html += '<details class="adv-chart-details"><summary>📈 City Comparison Chart</summary><div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="city'+metric+'Chart"></canvas></div></div></details>';
+  cityChartData[metric] = data;
+  
+  html += '<details class="adv-chart-details" open><summary>📈 City Comparison Chart</summary>';
+  html += '<div class="adv-city-slicer" id="citySlicer'+metric+'">';
+  html += '<span class="slicer-label">Filter:</span>';
+  html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T1\',\''+metric+'\')">T1 Cities</span>';
+  html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T2\',\''+metric+'\')">T2 Cities</span>';
+  html += '<span style="width:1px;height:20px;background:#ccc;margin:0 4px;"></span>';
+  var cityTiers = {0:'T1',1:'T1',2:'T2',3:'T2',4:'T1',5:'T1',6:'T2',7:'T2',8:'T1',9:'T1',10:'T2',11:'T2',12:'T2',13:'T2',14:'T1',15:'T2',16:'T2'};
+  for(var ci=0; ci<cities.length; ci++) {
+    var isDefault = (cities[ci]==='Riyadh');
+    html += '<span class="adv-city-chip'+(isDefault?' active':'')+'" data-city-idx="'+ci+'" data-tier="'+cityTiers[ci]+'" onclick="toggleCityChip(this,\''+metric+'\')">'+cities[ci]+'</span>';
+  }
+  html += '</div>';
+  html += '<div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="city'+metric+'Chart"></canvas></div></div></details>';
   
   document.getElementById('cityMetricContent').innerHTML = html;
   
   setTimeout(function(){
-    var ctx = document.getElementById('city'+metric+'Chart');
-    if(!ctx) return;
-    ctx = ctx.getContext('2d');
-    
-    var datasets = [];
-    var colors = ['#1976d2','#2e7d32','#f57c00','#c62828','#7b1fa2','#0097a7','#fbc02d','#455a64'];
-    for(var c=0; c<Math.min(cities.length,8); c++) {
-      datasets.push({
-        label: cities[c],
-        data: data.daily[c],
-        borderColor: colors[c%colors.length],
-        backgroundColor: colors[c%colors.length]+'33',
-        tension: 0.2,
-        borderWidth: 2,
-        pointRadius: 3
-      });
-    }
-    
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15'],
-        datasets: datasets
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-          y: { beginAtZero: false, ticks: { callback: v=>v+(metric==='ach'?'%':'%') } }
-        }
-      }
-    });
+    renderCityChart(metric, data, cities);
   }, 100);
+}
+
+var cityChartInstances = {};
+
+function renderCityChart(metric, data, cities) {
+  var ctx = document.getElementById('city'+metric+'Chart');
+  if(!ctx) return;
+  if(cityChartInstances[metric]) { cityChartInstances[metric].destroy(); }
+  ctx = ctx.getContext('2d');
+  
+  var slicer = document.getElementById('citySlicer'+metric);
+  var activeChips = slicer.querySelectorAll('.adv-city-chip:not(.tier-btn).active');
+  var selectedIndices = [];
+  activeChips.forEach(function(chip){ selectedIndices.push(parseInt(chip.getAttribute('data-city-idx'))); });
+  
+  var allColors = ['#1976d2','#2e7d32','#f57c00','#c62828','#7b1fa2','#0097a7','#fbc02d','#455a64','#d81b60','#00695c','#ff6f00','#4527a0','#00838f','#bf360c','#1b5e20','#6a1b9a','#e65100'];
+  var datasets = [];
+  for(var s=0; s<selectedIndices.length; s++) {
+    var ci = selectedIndices[s];
+    datasets.push({
+      label: cities[ci],
+      data: data.daily[ci],
+      borderColor: allColors[ci%allColors.length],
+      backgroundColor: allColors[ci%allColors.length]+'33',
+      tension: 0.2,
+      borderWidth: 2,
+      pointRadius: 3
+    });
+  }
+  
+  cityChartInstances[metric] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15'],
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        y: { beginAtZero: false, ticks: { callback: function(v){return v+'%';} } }
+      }
+    }
+  });
+}
+
+// Store city data globally for chart re-rendering
+var cityChartData = {};
+var cityNames = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu','Abha','Jazan','Makkah','Najran','Taif'];
+
+function toggleCityChip(chip, metric) {
+  chip.classList.toggle('active');
+  renderCityChart(metric, cityChartData[metric], cityNames);
+}
+
+function toggleCityTier(tier, metric) {
+  var slicer = document.getElementById('citySlicer'+metric);
+  var tierChips = slicer.querySelectorAll('.adv-city-chip[data-tier="'+tier+'"]:not(.tier-btn)');
+  var allActive = true;
+  tierChips.forEach(function(c){ if(!c.classList.contains('active')) allActive=false; });
+  tierChips.forEach(function(c){
+    if(allActive) c.classList.remove('active');
+    else c.classList.add('active');
+  });
+  // Toggle the tier button visual
+  var tierBtns = slicer.querySelectorAll('.tier-btn');
+  tierBtns.forEach(function(b){
+    if(b.textContent.indexOf(tier) >= 0) b.classList.toggle('active');
+  });
+  renderCityChart(metric, cityChartData[metric], cityNames);
 }
 </script>
 
