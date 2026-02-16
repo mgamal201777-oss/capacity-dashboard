@@ -10794,11 +10794,17 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .comment-close { background:none; border:none; color:#fff; font-size:28px; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
     .comment-close:hover { background:rgba(255,255,255,0.2); }
     .comment-list { flex:1; overflow-y:auto; padding:16px; background:#f5f5f5; }
-    .comment-item { background:#fff; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.1); animation:slideIn 0.3s ease; }
+    .comment-item { background:#fff; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.1); animation:slideIn 0.3s ease; position:relative; }
+    .comment-item.pinned { background:linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%); border-left:4px solid #ffa726; }
     @keyframes slideIn { from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);} }
-    .comment-user { font-weight:700; color:#1976d2; font-size:13px; margin-bottom:4px; }
+    .comment-user { font-weight:700; color:#1976d2; font-size:13px; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+    .comment-pin-badge { background:#ffa726; color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:600; }
     .comment-text { font-size:13px; color:#424242; line-height:1.5; margin-bottom:6px; }
     .comment-time { font-size:11px; color:#9e9e9e; }
+    .comment-pin-btn { position:absolute; top:8px; right:8px; background:transparent; border:1px solid #e0e0e0; color:#757575; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; transition:all 0.2s; }
+    .comment-pin-btn:hover { background:#f5f5f5; border-color:#bdbdbd; }
+    .comment-pin-btn.pinned { background:#ffa726; color:#fff; border-color:#ffa726; }
+    .comment-pin-btn.pinned:hover { background:#ff9800; }
     .comment-input-area { padding:16px; background:#fff; border-top:1px solid #e0e0e0; }
     .comment-input-area input, .comment-input-area textarea { width:100%; border:1px solid #bdbdbd; border-radius:8px; padding:10px; font-size:13px; font-family:inherit; margin-bottom:10px; }
     .comment-input-area input { height:38px; }
@@ -11035,6 +11041,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 
   <!-- PARTNERS STRATIFICATION SECTION -->
   <div id="partnersStratContent" class="adv-content-box">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">👥 Partners Stratification</h3>
+      <button onclick="openComments('partnersStrat')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="partnersStratCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
+    </div>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-cat="good" onclick="switchPartnerCat('good', this)">✅ Good Partners</button>
       <button class="adv-sub-btn" data-cat="average" onclick="switchPartnerCat('average', this)">⚠️ Average Partners</button>
@@ -11050,6 +11060,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 
   <!-- CITY LEVEL DATA SECTION -->
   <div id="cityLevelContent" class="adv-content-box">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">🏙️ City Level Data</h3>
+      <button onclick="openComments('cityLevel')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="cityLevelCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
+    </div>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-city="gap" onclick="switchCityMetric('gap', this)">📉 GAP % (Del vs Capacity)</button>
       <button class="adv-sub-btn" data-city="ach" onclick="switchCityMetric('ach', this)">📊 Achievement Rate</button>
@@ -29789,7 +29803,12 @@ const monthlyData = {
       currentSection = section;
       document.getElementById('commentPanel').classList.add('open');
       document.getElementById('commentOverlay').classList.add('show');
-      document.getElementById('currentSectionName').textContent = section === 'totalOverview' ? '📊 Total Overview' : section;
+      var sectionNames = {
+        'totalOverview': '📊 Total Overview',
+        'partnersStrat': '👥 Partners Stratification',
+        'cityLevel': '🏙️ City Level Data'
+      };
+      document.getElementById('currentSectionName').textContent = sectionNames[section] || section;
       loadComments(section);
       if(!userName) {
         document.getElementById('commentUserName').focus();
@@ -29821,16 +29840,23 @@ const monthlyData = {
         if(comments.length === 0) {
           commentList.innerHTML = '<div class="comment-empty">💬<br>No comments yet.<br>Be the first to comment!</div>';
         } else {
-          comments.forEach(function(comment) {
+          // Separate pinned and unpinned
+          var pinned = comments.filter(c => c.data.pinned);
+          var unpinned = comments.filter(c => !c.data.pinned);
+          var sorted = pinned.concat(unpinned);
+          
+          sorted.forEach(function(comment) {
             var item = document.createElement('div');
             item.className = 'comment-item';
+            if(comment.data.pinned) item.classList.add('pinned');
             
-            var time = new Date(comment.data.timestamp);
-            var timeStr = time.toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+            var timeStr = getRelativeTime(comment.data.timestamp);
+            var pinBadge = comment.data.pinned ? '<span class="comment-pin-badge">📌 PINNED</span>' : '';
+            var pinBtn = '<button class="comment-pin-btn' + (comment.data.pinned ? ' pinned' : '') + '" onclick="togglePin(\'' + section + '\', \'' + comment.key + '\', ' + !comment.data.pinned + ')">' + (comment.data.pinned ? '📌 Unpin' : '📌 Pin') + '</button>';
             
-            item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + '</div>' +
+            item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + pinBadge + '</div>' +
                            '<div class="comment-text">' + escapeHtml(comment.data.text).replace(/\n/g, '<br>') + '</div>' +
-                           '<div class="comment-time">' + timeStr + '</div>';
+                           '<div class="comment-time">' + timeStr + '</div>' + pinBtn;
             commentList.appendChild(item);
             count++;
           });
@@ -29889,9 +29915,43 @@ const monthlyData = {
       return div.innerHTML;
     }
     
-    // Load comment counts on page load
+    function getRelativeTime(timestamp) {
+      var now = Date.now();
+      var diff = now - timestamp;
+      var seconds = Math.floor(diff / 1000);
+      var minutes = Math.floor(seconds / 60);
+      var hours = Math.floor(minutes / 60);
+      var days = Math.floor(hours / 24);
+      
+      if(seconds < 60) return 'Just now';
+      if(minutes < 60) return minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ago';
+      if(hours < 24) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+      if(days < 7) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+      
+      var date = new Date(timestamp);
+      return date.toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+    }
+    
+    function togglePin(section, commentKey, pinState) {
+      firebase.database().ref('comments/' + section + '/' + commentKey).update({
+        pinned: pinState
+      }).catch(function(error) {
+        alert('Error updating pin: ' + error.message);
+      });
+    }
+    
+    // Load comment counts on page load for all sections
     setTimeout(function() {
-      loadComments('totalOverview'); // Pre-load to get count
+      loadComments('totalOverview');
+      
+      // Load counts for other sections
+      ['partnersStrat', 'cityLevel'].forEach(function(sec) {
+        firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
+          var count = snapshot.numChildren();
+          var badge = document.getElementById(sec + 'CommentCount');
+          if(badge) badge.textContent = count;
+        });
+      });
     }, 1000);
 
     </script>
