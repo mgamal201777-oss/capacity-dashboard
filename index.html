@@ -10765,6 +10765,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-table td { padding:8px 10px; text-align:center; border:1px solid #e0e0e0; white-space:nowrap; transition:background 0.2s; }
     .adv-table tr:hover td { background:#e3f2fd; }
     .adv-table td:first-child { font-weight:600; text-align:left; background:#f5f5f5; position:sticky; left:0; z-index:2; min-width:150px; }
+    .adv-table .period-col { background:#f0f4f8; font-weight:600; }
     .adv-table .val-excellent { color:#2e7d32; font-weight:700; }
     .adv-table .val-good { color:#558b2f; font-weight:600; }
     .adv-table .val-warning { color:#f57c00; font-weight:600; }
@@ -11283,7 +11284,8 @@ function renderPartnerCat(cat) {
     html += '<tr><td>'+(r===3?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
     for(var c=0; c<3; c++) {
       var val = d.data[r][c];
-      var cls = (r===3 && c>0) ? getColorClass(val) : '';
+      var cls = 'period-col';
+      if(r===3 && c>0) cls += ' '+getColorClass(val);
       html += '<td class="'+cls+'">'+(typeof val === 'number' && r===3 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
@@ -11300,7 +11302,7 @@ function renderPartnerCat(cat) {
     html += '<tr><td>'+breakdownRows[b]+'</td>';
     for(var c=0; c<3; c++) {
       var val = d.breakdown[b][c];
-      html += '<td>'+val+'</td>';
+      html += '<td class="period-col">'+val+'</td>';
     }
     for(var c=3; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
@@ -11421,15 +11423,16 @@ function renderCityMetric(metric) {
   var title = (metric==='gap') ? '📉 City GAP % (Delivery vs Capacity)' : '📊 City Achievement Rate';
   var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.6%), Riyadh (3.3%), and Dammam (1.8%). Negative W1 values indicate delivery exceeded capacity in shorter window. Day 1 shows extreme spikes (Yanbu -13.5%, multiple cities <-8%) suggesting initialization or data timing issues. Most cities stabilize at <-2% daily gap by Day 3 onwards.' : 'Achievement rates show strong performers: Al Kharj (100.7%), Hafar Albatin (100.1%), Madinah (97.3%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.8% MTD with W1=W2=89.5%, indicating systemic underperformance. Jazan volatile (93.4% W1 → 100.2% W2). Taif improves dramatically (92.5% W1 → 98.9% W2).';
   
-  var bestCity = '', bestVal = -999, worstCity = '', worstVal = 999;
+  var bestCity = '', bestVal = (metric==='ach' ? -999 : 999), worstCity = '', worstVal = (metric==='ach' ? 999 : -999);
   for(var i=0; i<cities.length; i++) {
-    if((metric==='ach' && data.mtd[i]>bestVal) || (metric==='gap' && data.mtd[i]<bestVal)) {
-      bestVal = data.mtd[i];
-      bestCity = cities[i];
-    }
-    if((metric==='ach' && data.mtd[i]<worstVal) || (metric==='gap' && data.mtd[i]>worstVal)) {
-      worstVal = data.mtd[i];
-      worstCity = cities[i];
+    var val = data.mtd[i];
+    if(metric==='ach') {
+      if(val>bestVal) { bestVal=val; bestCity=cities[i]; }
+      if(val<worstVal) { worstVal=val; worstCity=cities[i]; }
+    } else {
+      var absVal = Math.abs(val);
+      if(absVal<Math.abs(bestVal)) { bestVal=val; bestCity=cities[i]; }
+      if(absVal>Math.abs(worstVal)) { worstVal=val; worstCity=cities[i]; }
     }
   }
   
@@ -11462,9 +11465,9 @@ function renderCityMetric(metric) {
   
   for(var c=0; c<cities.length; c++) {
     html += '<tr><td>'+cities[c]+'</td>';
-    html += '<td class="'+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+data.mtd[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
-    html += '<td class="'+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+data.w1[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
-    html += '<td class="'+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+data.w2[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+data.mtd[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+data.w1[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+data.w2[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     for(var d=0; d<15; d++) {
       html += '<td class="adv-daily-cols '+(metric==='ach'?getColorClass(data.daily[c][d]):getGapColorClass(data.daily[c][d]))+'">'+data.daily[c][d].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     }
