@@ -10729,7 +10729,731 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 </style>
 
 <h2 class="daily-view-title">&#128197; Capacity Target Achievement (Daily View)</h2>
-<p class="daily-view-subtitle">February 1&#8211;10, 2026 &nbsp;|&nbsp; Daily performance tracking across <strong>553</strong> partners &nbsp;|&nbsp; Delivery &amp; Online rider achievement analysis</p>
+<p class="daily-view-subtitle">February 1&#8211;15, 2026 &nbsp;|&nbsp; Daily performance tracking across <strong>596</strong> partners &nbsp;|&nbsp; Delivery &amp; Online rider achievement analysis</p>
+
+<!-- NEW ADVANCED DATA SECTION -->
+<div id="advancedDataSection" style="margin-bottom: 30px;">
+  <style>
+    .adv-toggle-row { display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+    .adv-toggle-btn { padding:10px 20px; background:linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border:2px solid #1976d2; border-radius:12px; font-size:14px; font-weight:700; color:#0d47a1; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(25,118,210,0.15); }
+    .adv-toggle-btn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(25,118,210,0.25); }
+    .adv-toggle-btn.active { background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border-color:#0d47a1; }
+    .adv-sub-slicer { display:flex; gap:8px; margin:12px 0 16px; flex-wrap:wrap; }
+    .adv-sub-btn { padding:6px 14px; background:#fff; border:2px solid #bdbdbd; border-radius:8px; font-size:12px; font-weight:600; color:#424242; cursor:pointer; transition:all 0.2s; }
+    .adv-sub-btn:hover { border-color:#1976d2; background:#e3f2fd; }
+    .adv-sub-btn.active { background:#1976d2; color:#fff; border-color:#0d47a1; }
+    .adv-content-box { display:none; background:#fff; border-radius:14px; padding:20px; box-shadow:0 3px 12px rgba(0,0,0,0.08); border:1px solid #e0e0e0; }
+    .adv-content-box.active { display:block; animation:fadeInUp 0.4s ease-out; }
+    @keyframes fadeInUp { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+    .adv-cards-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:18px; }
+    .adv-card { background:linear-gradient(135deg, #f8fafc 0%, #e8f4f8 100%); border-radius:12px; padding:16px; border-left:4px solid #1976d2; }
+    .adv-card .card-label { font-size:11px; color:#546e7a; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .adv-card .card-value { font-size:24px; font-weight:800; color:#0d47a1; line-height:1.1; }
+    .adv-card .card-sub { font-size:11px; color:#78909c; margin-top:4px; }
+    .adv-card.green { border-left-color:#2e7d32; background:linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%); }
+    .adv-card.green .card-value { color:#1b5e20; }
+    .adv-card.amber { border-left-color:#f57c00; background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
+    .adv-card.amber .card-value { color:#e65100; }
+    .adv-card.red { border-left-color:#c62828; background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); }
+    .adv-card.red .card-value { color:#b71c1c; }
+    .adv-table-container { margin-bottom:16px; }
+    .adv-table-title { font-size:15px; font-weight:700; color:#0d47a1; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .adv-table-wrap { overflow-x:auto; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,0.08); }
+    .adv-table { width:100%; border-collapse:collapse; font-size:12px; background:#fff; }
+    .adv-table th { background:linear-gradient(135deg, #1565c0 0%, #0d47a1 100%); color:#fff; padding:10px 12px; text-align:center; font-weight:700; font-size:11.5px; white-space:nowrap; border-right:1px solid rgba(255,255,255,0.2); position:sticky; left:0; z-index:3; }
+    .adv-table th:first-child { position:sticky; left:0; z-index:4; }
+    .adv-table td { padding:8px 10px; text-align:center; border:1px solid #e0e0e0; white-space:nowrap; transition:background 0.2s; }
+    .adv-table tr:hover td { background:#e3f2fd; }
+    .adv-table td:first-child { font-weight:600; text-align:left; background:#f5f5f5; position:sticky; left:0; z-index:2; min-width:150px; }
+    .adv-table .val-excellent { color:#2e7d32; font-weight:700; }
+    .adv-table .val-good { color:#558b2f; font-weight:600; }
+    .adv-table .val-warning { color:#f57c00; font-weight:600; }
+    .adv-table .val-critical { color:#c62828; font-weight:700; }
+    .adv-legend { display:flex; gap:16px; margin:10px 0 14px; font-size:11px; flex-wrap:wrap; align-items:center; padding:10px 14px; background:#f9fafb; border-radius:8px; border:1px solid #e0e0e0; }
+    .adv-legend-item { display:flex; align-items:center; gap:6px; }
+    .adv-legend-dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
+    .adv-legend .dot-excellent { background:#2e7d32; }
+    .adv-legend .dot-good { background:#558b2f; }
+    .adv-legend .dot-warning { background:#f57c00; }
+    .adv-legend .dot-critical { background:#c62828; }
+    .adv-highlight-box { margin:14px 0; padding:14px 18px; border-radius:10px; border-left:4px solid #1976d2; background:linear-gradient(135deg, #e3f2fd 0%, #bbdefb 30%, #e3f2fd 100%); font-size:13px; line-height:1.6; color:#0d47a1; }
+    .adv-highlight-box strong { font-size:14px; color:#01579b; }
+    .adv-highlight-box.green { border-left-color:#2e7d32; background:linear-gradient(135deg, #f1f8e9 0%, #dcedc8 30%, #f1f8e9 100%); color:#1b5e20; }
+    .adv-highlight-box.green strong { color:#1b5e20; }
+    .adv-highlight-box.amber { border-left-color:#f57c00; background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 30%, #fff3e0 100%); color:#e65100; }
+    .adv-highlight-box.amber strong { color:#e65100; }
+    .adv-chart-details { margin-top:12px; }
+    .adv-chart-details summary { padding:10px 16px; background:linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%); border-radius:8px; cursor:pointer; font-weight:700; font-size:13px; color:#263238; list-style:none; display:flex; align-items:center; gap:8px; }
+    .adv-chart-details summary::-webkit-details-marker { display:none; }
+    .adv-chart-details summary::before { content:'▶'; font-size:10px; transition:transform 0.2s; }
+    .adv-chart-details[open] summary::before { transform:rotate(90deg); }
+    .adv-chart-details summary:hover { background:linear-gradient(135deg, #cfd8dc 0%, #b0bec5 100%); }
+    .adv-chart-wrap { margin-top:12px; padding:16px; background:#fafafa; border-radius:8px; }
+    .adv-chart-canvas { position:relative; height:280px; }
+    .adv-expand-btn { padding:6px 14px; background:#fff; border:2px solid #1976d2; border-radius:6px; font-size:11px; font-weight:600; color:#1976d2; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+    .adv-expand-btn:hover { background:#1976d2; color:#fff; }
+.adv-daily-cols { display:none; }
+    .adv-daily-cols.expanded { display:table-cell; }
+  </style>
+
+  <div class="adv-toggle-row">
+    <button class="adv-toggle-btn active" data-section="totalOverview" onclick="switchAdvSection('totalOverview', this)">📊 Total Overview</button>
+    <button class="adv-toggle-btn" data-section="partnersStrat" onclick="switchAdvSection('partnersStrat', this)">👥 Partners Stratification</button>
+    <button class="adv-toggle-btn" data-section="cityLevel" onclick="switchAdvSection('cityLevel', this)">🏙️ City Level Data</button>
+  </div>
+
+  <!-- TOTAL OVERVIEW SECTION -->
+  <div id="totalOverviewContent" class="adv-content-box active">
+    <div class="adv-cards-row">
+      <div class="adv-card amber">
+        <div class="card-label">MTD Achievement</div>
+        <div class="card-value">93.5%</div>
+        <div class="card-sub">Delivery | Target: 19,405</div>
+      </div>
+      <div class="adv-card green">
+        <div class="card-label">W1 Performance</div>
+        <div class="card-value">92.9%</div>
+        <div class="card-sub">Feb 1-7 | Stable</div>
+      </div>
+      <div class="adv-card amber">
+        <div class="card-label">W2 Performance</div>
+        <div class="card-value">92.9%</div>
+        <div class="card-sub">Feb 8-14 | Flat trend</div>
+      </div>
+      <div class="adv-card">
+        <div class="card-label">Total GAP</div>
+        <div class="card-value">448</div>
+        <div class="card-sub">Riders | Online vs Del</div>
+      </div>
+    </div>
+
+    <div class="adv-legend">
+      <strong>Color Legend:</strong>
+      <div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≥95% Excellent</div>
+      <div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 90-94.9% Good</div>
+      <div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 85-89.9% Warning</div>
+      <div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>
+    </div>
+
+    <div class="adv-table-container">
+      <div class="adv-table-title">📈 Overall Performance Summary</div>
+      <div class="adv-table-wrap">
+        <table class="adv-table" id="totalOverviewTable">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>MTD</th>
+              <th>W1 (Feb 1-7)</th>
+              <th>W2 (Feb 8-14)</th>
+              <th class="adv-daily-cols">Day 1</th>
+              <th class="adv-daily-cols">Day 2</th>
+              <th class="adv-daily-cols">Day 3</th>
+              <th class="adv-daily-cols">Day 4</th>
+              <th class="adv-daily-cols">Day 5</th>
+              <th class="adv-daily-cols">Day 6</th>
+              <th class="adv-daily-cols">Day 7</th>
+              <th class="adv-daily-cols">Day 8</th>
+              <th class="adv-daily-cols">Day 9</th>
+              <th class="adv-daily-cols">Day 10</th>
+              <th class="adv-daily-cols">Day 11</th>
+              <th class="adv-daily-cols">Day 12</th>
+              <th class="adv-daily-cols">Day 13</th>
+              <th class="adv-daily-cols">Day 14</th>
+              <th class="adv-daily-cols">Day 15</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Target</td>
+              <td>19,405</td>
+              <td>19,405</td>
+              <td>19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+              <td class="adv-daily-cols">19,405</td>
+            </tr>
+            <tr>
+              <td>Online Riders</td>
+              <td>18,585</td>
+              <td>18,528</td>
+              <td>18,403</td>
+              <td class="adv-daily-cols">19,557</td>
+              <td class="adv-daily-cols">18,436</td>
+              <td class="adv-daily-cols">18,504</td>
+              <td class="adv-daily-cols">18,209</td>
+              <td class="adv-daily-cols">18,357</td>
+              <td class="adv-daily-cols">18,313</td>
+              <td class="adv-daily-cols">18,321</td>
+              <td class="adv-daily-cols">18,178</td>
+              <td class="adv-daily-cols">18,255</td>
+              <td class="adv-daily-cols">18,355</td>
+              <td class="adv-daily-cols">18,386</td>
+              <td class="adv-daily-cols">18,526</td>
+              <td class="adv-daily-cols">18,542</td>
+              <td class="adv-daily-cols">18,576</td>
+              <td class="adv-daily-cols">18,353</td>
+            </tr>
+            <tr>
+              <td>Delivery Riders</td>
+              <td>18,137</td>
+              <td>18,037</td>
+              <td>18,020</td>
+              <td class="adv-daily-cols">18,185</td>
+              <td class="adv-daily-cols">18,240</td>
+              <td class="adv-daily-cols">18,263</td>
+              <td class="adv-daily-cols">17,662</td>
+              <td class="adv-daily-cols">17,998</td>
+              <td class="adv-daily-cols">17,948</td>
+              <td class="adv-daily-cols">17,962</td>
+              <td class="adv-daily-cols">17,571</td>
+              <td class="adv-daily-cols">17,738</td>
+              <td class="adv-daily-cols">17,981</td>
+              <td class="adv-daily-cols">18,001</td>
+              <td class="adv-daily-cols">18,238</td>
+              <td class="adv-daily-cols">18,330</td>
+              <td class="adv-daily-cols">18,282</td>
+              <td class="adv-daily-cols">17,783</td>
+            </tr>
+            <tr>
+              <td><strong>Achievement %</strong></td>
+              <td class="val-good">93.5%</td>
+              <td class="val-good">92.9%</td>
+              <td class="val-good">92.9%</td>
+              <td class="adv-daily-cols val-good">93.7%</td>
+              <td class="adv-daily-cols val-good">94.0%</td>
+              <td class="adv-daily-cols val-good">94.1%</td>
+              <td class="adv-daily-cols val-good">91.0%</td>
+              <td class="adv-daily-cols val-good">92.7%</td>
+              <td class="adv-daily-cols val-good">92.5%</td>
+              <td class="adv-daily-cols val-good">92.6%</td>
+              <td class="adv-daily-cols val-good">90.5%</td>
+              <td class="adv-daily-cols val-good">91.4%</td>
+              <td class="adv-daily-cols val-good">92.7%</td>
+              <td class="adv-daily-cols val-good">92.8%</td>
+              <td class="adv-daily-cols val-good">94.0%</td>
+              <td class="adv-daily-cols val-good">94.5%</td>
+              <td class="adv-daily-cols val-good">94.2%</td>
+              <td class="adv-daily-cols val-good">91.6%</td>
+            </tr>
+            <tr>
+              <td>GAP (Riders)</td>
+              <td>448</td>
+              <td>491</td>
+              <td>382</td>
+              <td class="adv-daily-cols">1,372</td>
+              <td class="adv-daily-cols">196</td>
+              <td class="adv-daily-cols">241</td>
+              <td class="adv-daily-cols">547</td>
+              <td class="adv-daily-cols">359</td>
+              <td class="adv-daily-cols">365</td>
+              <td class="adv-daily-cols">359</td>
+              <td class="adv-daily-cols">607</td>
+              <td class="adv-daily-cols">517</td>
+              <td class="adv-daily-cols">374</td>
+              <td class="adv-daily-cols">385</td>
+              <td class="adv-daily-cols">288</td>
+              <td class="adv-daily-cols">212</td>
+              <td class="adv-daily-cols">294</td>
+              <td class="adv-daily-cols">570</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="adv-expand-btn" onclick="toggleDailyExpand('totalOverviewTable')">📅 Expand Daily View</button>
+    </div>
+
+    <div class="adv-highlight-box amber">
+      <strong>📊 Key Insights:</strong> MTD achievement at 93.5% remains below the 100% target. Performance stable across both weeks (W1: 92.9%, W2: 92.9%), suggesting consistent underperformance. Day 1 shows highest GAP (1,372 riders) due to online spike. Improvement needed: Daily achievement ranges 90.5%-94.5% - target ≥95% for optimal performance.
+    </div>
+
+    <details class="adv-chart-details">
+      <summary>📈 Daily Achievement Trend Chart</summary>
+      <div class="adv-chart-wrap">
+        <div class="adv-chart-canvas"><canvas id="totalOverviewChart"></canvas></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- PARTNERS STRATIFICATION SECTION -->
+  <div id="partnersStratContent" class="adv-content-box">
+    <div class="adv-sub-slicer">
+      <button class="adv-sub-btn active" data-cat="good" onclick="switchPartnerCat('good', this)">✅ Good Partners</button>
+      <button class="adv-sub-btn" data-cat="average" onclick="switchPartnerCat('average', this)">⚠️ Average Partners</button>
+      <button class="adv-sub-btn" data-cat="bad" onclick="switchPartnerCat('bad', this)">❌ Bad Partners</button>
+      <button class="adv-sub-btn" data-cat="inc20" onclick="switchPartnerCat('inc20', this)">📈 Increase >20</button>
+      <button class="adv-sub-btn" data-cat="inc1020" onclick="switchPartnerCat('inc1020', this)">📊 Increase 10-20</button>
+      <button class="adv-sub-btn" data-cat="inc110" onclick="switchPartnerCat('inc110', this)">📉 Increase 1-10</button>
+      <button class="adv-sub-btn" data-cat="inc0" onclick="switchPartnerCat('inc0', this)">↔️ Others (≤0)</button>
+    </div>
+
+    <div id="partnerCatContent"></div>
+  </div>
+
+  <!-- CITY LEVEL DATA SECTION -->
+  <div id="cityLevelContent" class="adv-content-box">
+    <div class="adv-sub-slicer">
+      <button class="adv-sub-btn active" data-city="gap" onclick="switchCityMetric('gap', this)">📉 GAP % (Del vs Capacity)</button>
+      <button class="adv-sub-btn" data-city="ach" onclick="switchCityMetric('ach', this)">📊 Achievement Rate</button>
+    </div>
+
+    <div id="cityMetricContent"></div>
+  </div>
+</div>
+
+<script>
+// Data storage
+var advDataLoaded = false;
+
+function switchAdvSection(section, btn) {
+  document.querySelectorAll('.adv-toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.adv-content-box').forEach(box=>box.classList.remove('active'));
+  document.getElementById(section+'Content').classList.add('active');
+  
+  if(!advDataLoaded) {
+    advDataLoaded = true;
+    initAdvCharts();
+    renderPartnerCat('good');
+    renderCityMetric('gap');
+  } else if(section === 'partnersStrat') {
+    renderPartnerCat('good');
+  } else if(section === 'cityLevel') {
+    renderCityMetric('gap');
+  }
+}
+
+function toggleDailyExpand(tableId) {
+  var table = document.getElementById(tableId);
+  var dailyCols = table.querySelectorAll('.adv-daily-cols');
+  var isExpanded = dailyCols[0].classList.contains('expanded');
+  
+  dailyCols.forEach(col => {
+    if(isExpanded) {
+      col.classList.remove('expanded');
+    } else {
+      col.classList.add('expanded');
+    }
+  });
+  
+  var btn = table.parentElement.querySelector('.adv-expand-btn');
+  btn.textContent = isExpanded ? '📅 Expand Daily View' : '📅 Collapse Daily View';
+}
+
+function switchPartnerCat(cat, btn) {
+  document.querySelectorAll('#partnersStratContent .adv-sub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPartnerCat(cat);
+}
+
+function switchCityMetric(metric, btn) {
+  document.querySelectorAll('#cityLevelContent .adv-sub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCityMetric(metric);
+}
+
+function getColorClass(val) {
+  var v = parseFloat(val);
+  if(v >= 95) return 'val-excellent';
+  if(v >= 90) return 'val-good';
+  if(v >= 85) return 'val-warning';
+  return 'val-critical';
+}
+
+function initAdvCharts() {
+  var ctx = document.getElementById('totalOverviewChart');
+  if(!ctx) return;
+  ctx = ctx.getContext('2d');
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7','Day 8','Day 9','Day 10','Day 11','Day 12','Day 13','Day 14','Day 15'],
+      datasets: [{
+        label: 'Achievement %',
+        data: [93.7,94.0,94.1,91.0,92.7,92.5,92.6,90.5,91.4,92.7,92.8,94.0,94.5,94.2,91.6],
+        borderColor: '#1976d2',
+        backgroundColor: 'rgba(25,118,210,0.1)',
+        tension: 0.3,
+        fill: true,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: '#1976d2'
+      },{
+        label: '95% Target',
+        data: Array(15).fill(95),
+        borderColor: '#2e7d32',
+        borderWidth: 2,
+        borderDash: [5,5],
+        pointRadius: 0,
+        fill: false
+      },{
+        label: '90% threshold',
+        data: Array(15).fill(90),
+        borderColor: '#f57c00',
+        borderWidth: 2,
+        borderDash: [5,5],
+        pointRadius: 0,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        y: { beginAtZero: false, min: 85, max: 100, ticks: { callback: v=>v+'%' } }
+      }
+    }
+  });
+}
+
+function renderPartnerCat(cat) {
+  var data = { good: {
+    title: '✅ Good Partners (252)',
+    target: '10,104',
+    mtd: '94.7%',
+    w1: '95.2%',
+    w2: '94.4%',
+    gap: '210',
+    insight: 'Good partners maintain strong performance above 94%, with W1 at 95.2%. 45% of partners achieving ≥100%, and 82% above 90%. Only 5% fall below 80%, indicating solid fundamentals.',
+    data: [[10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104,10104],
+           [9784,9861,9717,10406,9830,9850,9695,9764,9759,9720,9657,9671,9685,9705,9782,9759,9757,9635],
+           [9573,9623,9542,9703,9741,9737,9434,9600,9601,9548,9361,9429,9525,9542,9658,9647,9634,9360],
+           [94.7,95.2,94.4,96.0,96.4,96.4,93.4,95.0,95.0,94.5,92.6,93.3,94.3,94.4,95.6,95.5,95.3,92.6]],
+    daily: [96.0,96.4,96.4,93.4,95.0,95.0,94.5,92.6,93.3,94.3,94.4,95.6,95.5,95.3,92.6]
+  }, average: {
+    title: '⚠️ Average Partners (261)',
+    target: '8,346',
+    mtd: '92.0%',
+    w1: '93.0%',
+    w2: '91.6%',
+    gap: '221',
+    insight: 'Average partners show declining trend from W1 (93.0%) to W2 (91.6%). Only 37% achieving ≥100%, with 12% below 80%. Performance concentration in 90-95% range suggests need for targeted improvement interventions.',
+    data: [[8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346],
+           [7925,8004,7839,8575,8005,8007,7842,7911,7848,7843,7755,7798,7832,7816,7861,7894,7920,7808],
+           [7704,7762,7646,7934,7907,7893,7568,7721,7649,7665,7471,7545,7632,7613,7703,7796,7765,7539],
+           [92.3,93.0,91.6,95.1,94.7,94.6,90.7,92.5,91.6,91.8,89.5,90.4,91.4,91.2,92.3,93.4,93.0,90.3]],
+    daily: [95.1,94.7,94.6,90.7,92.5,91.6,91.8,89.5,90.4,91.4,91.2,92.3,93.4,93.0,90.3]
+  }, bad: {
+    title: '❌ Bad Partners (20)',
+    target: '375',
+    mtd: '91.7%',
+    w1: '91.5%',
+    w2: '92.2%',
+    gap: '8',
+    insight: 'Bad partners show improvement from W1 (91.5%) to W2 (92.2%). Despite "bad" classification, 54% achieve ≥100%, indicating potential for rehabilitation. Only 19.3% below 80% - relatively small absolute numbers allow focused intervention.',
+    data: [[375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375,375],
+           [353,355,351,374,349,352,351,355,347,354,350,343,351,351,351,356,355,352],
+           [344,343,346,346,341,337,341,349,341,347,335,337,347,344,350,355,351,345],
+           [91.7,91.5,92.2,92.3,90.9,89.9,90.9,93.1,90.9,92.5,89.3,89.9,92.5,91.7,93.3,94.7,93.6,92.0]],
+    daily: [92.3,90.9,89.9,90.9,93.1,90.9,92.5,89.3,89.9,92.5,91.7,93.3,94.7,93.6,92.0]
+  }, inc20: {
+    title: '📈 Increase >20 (84 partners)',
+    target: '6,112',
+    mtd: '93.3%',
+    w1: '91.3%',
+    w2: '92.5%',
+    gap: '134',
+    insight: 'Partners with >20 increase show recovery from W1 (91.3%) to W2 (92.5%). Only 21% achieve ≥100%, suggesting aggressive targets. 74% maintain >90%, indicating targets are challenging but largely achievable with effort.',
+    data: [[6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112,6112],
+           [5836,5721,5773,5882,5696,5727,5656,5701,5682,5704,5672,5720,5757,5767,5811,5824,5859,5793],
+           [5702,5579,5656,5552,5625,5657,5474,5593,5558,5593,5493,5556,5661,5629,5712,5767,5773,5620],
+           [93.3,91.3,92.5,90.8,92.0,92.6,89.6,91.5,90.9,91.5,89.9,90.9,92.6,92.1,93.5,94.4,94.5,92.0]],
+    daily: [90.8,92.0,92.6,89.6,91.5,90.9,91.5,89.9,90.9,92.6,92.1,93.5,94.4,94.5,92.0]
+  }, inc1020: {
+    title: '📊 Increase 10-20 (47 partners)',
+    target: '1,584',
+    mtd: '93.6%',
+    w1: '90.9%',
+    w2: '93.3%',
+    gap: '32',
+    insight: 'Moderate increase group shows strong improvement W1→W2 (90.9% to 93.3%). 44% achieve ≥100%, highest among increase slabs. 82% above 80% indicates well-calibrated targets with room for optimization.',
+    data: [[1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584,1584],
+           [1514,1469,1508,1511,1459,1458,1446,1464,1474,1469,1468,1489,1509,1511,1525,1531,1523,1502],
+           [1482,1439,1477,1436,1450,1439,1408,1438,1455,1448,1410,1452,1476,1481,1501,1519,1503,1452],
+           [93.6,90.9,93.3,90.7,91.5,90.8,88.9,90.8,91.9,91.4,89.0,91.7,93.2,93.5,94.8,95.9,94.9,91.7]],
+    daily: [90.7,91.5,90.8,88.9,90.8,91.9,91.4,89.0,91.7,93.2,93.5,94.8,95.9,94.9,91.7]
+  }, inc110: {
+    title: '📉 Increase 1-10 (100 partners)',
+    target: '3,166',
+    mtd: '93.5%',
+    w1: '93.5%',
+    w2: '93.2%',
+    gap: '66',
+    insight: 'Minor increase group maintains stable performance (W1: 93.5%, W2: 93.2%). 35% achieve ≥100%, 72% above 90%, 91% above 80%. Small target increases appear well-absorbed with consistent execution.',
+    data: [[3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166,3166],
+           [3026,3031,3011,3192,3013,3028,2990,2993,3004,2998,2981,2987,2998,2997,3032,3039,3041,3011],
+           [2960,2961,2952,2979,2985,3000,2911,2947,2952,2954,2900,2909,2931,2946,2990,3006,2982,2924],
+           [93.5,93.5,93.2,94.1,94.3,94.8,91.9,93.1,93.2,93.3,91.6,91.9,92.6,93.1,94.4,94.9,94.2,92.4]],
+    daily: [94.1,94.3,94.8,91.9,93.1,93.2,93.3,91.6,91.9,92.6,93.1,94.4,94.9,94.2,92.4]
+  }, inc0: {
+    title: '↔️ Others (≤0) (325 partners)',
+    target: '8,543',
+    mtd: '93.6%',
+    w1: '94.3%',
+    w2: '92.9%',
+    gap: '216',
+    insight: 'Partners with flat/reduced targets show declining trend (W1: 94.3% to W2: 92.9%). 48% achieve ≥100%, highest overall. 88% above 80%. May indicate capacity adjustment or operational challenges offsetting target reduction benefit.',
+    data: [[8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543,8543],
+           [8209,8307,8111,8972,8268,8291,8117,8199,8153,8150,8057,8059,8091,8111,8158,8148,8153,8047],
+           [7992,8058,7935,8218,8180,8167,7869,8020,7983,7967,7768,7821,7913,7945,8035,8038,8024,7787],
+           [93.6,94.3,92.9,96.2,95.8,95.6,92.1,93.9,93.4,93.3,90.9,91.5,92.6,93.0,94.1,94.1,93.9,91.2]],
+    daily: [96.2,95.8,95.6,92.1,93.9,93.4,93.3,90.9,91.5,92.6,93.0,94.1,94.1,93.9,91.2]
+  }};
+  
+  var d = data[cat];
+  var html = '<div class="adv-cards-row">';
+  html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-14</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Total GAP</div><div class="card-value">'+d.gap+'</div><div class="card-sub">Riders</div></div>';
+  html += '</div>';
+  
+  html += '<div class="adv-legend"><strong>Color Legend:</strong>';
+  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≥95% Excellent</div>';
+  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 90-94.9% Good</div>';
+  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 85-89.9% Warning</div>';
+  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>';
+  html += '</div>';
+  
+  html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
+  for(var i=1; i<=15; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  html += '</tr></thead><tbody>';
+  
+  var rows = ['Target','Online Riders','Delivery Riders','Achievement %'];
+  for(var r=0; r<4; r++) {
+    html += '<tr><td>'+(r===3?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
+    for(var c=0; c<3; c++) {
+      var val = d.data[r][c];
+      var cls = (r===3 && c>0) ? getColorClass(val) : '';
+      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===3 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+    }
+    for(var c=3; c<d.data[r].length; c++) {
+      var val = d.data[r][c];
+      var cls = (r===3) ? 'adv-daily-cols '+getColorClass(val) : 'adv-daily-cols';
+      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===3 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+    }
+    html += '</tr>';
+  }
+  
+  html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'partner'+cat+'Table\')">📅 Expand Daily View</button></div>';
+  
+  var color = (parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'amber';
+  html += '<div class="adv-highlight-box '+color+'"><strong>📊 Key Insights:</strong> '+d.insight+'</div>';
+  
+  html += '<details class="adv-chart-details"><summary>📈 Daily Trend Chart</summary><div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="partner'+cat+'Chart"></canvas></div></div></details>';
+  
+  document.getElementById('partnerCatContent').innerHTML = html;
+  
+  setTimeout(function(){
+    var ctx = document.getElementById('partner'+cat+'Chart');
+    if(!ctx) return;
+    ctx = ctx.getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15'],
+        datasets: [{
+          label: 'Achievement %',
+          data: d.daily,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25,118,210,0.1)',
+          tension: 0.3,
+          fill: true,
+          borderWidth: 3,
+          pointRadius: 4
+        },{
+          label: '95% Target',
+          data: Array(15).fill(95),
+          borderColor: '#2e7d32',
+          borderWidth: 2,
+          borderDash: [5,5],
+          pointRadius: 0,
+          fill: false
+        },{
+          label: '90% Threshold',
+          data: Array(15).fill(90),
+          borderColor: '#f57c00',
+          borderWidth: 2,
+          borderDash: [5,5],
+          pointRadius: 0,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { beginAtZero: false, min: 85, max: 105, ticks: { callback: v=>v+'%' } }
+        }
+      }
+    });
+  }, 100);
+}
+
+function renderCityMetric(metric) {
+  var cities = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu','Abha','Jazan','Makkah','Najran','Taif'];
+  
+  var gapData = {
+    mtd: [1.1,1.8,1.1,1.7,3.3,1.6,1.4,1.7,1.8,1.4,1.7,2.6,1.7,1.9,2.1,1.5,1.8],
+    w1: [-0.9,-2.2,-1.5,-2.0,-3.4,-2.0,-1.6,-1.5,-1.6,-1.6,-1.9,-3.8,-1.6,-1.3,-2.2,-1.2,-1.6],
+    w2: [-1.0,-1.5,-0.8,-1.9,-2.8,-1.7,-0.6,-2.6,-1.9,-1.5,-2.0,-3.0,-2.0,-2.7,-1.8,-1.2,-1.8],
+    daily: [[-2.9,-0.1,-0.1,-1.6,-0.4,-0.7,-0.3,-2.2,-1.4,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8],
+            [-8.8,-0.4,-0.5,-2.6,-1.0,-0.5,-1.3,-2.2,-2.0,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4],
+            [-8.7,-1.0,0.0,0.0,0.0,0.0,-1.0,-1.0,0.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],
+            [-6.0,-0.9,-1.4,0.0,-0.9,-0.9,-3.7,-2.8,-2.8,-0.9,-0.9,-0.9,-0.9,-0.9,-0.9],
+            [-8.1,-1.4,-1.9,-4.1,-2.9,-3.1,-2.5,-3.9,-3.3,-2.4,-2.4,-2.4,-2.4,-2.4,-2.4],
+            [-8.3,-0.7,0.0,-1.3,-1.3,-0.7,-1.7,-4.0,-2.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],
+            [-7.4,0.0,-0.4,-1.6,-0.8,-0.4,-0.4,-1.2,-2.5,0.0,0.0,0.0,0.0,0.0,0.0],
+            [-3.5,-1.2,0.0,-0.6,-1.2,0.0,-4.1,-4.7,0.0,-2.3,-2.3,-2.3,-2.3,-2.3,-2.3],
+            [-4.9,-0.8,-0.6,-1.5,-1.0,-0.8,-1.2,-2.6,-2.4,-1.8,-1.8,-1.8,-1.8,-1.8,-1.8],
+            [-4.9,-0.4,-1.1,-1.4,-1.3,-1.2,-1.0,-1.8,-1.8,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4],
+            [-8.7,-0.5,0.0,-1.4,-0.5,-1.0,-1.0,-1.9,-1.4,-2.4,-2.4,-2.4,-2.4,-2.4,-2.4],
+            [-13.5,-0.6,-2.9,-4.1,-1.2,-0.6,-3.5,-3.5,-4.7,-2.3,-2.3,-2.3,-2.3,-2.3,-2.3],
+            [-3.4,-1.9,-1.1,-1.1,0.0,-1.5,-2.3,-1.5,-1.1,-2.3,-2.3,-2.3,-2.3,-2.3,-2.3],
+            [-3.8,0.0,0.0,-1.3,-1.3,-1.3,-1.3,0.0,-2.6,-3.8,-3.8,-3.8,-3.8,-3.8,-3.8],
+            [-8.7,-1.0,-0.8,-1.9,-0.9,-1.4,-1.0,-3.2,-2.2,-1.6,-1.6,-1.6,-1.6,-1.6,-1.6],
+            [-5.6,0.0,0.0,0.0,-1.4,0.0,-1.4,-5.6,-1.4,0.0,0.0,0.0,0.0,0.0,0.0],
+            [-2.8,-0.7,-1.0,-1.7,-1.4,-2.1,-1.4,-1.4,-3.1,-1.7,-1.7,-1.7,-1.7,-1.7,-1.7]]
+  };
+  
+  var achData = {
+    mtd: [93.4,95.2,100.1,97.4,90.8,100.7,98.4,95.2,95.2,97.3,95.9,96.1,98.8,98.8,94.6,97.6,96.8],
+    w1: [94.2,95.6,100.1,97.5,89.5,103.5,99.1,98.4,95.0,98.3,95.3,95.2,100.9,93.4,94.0,101.4,92.5],
+    w2: [92.1,94.6,99.0,93.1,89.5,98.4,97.1,91.4,93.8,95.8,95.7,97.0,96.3,100.2,92.9,92.7,98.9],
+    daily: [[93.8,93.0,94.8,93.6,95.1,94.8,94.7,90.5,91.4,92.1,92.1,92.1,92.1,92.1,92.1],
+            [95.7,96.0,96.7,92.9,96.0,96.4,95.6,93.1,94.0,94.8,94.8,94.8,94.8,94.8,94.8],
+            [100.0,98.1,99.0,101.9,100.0,101.0,101.0,99.0,101.0,98.1,98.1,98.1,98.1,98.1,98.1],
+            [97.2,99.1,99.5,100.5,97.2,98.6,90.2,89.3,90.7,95.3,95.3,95.3,95.3,95.3,95.3],
+            [90.3,91.0,90.9,87.6,89.2,88.2,89.3,87.3,88.4,90.3,90.3,90.3,90.3,90.3,90.3],
+            [104.3,104.3,104.7,103.0,103.0,103.3,101.7,98.7,98.0,97.7,97.7,97.7,97.7,97.7,97.7],
+            [101.2,99.6,99.6,97.9,97.5,98.8,99.2,98.4,96.7,96.3,96.3,96.3,96.3,96.3,96.3],
+            [99.4,98.8,100.0,98.3,98.8,98.3,95.3,94.2,97.1,88.4,88.4,88.4,88.4,88.4,88.4],
+            [96.3,96.3,96.1,92.2,94.5,95.3,94.2,91.9,93.1,94.3,94.3,94.3,94.3,94.3,94.3],
+            [101.0,100.3,100.0,97.1,97.5,96.0,96.1,95.5,95.8,95.8,95.8,95.8,95.8,95.8,95.8],
+            [93.7,96.1,97.6,95.2,95.2,94.7,94.7,95.2,95.2,96.1,96.1,96.1,96.1,96.1,96.1],
+            [95.9,95.3,94.2,91.8,97.1,97.7,94.2,95.9,95.9,98.2,98.2,98.2,98.2,98.2,98.2],
+            [106.1,102.7,102.3,98.9,99.6,98.9,98.1,97.7,97.7,95.1,95.1,95.1,95.1,95.1,95.1],
+            [89.7,91.0,88.5,87.2,93.6,101.3,102.6,105.1,103.8,97.4,97.4,97.4,97.4,97.4,97.4],
+            [93.4,94.1,95.0,92.2,94.5,94.3,94.6,91.5,92.0,93.1,93.1,93.1,93.1,93.1,93.1],
+            [104.2,101.4,102.8,101.4,101.4,101.4,97.2,87.5,91.7,93.1,93.1,93.1,93.1,93.1,93.1],
+            [88.5,90.6,89.9,91.3,93.4,96.2,97.6,99.3,96.9,99.7,99.7,99.7,99.7,99.7,99.7]]
+  };
+  
+  var data = (metric==='gap') ? gapData : achData;
+  var title = (metric==='gap') ? '📉 City GAP % (Delivery vs Capacity)' : '📊 City Achievement Rate';
+  var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.6%), Riyadh (3.3%), and Dammam (1.8%). Negative W1 values indicate delivery exceeded capacity in shorter window. Day 1 shows extreme spikes (Yanbu -13.5%, multiple cities <-8%) suggesting initialization or data timing issues. Most cities stabilize at <-2% daily gap by Day 3 onwards.' : 'Achievement rates show strong performers: Al Kharj (100.7%), Hafar Albatin (100.1%), Madinah (97.3%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.8% MTD with W1=W2=89.5%, indicating systemic underperformance. Jazan volatile (93.4% W1 → 100.2% W2). Taif improves dramatically (92.5% W1 → 98.9% W2).';
+  
+  var bestCity = '', bestVal = -999, worstCity = '', worstVal = 999;
+  for(var i=0; i<cities.length; i++) {
+    if((metric==='ach' && data.mtd[i]>bestVal) || (metric==='gap' && data.mtd[i]<bestVal)) {
+      bestVal = data.mtd[i];
+      bestCity = cities[i];
+    }
+    if((metric==='ach' && data.mtd[i]<worstVal) || (metric==='gap' && data.mtd[i]>worstVal)) {
+      worstVal = data.mtd[i];
+      worstCity = cities[i];
+    }
+  }
+  
+  var html = '<div class="adv-cards-row">';
+  html += '<div class="adv-card green"><div class="card-label">Best City</div><div class="card-value">'+bestCity+'</div><div class="card-sub">'+bestVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+  html += '<div class="adv-card red"><div class="card-label">Worst City</div><div class="card-value">'+worstCity+'</div><div class="card-sub">'+worstVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Cities Tracked</div><div class="card-value">17</div><div class="card-sub">Across KSA</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Avg '+(metric==='gap'?'GAP':'Achievement')+'</div><div class="card-value">'+(data.mtd.reduce((a,b)=>a+b,0)/17).toFixed(1)+(metric==='ach'?'%':'%')+'</div><div class="card-sub">MTD Average</div></div>';
+  html += '</div>';
+  
+  if(metric==='ach') {
+    html += '<div class="adv-legend"><strong>Color Legend:</strong>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≥95% Excellent</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 90-94.9% Good</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 85-89.9% Warning</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>';
+    html += '</div>';
+  }
+  
+  html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
+  for(var i=1; i<=15; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  html += '</tr></thead><tbody>';
+  
+  for(var c=0; c<cities.length; c++) {
+    html += '<tr><td>'+cities[c]+'</td>';
+    html += '<td class="'+(metric==='ach'?getColorClass(data.mtd[c]):'')+'">'+data.mtd[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    html += '<td class="'+(metric==='ach'?getColorClass(data.w1[c]):'')+'">'+data.w1[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    html += '<td class="'+(metric==='ach'?getColorClass(data.w2[c]):'')+'">'+data.w2[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    for(var d=0; d<15; d++) {
+      html += '<td class="adv-daily-cols '+(metric==='ach'?getColorClass(data.daily[c][d]):'')+'">'+data.daily[c][d].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+    }
+    html += '</tr>';
+  }
+  
+  html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'city'+metric+'Table\')">📅 Expand Daily View</button></div>';
+  
+  html += '<div class="adv-highlight-box amber"><strong>📊 Key Insights:</strong> '+insight+'</div>';
+  
+  html += '<details class="adv-chart-details"><summary>📈 City Comparison Chart</summary><div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="city'+metric+'Chart"></canvas></div></div></details>';
+  
+  document.getElementById('cityMetricContent').innerHTML = html;
+  
+  setTimeout(function(){
+    var ctx = document.getElementById('city'+metric+'Chart');
+    if(!ctx) return;
+    ctx = ctx.getContext('2d');
+    
+    var datasets = [];
+    var colors = ['#1976d2','#2e7d32','#f57c00','#c62828','#7b1fa2','#0097a7','#fbc02d','#455a64'];
+    for(var c=0; c<Math.min(cities.length,8); c++) {
+      datasets.push({
+        label: cities[c],
+        data: data.daily[c],
+        borderColor: colors[c%colors.length],
+        backgroundColor: colors[c%colors.length]+'33',
+        tension: 0.2,
+        borderWidth: 2,
+        pointRadius: 3
+      });
+    }
+    
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15'],
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { beginAtZero: false, ticks: { callback: v=>v+(metric==='ach'?'%':'%') } }
+        }
+      }
+    });
+  }, 100);
+}
+</script>
 
 <!-- KPI CARDS -->
 <div class="daily-kpi-row">
