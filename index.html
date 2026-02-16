@@ -29882,6 +29882,13 @@ const monthlyData = {
         'cityLevel': '🏙️ City Level Data'
       };
       document.getElementById('currentSectionName').textContent = sectionNames[section] || section;
+      
+      // Re-enable input fields (in case coming from hub view)
+      document.getElementById('commentUserName').disabled = false;
+      document.getElementById('commentText').disabled = false;
+      document.getElementById('submitCommentBtn').disabled = false;
+      document.getElementById('submitCommentBtn').textContent = 'Post Comment';
+      
       loadComments(section);
       if(!userName) {
         document.getElementById('commentUserName').focus();
@@ -29948,14 +29955,94 @@ const monthlyData = {
     }
     
     function openCommentHub() {
-      // Open with a list of all comment sections
+      // Load and display all comments from all sections
       currentSection = 'hub';
       document.getElementById('commentPanel').classList.add('open');
       document.getElementById('commentOverlay').classList.add('show');
       document.getElementById('currentSectionName').textContent = 'All Comments';
       
       var commentList = document.getElementById('commentList');
-      commentList.innerHTML = '<div style="padding:20px; text-align:center; color:#757575;">Select a section to view or add comments.<br><br>Hover over cards, tables, and charts to see comment buttons.</div>';
+      commentList.innerHTML = '<div style="padding:20px; text-align:center; color:#9e9e9e; font-size:13px;"><i>Loading all comments...</i></div>';
+      
+      var allSections = [
+        {id: 'totalOverview-mtd', name: '📊 MTD Achievement'},
+        {id: 'totalOverview-w1', name: '📊 W1 Performance'},
+        {id: 'totalOverview-w2', name: '📊 W2 Performance'},
+        {id: 'totalOverview-gap', name: '📊 Total GAP'},
+        {id: 'totalOverview-table', name: '📊 Performance Summary'},
+        {id: 'partnersStrat', name: '👥 Partners Stratification'},
+        {id: 'cityLevel', name: '🏙️ City Level Data'}
+      ];
+      
+      var allComments = [];
+      var sectionsLoaded = 0;
+      
+      allSections.forEach(function(section) {
+        firebase.database().ref('comments/' + section.id).once('value').then(function(snapshot) {
+          snapshot.forEach(function(child) {
+            allComments.push({
+              sectionId: section.id,
+              sectionName: section.name,
+              key: child.key,
+              data: child.val()
+            });
+          });
+          
+          sectionsLoaded++;
+          
+          if(sectionsLoaded === allSections.length) {
+            // All sections loaded, now display
+            commentList.innerHTML = '';
+            
+            if(allComments.length === 0) {
+              commentList.innerHTML = '<div class="comment-empty">💬<br>No comments yet across all sections.<br><br>Hover over cards, tables, and charts to add comments.</div>';
+            } else {
+              // Sort by timestamp (newest first)
+              allComments.sort(function(a, b) {
+                return (b.data.timestamp || 0) - (a.data.timestamp || 0);
+              });
+              
+              // Group by section
+              var currentSec = '';
+              allComments.forEach(function(comment) {
+                // Add section header if new section
+                if(currentSec !== comment.sectionName) {
+                  currentSec = comment.sectionName;
+                  var sectionHeader = document.createElement('div');
+                  sectionHeader.style.cssText = 'background:#e3f2fd; padding:8px 12px; margin:10px -16px 10px -16px; font-weight:700; font-size:12px; color:#0d47a1; border-left:4px solid #1976d2; cursor:pointer;';
+                  sectionHeader.textContent = currentSec;
+                  sectionHeader.onclick = function() { openComments(comment.sectionId); };
+                  commentList.appendChild(sectionHeader);
+                }
+                
+                // Render comment (simplified view)
+                var item = document.createElement('div');
+                item.className = 'comment-item';
+                if(comment.data.pinned) item.classList.add('pinned');
+                if(comment.data.resolved) item.classList.add('resolved');
+                
+                var timeStr = getRelativeTime(comment.data.timestamp);
+                var pinBadge = comment.data.pinned ? '<span class="comment-pin-badge">📌 PINNED</span>' : '';
+                var resolvedBadge = comment.data.resolved ? '<span class="comment-resolved-badge">✓ RESOLVED</span>' : '';
+                
+                var textWithMentions = highlightMentions(escapeHtml(comment.data.text));
+                
+                item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + pinBadge + resolvedBadge + '</div>' +
+                               '<div class="comment-text">' + textWithMentions.replace(/\n/g, '<br>') + '</div>' +
+                               '<div class="comment-time">' + timeStr + '</div>' +
+                               '<button class="comment-action-btn" onclick="openComments(\'' + comment.sectionId + '\')" style="margin-top:6px;">View Thread →</button>';
+                commentList.appendChild(item);
+              });
+            }
+            
+            // Disable input area in hub view
+            document.getElementById('commentUserName').disabled = true;
+            document.getElementById('commentText').disabled = true;
+            document.getElementById('submitCommentBtn').disabled = true;
+            document.getElementById('submitCommentBtn').textContent = 'Select a Section to Comment';
+          }
+        });
+      });
     }
     
     var replyToComment = null;
