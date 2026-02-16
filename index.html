@@ -7,6 +7,10 @@
 <title>Partner Capacity Dashboard - Jan 2026 vs Feb 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
         * {
             margin: 0;
@@ -10778,6 +10782,33 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-legend .dot-warning { background:#f57c00; }
     .adv-legend .dot-critical { background:#c62828; }
     .adv-highlight-box { margin:14px 0; padding:14px 18px; border-radius:10px; border-left:4px solid #1976d2; background:linear-gradient(135deg, #e3f2fd 0%, #bbdefb 30%, #e3f2fd 100%); font-size:13px; line-height:1.6; color:#0d47a1; }
+
+    /* Comment System Styles */
+    .comment-btn { position:fixed; bottom:30px; right:30px; width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; cursor:pointer; font-size:24px; box-shadow:0 4px 16px rgba(25,118,210,0.4); transition:all 0.3s; z-index:999; display:flex; align-items:center; justify-content:center; }
+    .comment-btn:hover { transform:scale(1.1); box-shadow:0 6px 24px rgba(25,118,210,0.6); }
+    .comment-btn .badge { position:absolute; top:-5px; right:-5px; background:#f44336; color:#fff; border-radius:50%; width:24px; height:24px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
+    .comment-panel { position:fixed; right:-400px; top:0; width:400px; height:100vh; background:#fff; box-shadow:-4px 0 24px rgba(0,0,0,0.2); transition:right 0.3s ease; z-index:1000; display:flex; flex-direction:column; }
+    .comment-panel.open { right:0; }
+    .comment-header { padding:20px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .comment-header h3 { margin:0; font-size:18px; font-weight:700; }
+    .comment-close { background:none; border:none; color:#fff; font-size:28px; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+    .comment-close:hover { background:rgba(255,255,255,0.2); }
+    .comment-list { flex:1; overflow-y:auto; padding:16px; background:#f5f5f5; }
+    .comment-item { background:#fff; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.1); animation:slideIn 0.3s ease; }
+    @keyframes slideIn { from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);} }
+    .comment-user { font-weight:700; color:#1976d2; font-size:13px; margin-bottom:4px; }
+    .comment-text { font-size:13px; color:#424242; line-height:1.5; margin-bottom:6px; }
+    .comment-time { font-size:11px; color:#9e9e9e; }
+    .comment-input-area { padding:16px; background:#fff; border-top:1px solid #e0e0e0; }
+    .comment-input-area input, .comment-input-area textarea { width:100%; border:1px solid #bdbdbd; border-radius:8px; padding:10px; font-size:13px; font-family:inherit; margin-bottom:10px; }
+    .comment-input-area input { height:38px; }
+    .comment-input-area textarea { height:80px; resize:none; }
+    .comment-input-area button { width:100%; padding:12px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s; }
+    .comment-input-area button:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(25,118,210,0.4); }
+    .comment-input-area button:disabled { opacity:0.5; cursor:not-allowed; }
+    .comment-empty { text-align:center; color:#9e9e9e; padding:40px 20px; font-size:14px; }
+    .comment-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:998; display:none; }
+    .comment-overlay.show { display:block; }
     .adv-highlight-box strong { font-size:14px; color:#01579b; }
     .adv-highlight-box.green { border-left-color:#2e7d32; background:linear-gradient(135deg, #f1f8e9 0%, #dcedc8 30%, #f1f8e9 100%); color:#1b5e20; }
     .adv-highlight-box.green strong { color:#1b5e20; }
@@ -10816,6 +10847,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 
   <!-- TOTAL OVERVIEW SECTION -->
   <div id="totalOverviewContent" class="adv-content-box active">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">📊 Total Overview</h3>
+      <button onclick="openComments('totalOverview')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="totalOverviewCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
+    </div>
     <div class="adv-cards-row">
       <div class="adv-card amber">
         <div class="card-label">MTD Achievement</div>
@@ -29728,7 +29763,155 @@ const monthlyData = {
         renderSuccessMetrics('capacity');
     });
 
+    // Firebase Comment System
+    var firebaseConfig = {
+      apiKey: "AIzaSyD8vxQ4fP9mHCQ3xZ2jK5lN8oP7qR6sT4u",
+      authDomain: "capacity-dashboard-demo.firebaseapp.com",
+      databaseURL: "https://capacity-dashboard-demo-default-rtdb.firebaseio.com",
+      projectId: "capacity-dashboard-demo",
+      storageBucket: "capacity-dashboard-demo.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abc123def456ghi789jkl"
+    };
+    
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+    } catch(e) {
+      console.log('Firebase init error:', e);
+    }
+    
+    var currentSection = '';
+    var userName = localStorage.getItem('dashboardUserName') || '';
+    
+    function openComments(section) {
+      currentSection = section;
+      document.getElementById('commentPanel').classList.add('open');
+      document.getElementById('commentOverlay').classList.add('show');
+      document.getElementById('currentSectionName').textContent = section === 'totalOverview' ? '📊 Total Overview' : section;
+      loadComments(section);
+      if(!userName) {
+        document.getElementById('commentUserName').focus();
+      } else {
+        document.getElementById('commentUserName').value = userName;
+      }
+    }
+    
+    function closeComments() {
+      document.getElementById('commentPanel').classList.remove('open');
+      document.getElementById('commentOverlay').classList.remove('show');
+    }
+    
+    function loadComments(section) {
+      var commentsRef = firebase.database().ref('comments/' + section);
+      commentsRef.off(); // Remove previous listeners
+      commentsRef.orderByChild('timestamp').on('value', function(snapshot) {
+        var commentList = document.getElementById('commentList');
+        commentList.innerHTML = '';
+        var count = 0;
+        
+        var comments = [];
+        snapshot.forEach(function(child) {
+          comments.push({key: child.key, data: child.val()});
+        });
+        
+        comments.reverse(); // Show newest first
+        
+        if(comments.length === 0) {
+          commentList.innerHTML = '<div class="comment-empty">💬<br>No comments yet.<br>Be the first to comment!</div>';
+        } else {
+          comments.forEach(function(comment) {
+            var item = document.createElement('div');
+            item.className = 'comment-item';
+            
+            var time = new Date(comment.data.timestamp);
+            var timeStr = time.toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+            
+            item.innerHTML = '<div class="comment-user">' + escapeHtml(comment.data.userName) + '</div>' +
+                           '<div class="comment-text">' + escapeHtml(comment.data.text).replace(/\n/g, '<br>') + '</div>' +
+                           '<div class="comment-time">' + timeStr + '</div>';
+            commentList.appendChild(item);
+            count++;
+          });
+        }
+        
+        // Update badge
+        var badge = document.getElementById(section + 'CommentCount');
+        if(badge) badge.textContent = count;
+      });
+    }
+    
+    function submitComment() {
+      var nameInput = document.getElementById('commentUserName');
+      var textInput = document.getElementById('commentText');
+      var submitBtn = document.getElementById('submitCommentBtn');
+      
+      var name = nameInput.value.trim();
+      var text = textInput.value.trim();
+      
+      if(!name) {
+        alert('Please enter your name');
+        nameInput.focus();
+        return;
+      }
+      if(!text) {
+        alert('Please enter a comment');
+        textInput.focus();
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Posting...';
+      
+      userName = name;
+      localStorage.setItem('dashboardUserName', name);
+      
+      var commentsRef = firebase.database().ref('comments/' + currentSection);
+      commentsRef.push({
+        userName: name,
+        text: text,
+        timestamp: Date.now()
+      }).then(function() {
+        textInput.value = '';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post Comment';
+      }).catch(function(error) {
+        alert('Error posting comment: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post Comment';
+      });
+    }
+    
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Load comment counts on page load
+    setTimeout(function() {
+      loadComments('totalOverview'); // Pre-load to get count
+    }, 1000);
 
     </script>
+
+<!-- Comment Panel -->
+<div id="commentOverlay" class="comment-overlay" onclick="closeComments()"></div>
+<div id="commentPanel" class="comment-panel">
+  <div class="comment-header">
+    <h3>💬 Comments: <span id="currentSectionName"></span></h3>
+    <button class="comment-close" onclick="closeComments()">×</button>
+  </div>
+  <div id="commentList" class="comment-list">
+    <div class="comment-empty">💬<br>Loading comments...</div>
+  </div>
+  <div class="comment-input-area">
+    <input type="text" id="commentUserName" placeholder="Your name" maxlength="30">
+    <textarea id="commentText" placeholder="Write your comment..." maxlength="500"></textarea>
+    <button id="submitCommentBtn" onclick="submitComment()">Post Comment</button>
+  </div>
+</div>
+
 </div></body>
 </html>
