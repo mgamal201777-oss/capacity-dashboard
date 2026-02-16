@@ -10868,6 +10868,23 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-city-chip:hover { border-color:#1565c0; }
     .adv-city-chip.tier-btn { background:#e8eaf6; color:#283593; border-color:#9fa8da; font-weight:700; }
     .adv-city-chip.tier-btn.active { background:#283593; color:#fff; border-color:#283593; }
+    
+    /* Fixed Comment Hub */
+    .comment-hub-fixed { position:fixed; top:80px; right:20px; z-index:999; }
+    .comment-hub-btn { background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:50%; width:56px; height:56px; cursor:pointer; box-shadow:0 4px 16px rgba(25,118,210,0.4); display:flex; align-items:center; justify-content:center; font-size:24px; transition:all 0.3s; position:relative; }
+    .comment-hub-btn:hover { transform:scale(1.1); box-shadow:0 6px 24px rgba(25,118,210,0.6); }
+    .comment-hub-badge { position:absolute; top:-5px; right:-5px; background:#f44336; color:#fff; border-radius:50%; width:22px; height:22px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
+    .comment-hub-tooltip { position:absolute; right:100%; top:50%; transform:translateY(-50%); margin-right:10px; background:#263238; color:#fff; padding:8px 12px; border-radius:6px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+    .comment-hub-btn:hover .comment-hub-tooltip { opacity:1; }
+    
+    /* Hover Comment Indicators */
+    .commentable-section { position:relative; }
+    .comment-indicator { position:absolute; top:8px; right:8px; background:rgba(25,118,210,0.9); color:#fff; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:14px; display:none; align-items:center; justify-content:center; transition:all 0.2s; z-index:10; box-shadow:0 2px 8px rgba(25,118,210,0.3); }
+    .comment-indicator.has-comments { background:#ff9800; }
+    .commentable-section:hover .comment-indicator { display:flex; animation:fadeInBounce 0.3s ease; }
+    .comment-indicator:hover { transform:scale(1.15); box-shadow:0 3px 12px rgba(25,118,210,0.5); }
+    .comment-indicator-badge { position:absolute; top:-4px; right:-4px; background:#f44336; color:#fff; border-radius:50%; width:16px; height:16px; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
+    @keyframes fadeInBounce { 0%{opacity:0; transform:scale(0.8);} 60%{transform:scale(1.1);} 100%{opacity:1; transform:scale(1);} }
   </style>
 
   <div class="adv-toggle-row">
@@ -10876,29 +10893,51 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     <button class="adv-toggle-btn" data-section="cityLevel" onclick="switchAdvSection('cityLevel', this)">🏙️ City Level Data</button>
   </div>
 
+  <!-- Fixed Comment Hub -->
+  <div class="comment-hub-fixed" id="commentHubFixed" style="display:none;">
+    <button class="comment-hub-btn" onclick="openCommentHub()">
+      💬
+      <span class="comment-hub-badge" id="commentHubBadge">0</span>
+      <span class="comment-hub-tooltip">View All Comments</span>
+    </button>
+  </div>
+
   <!-- TOTAL OVERVIEW SECTION -->
   <div id="totalOverviewContent" class="adv-content-box active">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">📊 Total Overview</h3>
-      <button onclick="openComments('totalOverview')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="totalOverviewCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
-    </div>
+    <h3 style="margin:0 0 16px 0; font-size:18px; color:#0d47a1; font-weight:700;">📊 Total Overview</h3>
     <div class="adv-cards-row">
-      <div class="adv-card amber">
+      <div class="adv-card amber commentable-section">
+        <button class="comment-indicator" onclick="openComments('totalOverview-mtd')" title="Comment on MTD Achievement">
+          💬
+          <span class="comment-indicator-badge" id="badge-totalOverview-mtd" style="display:none;">0</span>
+        </button>
         <div class="card-label">MTD Achievement</div>
         <div class="card-value">93.5%</div>
         <div class="card-sub">Delivery | Target: 19,405</div>
       </div>
-      <div class="adv-card green">
+      <div class="adv-card green commentable-section">
+        <button class="comment-indicator" onclick="openComments('totalOverview-w1')" title="Comment on W1 Performance">
+          💬
+          <span class="comment-indicator-badge" id="badge-totalOverview-w1" style="display:none;">0</span>
+        </button>
         <div class="card-label">W1 Performance</div>
         <div class="card-value">92.9%</div>
         <div class="card-sub">Feb 1-7 | Stable</div>
       </div>
-      <div class="adv-card amber">
+      <div class="adv-card amber commentable-section">
+        <button class="comment-indicator" onclick="openComments('totalOverview-w2')" title="Comment on W2 Performance">
+          💬
+          <span class="comment-indicator-badge" id="badge-totalOverview-w2" style="display:none;">0</span>
+        </button>
         <div class="card-label">W2 Performance</div>
         <div class="card-value">92.9%</div>
         <div class="card-sub">Feb 8-14 | Flat trend</div>
       </div>
-      <div class="adv-card">
+      <div class="adv-card commentable-section">
+        <button class="comment-indicator" onclick="openComments('totalOverview-gap')" title="Comment on Total GAP">
+          💬
+          <span class="comment-indicator-badge" id="badge-totalOverview-gap" style="display:none;">0</span>
+        </button>
         <div class="card-label">Total GAP</div>
         <div class="card-value">448</div>
         <div class="card-sub">Riders | Online vs Del</div>
@@ -10913,7 +10952,11 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
       <div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>
     </div>
 
-    <div class="adv-table-container">
+    <div class="adv-table-container commentable-section">
+      <button class="comment-indicator" onclick="openComments('totalOverview-table')" title="Comment on Performance Summary">
+        💬
+        <span class="comment-indicator-badge" id="badge-totalOverview-table" style="display:none;">0</span>
+      </button>
       <div class="adv-table-title">📈 Overall Performance Summary</div>
       <div class="adv-table-wrap">
         <table class="adv-table" id="totalOverviewTable">
@@ -11066,10 +11109,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 
   <!-- PARTNERS STRATIFICATION SECTION -->
   <div id="partnersStratContent" class="adv-content-box">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">👥 Partners Stratification</h3>
-      <button onclick="openComments('partnersStrat')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="partnersStratCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
-    </div>
+    <h3 style="margin:0 0 16px 0; font-size:18px; color:#0d47a1; font-weight:700;">👥 Partners Stratification</h3>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-cat="good" onclick="switchPartnerCat('good', this)">✅ Good Partners</button>
       <button class="adv-sub-btn" data-cat="average" onclick="switchPartnerCat('average', this)">⚠️ Average Partners</button>
@@ -11085,10 +11125,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 
   <!-- CITY LEVEL DATA SECTION -->
   <div id="cityLevelContent" class="adv-content-box">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="margin:0; font-size:18px; color:#0d47a1; font-weight:700;">🏙️ City Level Data</h3>
-      <button onclick="openComments('cityLevel')" style="padding:8px 16px; background:linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(25,118,210,0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">💬 Comments <span id="cityLevelCommentCount" style="background:rgba(255,255,255,0.3); padding:2px 8px; border-radius:12px; font-size:11px;">0</span></button>
-    </div>
+    <h3 style="margin:0 0 16px 0; font-size:18px; color:#0d47a1; font-weight:700;">🏙️ City Level Data</h3>
     <div class="adv-sub-slicer">
       <button class="adv-sub-btn active" data-city="gap" onclick="switchCityMetric('gap', this)">📉 GAP % (Del vs Capacity)</button>
       <button class="adv-sub-btn" data-city="ach" onclick="switchCityMetric('ach', this)">📊 Achievement Rate</button>
@@ -11736,6 +11773,12 @@ if(ovChartDet) {
 
             // Fix Chart.js sizing when switching to hidden tabs
             window.dispatchEvent(new Event('resize'));
+            
+            // Show/hide comment hub based on active tab
+            var commentHub = document.getElementById('commentHubFixed');
+            if(commentHub) {
+                commentHub.style.display = tabName === 'dailyView' ? 'block' : 'none';
+            }
 
             if (tabName === 'dailyView') {
                 setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 100);
@@ -29828,8 +29871,13 @@ const monthlyData = {
       currentSection = section;
       document.getElementById('commentPanel').classList.add('open');
       document.getElementById('commentOverlay').classList.add('show');
+      
       var sectionNames = {
-        'totalOverview': '📊 Total Overview',
+        'totalOverview-mtd': '📊 MTD Achievement',
+        'totalOverview-w1': '📊 W1 Performance',
+        'totalOverview-w2': '📊 W2 Performance',
+        'totalOverview-gap': '📊 Total GAP',
+        'totalOverview-table': '📊 Performance Summary',
         'partnersStrat': '👥 Partners Stratification',
         'cityLevel': '🏙️ City Level Data'
       };
@@ -29885,9 +29933,29 @@ const monthlyData = {
         }
         
         // Update badge
-        var badge = document.getElementById(section + 'CommentCount');
-        if(badge) badge.textContent = count;
+        var badge = document.getElementById('badge-' + section);
+        if(badge) {
+          if(count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+            document.querySelector('[onclick="openComments(\'' + section + '\')"').classList.add('has-comments');
+          } else {
+            badge.style.display = 'none';
+            document.querySelector('[onclick="openComments(\'' + section + '\')"').classList.remove('has-comments');
+          }
+        }
       });
+    }
+    
+    function openCommentHub() {
+      // Open with a list of all comment sections
+      currentSection = 'hub';
+      document.getElementById('commentPanel').classList.add('open');
+      document.getElementById('commentOverlay').classList.add('show');
+      document.getElementById('currentSectionName').textContent = 'All Comments';
+      
+      var commentList = document.getElementById('commentList');
+      commentList.innerHTML = '<div style="padding:20px; text-align:center; color:#757575;">Select a section to view or add comments.<br><br>Hover over cards, tables, and charts to see comment buttons.</div>';
     }
     
     var replyToComment = null;
@@ -30182,19 +30250,41 @@ const monthlyData = {
     
     // Load comment counts on page load for all sections
     setTimeout(function() {
-      loadComments('totalOverview');
+      var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-gap', 'totalOverview-table', 'partnersStrat', 'cityLevel'];
+      var totalComments = 0;
       
-      // Load counts for other sections
-      ['partnersStrat', 'cityLevel'].forEach(function(sec) {
+      allSections.forEach(function(sec) {
         firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
           var count = snapshot.numChildren();
-          var badge = document.getElementById(sec + 'CommentCount');
-          if(badge) badge.textContent = count;
+          totalComments += count;
+          
+          var badge = document.getElementById('badge-' + sec);
+          if(badge) {
+            if(count > 0) {
+              badge.textContent = count;
+              badge.style.display = 'flex';
+              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"');
+              if(btn) btn.classList.add('has-comments');
+            } else {
+              badge.style.display = 'none';
+              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"');
+              if(btn) btn.classList.remove('has-comments');
+            }
+          }
+          
+          // Update hub badge
+          document.getElementById('commentHubBadge').textContent = totalComments;
         });
       });
       
+      // Show comment hub when Daily View tab is active
+      var dailyTab = document.getElementById('dailyView');
+      if(dailyTab && dailyTab.style.display !== 'none') {
+        document.getElementById('commentHubFixed').style.display = 'block';
+      }
+      
       // Build known users list for @mentions
-      ['totalOverview', 'partnersStrat', 'cityLevel'].forEach(function(sec) {
+      allSections.forEach(function(sec) {
         firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
           snapshot.forEach(function(child) {
             var userName = child.val().userName;
