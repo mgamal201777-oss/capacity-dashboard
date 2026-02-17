@@ -10948,7 +10948,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
         </button>
         <div class="card-label">W2 Performance</div>
         <div class="card-value">92.4%</div>
-        <div class="card-sub">Feb 8-16 | Declining trend</div>
+        <div class="card-sub">Feb 8-14 | Declining trend</div>
       </div>
       <div class="adv-card commentable-section">
         <button class="comment-indicator" onclick="openComments('totalOverview-gap')" title="Comment on Total GAP">
@@ -10982,7 +10982,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
               <th>Metric</th>
               <th>MTD</th>
               <th>W1 (Feb 1-7)</th>
-              <th>W2 (Feb 8-16)</th>
+              <th>W2 (Feb 8-14)</th>
               <th class="adv-daily-cols">Day 1</th>
               <th class="adv-daily-cols">Day 2</th>
               <th class="adv-daily-cols">Day 3</th>
@@ -11004,9 +11004,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <tbody>
             <tr>
               <td>Target</td>
-              <td>19,430</td>
-              <td>19,430</td>
-              <td>19,430</td>
+              <td class="period-col">19,430</td>
+              <td class="period-col">19,430</td>
+              <td class="period-col">19,430</td>
               <td class="adv-daily-cols">19,430</td>
               <td class="adv-daily-cols">19,430</td>
               <td class="adv-daily-cols">19,430</td>
@@ -11026,9 +11026,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
             </tr>
             <tr>
               <td>Online Riders</td>
-              <td>18,537</td>
-              <td>18,466</td>
-              <td>18,341</td>
+              <td class="period-col">18,537</td>
+              <td class="period-col">18,466</td>
+              <td class="period-col">18,341</td>
               <td class="adv-daily-cols">19,494</td>
               <td class="adv-daily-cols">18,373</td>
               <td class="adv-daily-cols">18,443</td>
@@ -11048,9 +11048,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
             </tr>
             <tr>
               <td>Delivery Riders</td>
-              <td>18,080</td>
-              <td>17,975</td>
-              <td>17,959</td>
+              <td class="period-col">18,080</td>
+              <td class="period-col">17,975</td>
+              <td class="period-col">17,959</td>
               <td class="adv-daily-cols">18,124</td>
               <td class="adv-daily-cols">18,177</td>
               <td class="adv-daily-cols">18,202</td>
@@ -11070,9 +11070,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
             </tr>
             <tr>
               <td><strong>Achievement %</strong></td>
-              <td class="val-good">93.1%</td>
-              <td class="val-good">92.5%</td>
-              <td class="val-good">92.4%</td>
+              <td class="period-col val-good">93.1%</td>
+              <td class="period-col val-good">92.5%</td>
+              <td class="period-col val-good">92.4%</td>
               <td class="adv-daily-cols val-good">93.3%</td>
               <td class="adv-daily-cols val-good">93.6%</td>
               <td class="adv-daily-cols val-good">93.7%</td>
@@ -11092,9 +11092,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
             </tr>
             <tr>
               <td>GAP (Riders)</td>
-              <td>457</td>
-              <td>491</td>
-              <td>382</td>
+              <td class="period-col">457</td>
+              <td class="period-col">491</td>
+              <td class="period-col">382</td>
               <td class="adv-daily-cols">1,370</td>
               <td class="adv-daily-cols">196</td>
               <td class="adv-daily-cols">241</td>
@@ -11885,7 +11885,7 @@ function _renderPartnerCatInner(cat) {
   var html = '<div class="adv-cards-row">';
   html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
   html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
-  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-16</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-14</div></div>';
   html += '<div class="adv-card"><div class="card-label">Total GAP</div><div class="card-value">'+d.gap+'</div><div class="card-sub">Riders</div></div>';
   html += '</div>';
   
