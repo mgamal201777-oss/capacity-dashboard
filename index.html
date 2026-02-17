@@ -11237,20 +11237,38 @@ function getGapColorClass(val) {
 }
 
 var advChartInited = false;
+var totalOverviewChartInstance = null;
+
 function initAdvCharts() {
-  if(advChartInited) return;
   var ctx = document.getElementById('totalOverviewChart');
   if(!ctx) return;
+  
+  // Destroy existing chart if it exists
+  if (totalOverviewChartInstance) {
+    totalOverviewChartInstance.destroy();
+  }
+  
   advChartInited = true;
   ctx = ctx.getContext('2d');
   
-  new Chart(ctx, {
+  // Use Google Sheets data if available, otherwise use hardcoded fallback
+  var chartData = [93.3,93.6,93.7,90.6,92.3,92.0,92.1,90.1,91.0,92.2,92.3,93.6,94.0,93.8,91.3,91.7];
+  var chartNumDays = 16;
+  
+  if (sheetDataCache && sheetDataCache.totalOverview && sheetDataCache.totalOverview.achievementDaily) {
+    chartData = sheetDataCache.totalOverview.achievementDaily.map(function(v) {
+      return parseFloat(v.toString().replace('%', ''));
+    });
+    chartNumDays = chartData.length;
+  }
+  
+  totalOverviewChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7','Day 8','Day 9','Day 10','Day 11','Day 12','Day 13','Day 14','Day 15','Day 16'],
+      labels: generateDayLabels(chartNumDays),
       datasets: [{
         label: 'Achievement %',
-        data: [93.3,93.6,93.7,90.6,92.3,92.0,92.1,90.1,91.0,92.2,92.3,93.6,94.0,93.8,91.3,91.7],
+        data: chartData,
         borderColor: '#1976d2',
         backgroundColor: 'rgba(25,118,210,0.1)',
         tension: 0.3,
@@ -11260,7 +11278,7 @@ function initAdvCharts() {
         pointBackgroundColor: '#1976d2'
       },{
         label: '95% Target',
-        data: Array(16).fill(95),
+        data: Array(chartNumDays).fill(95),
         borderColor: '#2e7d32',
         borderWidth: 2,
         borderDash: [5,5],
@@ -11268,7 +11286,7 @@ function initAdvCharts() {
         fill: false
       },{
         label: '90% threshold',
-        data: Array(16).fill(90),
+        data: Array(chartNumDays).fill(90),
         borderColor: '#f57c00',
         borderWidth: 2,
         borderDash: [5,5],
@@ -11294,6 +11312,7 @@ function initAdvCharts() {
 var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOw50dUYapa3fCtvsW_dxvCQ-eqBymvrTymNJuv82imwbGhdfFu4kHJogQmyQLwOgAY9tGhAx6gbri/pub?output=csv';
 var sheetDataCache = null;
 var lastFetchTime = null;
+var numDaysAvailable = 16; // Default to 16, will be updated from sheet data
 
 // Update sync status UI
 function updateSyncStatus(status, message, time) {
@@ -11335,13 +11354,33 @@ function parseCSV(csvText) {
   return rows;
 }
 
-// Helper: Extract daily values (16 days) from row starting at column 8
+// Helper: Extract all available daily values from row starting at column 8
 function extractDailyValues(row, startCol) {
   var values = [];
-  for (var i = startCol; i < startCol + 16 && i < row.length; i++) {
+  // Extract all available daily columns (stop when we hit empty or end of row)
+  for (var i = startCol; i < row.length; i++) {
+    if (row[i] === '' || row[i] === undefined || row[i] === null) break;
     values.push(row[i]);
   }
   return values;
+}
+
+// Helper: Generate dynamic day labels for charts
+function generateDayLabels(numDays) {
+  var labels = [];
+  for (var i = 1; i <= numDays; i++) {
+    labels.push('Day ' + i);
+  }
+  return labels;
+}
+
+// Helper: Generate short day labels for charts (D1, D2, etc.)
+function generateShortDayLabels(numDays) {
+  var labels = [];
+  for (var i = 1; i <= numDays; i++) {
+    labels.push('D' + i);
+  }
+  return labels;
 }
 
 // Helper: Format number with commas
@@ -11374,6 +11413,10 @@ function parseSheetData(rows) {
   var totalRow = rows[3];
   data.totalOverview.target = totalRow[3]; // MTD target
   data.totalOverview.daily = extractDailyValues(totalRow, 8);
+  
+  // Determine number of days from the first data row
+  numDaysAvailable = data.totalOverview.daily.length;
+  data.numDays = numDaysAvailable;
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 8);
@@ -11519,12 +11562,15 @@ function fetchSheetData(callback) {
 function refreshSheetData() {
   fetchSheetData(function(data) {
     if (data) {
+      // Reinitialize Total Overview chart with new data
+      initAdvCharts();
+      
       // Refresh current view
       var activeSection = document.querySelector('.adv-content-box.active');
       if (activeSection) {
         var sectionId = activeSection.id;
         if (sectionId === 'totalOverview') {
-          // Refresh total overview
+          // Total Overview chart already refreshed above
         } else if (sectionId === 'partnersStrat') {
           // Refresh partners stratification
           var activeCat = document.querySelector('.adv-sub-btn.active');
@@ -11749,8 +11795,11 @@ function renderPartnerCat(cat) {
   html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>';
   html += '</div>';
   
+  // Determine number of daily columns from data
+  var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
+  
   html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=1; i<=16; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
   var rows = ['Target','Online Riders','Delivery Riders','Achievement %'];
@@ -11822,10 +11871,11 @@ function renderPartnerCat(cat) {
     var ctx = document.getElementById('partner'+cat+'Chart');
     if(!ctx) return;
     ctx = ctx.getContext('2d');
+    var chartNumDays = d.daily ? d.daily.length : numDaysAvailable;
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16'],
+        labels: generateShortDayLabels(chartNumDays),
         datasets: [{
           label: 'Achievement %',
           data: d.daily,
@@ -11837,7 +11887,7 @@ function renderPartnerCat(cat) {
           pointRadius: 4
         },{
           label: '95% Target',
-          data: Array(16).fill(95),
+          data: Array(chartNumDays).fill(95),
           borderColor: '#2e7d32',
           borderWidth: 2,
           borderDash: [5,5],
@@ -11845,7 +11895,7 @@ function renderPartnerCat(cat) {
           fill: false
         },{
           label: '90% Threshold',
-          data: Array(16).fill(90),
+          data: Array(chartNumDays).fill(90),
           borderColor: '#f57c00',
           borderWidth: 2,
           borderDash: [5,5],
@@ -11957,8 +12007,11 @@ function renderCityMetric(metric) {
     html += '</div>';
   }
   
+  // Determine number of daily columns from data
+  var numDays = (data.daily && data.daily[0] && data.daily[0].length > 0) ? data.daily[0].length : numDaysAvailable;
+  
   html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=1; i<=16; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
   for(var c=0; c<cities.length; c++) {
@@ -12027,10 +12080,11 @@ function renderCityChart(metric, data, cities) {
     });
   }
   
+  var chartNumDays = (data.daily && data.daily[0]) ? data.daily[0].length : numDaysAvailable;
   cityChartInstances[metric] = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D13','D14','D15','D16'],
+      labels: generateShortDayLabels(chartNumDays),
       datasets: datasets
     },
     options: {
