@@ -91,6 +91,15 @@
             border-bottom: 2px solid #e5e7eb;
             padding: 20px 30px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            height: 40px;
+            width: auto;
         }
 
         .header h1 {
@@ -2016,6 +2025,7 @@
         })();
     </script>
 <div class="header">
+<img src="data:image/png;base64,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" alt="Keeta Logo" class="header-logo">
 <h1>Partner Capacity Dashboard</h1>
 <div class="header-subtitle">January 2026 vs February 2026 Analysis</div>
 <div class="header-buttons">
