@@ -11390,7 +11390,13 @@ function formatNumber(num) {
 
 // Parse the sheet rows into dashboard data structure
 function parseSheetData(rows) {
-  if (!rows || rows.length < 100) return null;
+  console.log('📊 Parsing sheet data, total rows:', rows ? rows.length : 0);
+  if (!rows || rows.length < 80) {
+    console.error('❌ Insufficient data rows. Expected at least 80, got:', rows ? rows.length : 0);
+    return null;
+  }
+  
+  try {
   
   var data = {
     totalOverview: {},
@@ -11409,14 +11415,20 @@ function parseSheetData(rows) {
     }
   };
   
-  // Parse Total Overview (rows 3-7, 0-indexed)
-  var totalRow = rows[3];
-  data.totalOverview.target = totalRow[3]; // MTD target
-  data.totalOverview.daily = extractDailyValues(totalRow, 8);
-  
-  // Determine number of days from the first data row
-  numDaysAvailable = data.totalOverview.daily.length;
-  data.numDays = numDaysAvailable;
+    // Parse Total Overview (rows 3-7, 0-indexed)
+    console.log('📈 Parsing Total Overview...');
+    var totalRow = rows[3];
+    if (!totalRow || totalRow.length < 10) {
+      console.error('❌ Invalid totalRow:', totalRow);
+      return null;
+    }
+    data.totalOverview.target = totalRow[3]; // MTD target
+    data.totalOverview.daily = extractDailyValues(totalRow, 8);
+    
+    // Determine number of days from the first data row
+    numDaysAvailable = data.totalOverview.daily.length;
+    data.numDays = numDaysAvailable;
+    console.log('✅ Total Overview parsed. Days available:', numDaysAvailable);
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 8);
@@ -11433,9 +11445,10 @@ function parseSheetData(rows) {
   var gapRow = rows[7];
   data.totalOverview.gapDaily = extractDailyValues(gapRow, 8);
   
-  // Parse Partners Stratification
-  // Good Partners (row 8-16)
-  parsePartnerCategory(rows, 8, data.partners.good, '✅ Good Partners');
+    // Parse Partners Stratification
+    console.log('👥 Parsing Partners Stratification...');
+    // Good Partners (row 8-16)
+    parsePartnerCategory(rows, 8, data.partners.good, '✅ Good Partners');
   
   // Average Partners (row 17-25)
   parsePartnerCategory(rows, 17, data.partners.avg, '⚡ Average Partners');
@@ -11490,7 +11503,14 @@ function parseSheetData(rows) {
     }
   }
   
+  console.log('✅ Sheet data parsed successfully!');
   return data;
+  
+  } catch (error) {
+    console.error('❌ Error parsing sheet data:', error);
+    console.error('Error stack:', error.stack);
+    return null;
+  }
 }
 
 // Helper to parse a partner category section
@@ -11512,15 +11532,15 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   category.mtd = achievementRow[3];
   category.w1 = achievementRow[4];
   category.w2 = achievementRow[5];
-  category.gap = gapRow[3];
+  category.gapValue = gapRow[3]; // Single gap value for display
   category.daily = extractDailyValues(achievementRow, 8);
   
-  // Breakdown arrays (19 elements: MTD, W1, W2, then 16 daily values)
+  // Breakdown arrays (19 elements: MTD, W1, W2, then daily values)
   category.numPartners = [numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8));
   category.deliveryRiders = [deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8));
   category.onlineRiders = [onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8));
   category.achievementRate = [achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8));
-  category.gap = [gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8));
+  category.gapArray = [gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8));
   
   // Performance tiers (skip first 2 columns which have labels)
   category.rate100 = extractDailyValues(rate100Row, 8);
@@ -11532,27 +11552,35 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
 
 // Fetch data from Google Sheets
 function fetchSheetData(callback) {
+  console.log('🔄 Starting Google Sheets fetch...');
+  console.log('📍 URL:', SHEET_CSV_URL);
   updateSyncStatus('syncing', 'Fetching data from Google Sheets...');
   
   fetch(SHEET_CSV_URL)
     .then(function(response) {
-      if (!response.ok) throw new Error('Failed to fetch sheet');
+      console.log('📡 Fetch response status:', response.status, response.statusText);
+      if (!response.ok) throw new Error('Failed to fetch sheet: ' + response.status);
       return response.text();
     })
     .then(function(csvText) {
+      console.log('📄 CSV received, length:', csvText.length, 'chars');
       var rows = parseCSV(csvText);
+      console.log('📋 CSV parsed into', rows.length, 'rows');
       var parsedData = parseSheetData(rows);
       if (parsedData) {
+        console.log('✅ Data parsing successful!');
         sheetDataCache = parsedData;
         lastFetchTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         updateSyncStatus('success', 'Data synced successfully', lastFetchTime);
       } else {
-        updateSyncStatus('error', 'Failed to parse data');
+        console.error('❌ Data parsing returned null');
+        updateSyncStatus('error', 'Failed to parse data - check console for details');
       }
       if (callback) callback(parsedData);
     })
     .catch(function(error) {
-      console.error('Google Sheets fetch error:', error);
+      console.error('❌ Google Sheets fetch error:', error);
+      console.error('Error details:', error.message);
       updateSyncStatus('error', 'Failed to sync - using fallback data');
       if (callback) callback(null);
     });
@@ -11621,9 +11649,9 @@ function renderPartnerCat(cat) {
         mtd: sheetCat.mtd || '0%',
         w1: sheetCat.w1 || '0%',
         w2: sheetCat.w2 || '0%',
-        gap: (sheetCat.gap && sheetCat.gap[0]) || '0',
+        gap: sheetCat.gapValue || '0',
         count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
-        insight: 'Data from Google Sheets',
+        insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
         data: [
           sheetCat.numPartners || [],
           sheetCat.onlineRiders || [],
