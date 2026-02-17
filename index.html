@@ -30454,7 +30454,15 @@ const monthlyData = {
     // Load comment counts on page load for all sections
     setTimeout(function() {
       var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-gap', 'totalOverview-table', 'totalOverview-chart', 'partnersStrat', 'cityLevel'];
-      var totalComments = 0;
+      var sectionCounts = {}; // Track counts per section
+      
+      function updateTotalBadge() {
+        var total = 0;
+        allSections.forEach(function(sec) {
+          total += (sectionCounts[sec] || 0);
+        });
+        document.getElementById('commentHubBadge').textContent = total;
+      }
       
       allSections.forEach(function(sec) {
         firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
@@ -30481,7 +30489,7 @@ const monthlyData = {
           
           // Update previous count
           previousCommentCounts[sec] = count;
-          totalComments += count;
+          sectionCounts[sec] = count; // Update this section's count
           
           var badge = document.getElementById('badge-' + sec);
           if(badge) {
@@ -30497,8 +30505,8 @@ const monthlyData = {
             }
           }
           
-          // Update hub badge
-          document.getElementById('commentHubBadge').textContent = totalComments;
+          // Update total hub badge
+          updateTotalBadge();
         });
       });
       
