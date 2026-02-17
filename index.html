@@ -11357,11 +11357,30 @@ function parseCSV(csvText) {
 // Helper: Extract all available daily values from row starting at column 8
 function extractDailyValues(row, startCol) {
   var values = [];
-  // Extract all available daily columns (stop when we hit empty or end of row)
-  for (var i = startCol; i < row.length; i++) {
-    if (row[i] === '' || row[i] === undefined || row[i] === null) break;
-    values.push(row[i]);
+  var emptyCount = 0;
+  var maxEmptyBeforeStop = 3; // Allow up to 3 consecutive empty cells
+  
+  // Skip initial empty cells and find where data actually starts
+  var actualStart = startCol;
+  for (var i = startCol; i < row.length && i < startCol + 5; i++) {
+    if (row[i] !== '' && row[i] !== undefined && row[i] !== null) {
+      actualStart = i;
+      break;
+    }
   }
+  
+  // Extract data, allowing for some empty cells in between
+  for (var i = actualStart; i < row.length; i++) {
+    if (row[i] === '' || row[i] === undefined || row[i] === null) {
+      emptyCount++;
+      if (emptyCount >= maxEmptyBeforeStop) break; // Stop after consecutive empties
+    } else {
+      emptyCount = 0; // Reset counter when we find data
+      values.push(row[i]);
+    }
+  }
+  
+  console.log('📊 Extracted', values.length, 'daily values from column', actualStart);
   return values;
 }
 
@@ -11515,6 +11534,12 @@ function parseSheetData(rows) {
 
 // Helper to parse a partner category section
 function parsePartnerCategory(rows, startRow, category, titlePrefix) {
+  // Validate rows exist
+  if (!rows[startRow] || !rows[startRow + 1] || !rows[startRow + 4]) {
+    console.error('❌ Missing rows at startRow:', startRow);
+    return;
+  }
+  
   var targetRow = rows[startRow];
   var numPartnersRow = rows[startRow + 1];
   var onlineRow = rows[startRow + 2];
@@ -11526,6 +11551,12 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   var rate90Row = rows[startRow + 8];
   var rate80Row = rows[startRow + 9];
   var rateLess80Row = rows[startRow + 10];
+  
+  // Validate required fields exist
+  if (!numPartnersRow[3] || !targetRow[3] || !achievementRow[3]) {
+    console.error('❌ Missing data in partner category at row:', startRow);
+    return;
+  }
   
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = targetRow[3];
