@@ -11666,53 +11666,8 @@ window.addEventListener('load', function() {
 });
 
 function renderPartnerCat(cat) {
-  // Try to use Google Sheets data if available
-  var data = null;
-  
-  if (sheetDataCache && sheetDataCache.partners) {
-    var sheetCat = null;
-    if (cat === 'good') sheetCat = sheetDataCache.partners.good;
-    else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
-    else if (cat === 'bad') sheetCat = sheetDataCache.partners.bad;
-    else if (cat === 'inc20') sheetCat = sheetDataCache.partners.inc20;
-    else if (cat === 'inc1020') sheetCat = sheetDataCache.partners.inc1020;
-    else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
-    else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
-    
-    if (sheetCat && sheetCat.title) {
-      // Transform sheet data to match expected format
-      data = {};
-      data[cat] = {
-        title: sheetCat.title || '(No data)',
-        target: sheetCat.target || '0',
-        mtd: sheetCat.mtd || '0%',
-        w1: sheetCat.w1 || '0%',
-        w2: sheetCat.w2 || '0%',
-        gap: sheetCat.gapValue || '0',
-        count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
-        insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
-        data: [
-          sheetCat.targetValues || [],
-          sheetCat.numPartners || [],
-          sheetCat.onlineRiders || [],
-          sheetCat.deliveryRiders || [],
-          sheetCat.achievementRate || []
-        ],
-        breakdown: [
-          sheetCat.rate100 || [],
-          sheetCat.rate95 || [],
-          sheetCat.rate90 || [],
-          sheetCat.rate80 || [],
-          sheetCat.rateLess80 || []
-        ],
-        daily: sheetCat.daily || []
-      };
-    }
-  }
-  
-  // Fallback to hardcoded data if sheet data not available
-  if (!data) {
-    data = { good: {
+  // Start with fallback data
+  var data = { good: {
     title: '✅ Good Partners (249)',
     target: '10,079',
     mtd: '94.4%',
@@ -11853,9 +11808,61 @@ function renderPartnerCat(cat) {
                 [7,30,30,23,22,26,38,32,33,35,36,35,33,30,29,25,25,38,33]],
     daily: [97.1,96.9,96.8,92.9,94.6,94.1,94.1,91.6,92.5,93.4,93.3,94.5,94.9,94.6,91.9,92.2]
   }};
-  } // End fallback data
+  
+  // Override with Google Sheets data if available
+  if (sheetDataCache && sheetDataCache.partners) {
+    var sheetCat = null;
+    if (cat === 'good') sheetCat = sheetDataCache.partners.good;
+    else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
+    else if (cat === 'bad') sheetCat = sheetDataCache.partners.bad;
+    else if (cat === 'inc20') sheetCat = sheetDataCache.partners.inc20;
+    else if (cat === 'inc1020') sheetCat = sheetDataCache.partners.inc1020;
+    else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
+    else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
+    
+    if (sheetCat && sheetCat.title) {
+      console.log('🔍 Using Google Sheets data for:', cat, '-', sheetCat.title);
+      
+      // Override the category with fresh sheet data
+      data[cat] = {
+        title: sheetCat.title || '(No data)',
+        target: sheetCat.target || '0',
+        mtd: sheetCat.mtd || '0%',
+        w1: sheetCat.w1 || '0%',
+        w2: sheetCat.w2 || '0%',
+        gap: sheetCat.gapValue || '0',
+        count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
+        insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
+        data: [
+          sheetCat.targetValues || [],
+          sheetCat.numPartners || [],
+          sheetCat.onlineRiders || [],
+          sheetCat.deliveryRiders || [],
+          sheetCat.achievementRate || []
+        ],
+        breakdown: [
+          sheetCat.rate100 || [],
+          sheetCat.rate95 || [],
+          sheetCat.rate90 || [],
+          sheetCat.rate80 || [],
+          sheetCat.rateLess80 || []
+        ],
+        daily: sheetCat.daily || []
+      };
+      console.log('✅ Sheet data override complete');
+    }
+  }
   
   var d = data[cat];
+  
+  if (!d) {
+    console.error('❌ No data found for category:', cat);
+    document.getElementById('partnerCatContent').innerHTML = '<div style="padding:40px; text-align:center; color:#999;">No data available for this category. Please refresh or check console for errors.</div>';
+    return;
+  }
+  
+  console.log('📊 Rendering', cat, 'with data rows:', d.data ? d.data.length : 'undefined');
+  
   var html = '<div class="adv-cards-row">';
   html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
   html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
@@ -11889,7 +11896,6 @@ function renderPartnerCat(cat) {
     for(var c=3; c<d.data[r].length; c++) {
       var val = d.data[r][c];
       var cls = (r===4) ? 'adv-daily-cols '+getColorClass(val) : 'adv-daily-cols';
-      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
       html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     html += '</tr>';
