@@ -11480,11 +11480,9 @@ function parseSheetData(rows) {
   
   // Increase 10-20 (row 52-62, 11 rows)
   parsePartnerCategory(rows, 52, data.partners.inc1020, '📊 Increase 10-20%');
-  console.log('✔️ Inc10-20 parsed:', data.partners.inc1020.title, 'Target:', data.partners.inc1020.target);
   
   // Increase 1-10 (row 63-73, 11 rows)
   parsePartnerCategory(rows, 63, data.partners.inc110, '📉 Increase 1-10%');
-  console.log('✔️ Inc1-10 parsed:', data.partners.inc110.title, 'Target:', data.partners.inc110.target);
   
   // Others <=0 (row 74-84, 11 rows)
   parsePartnerCategory(rows, 74, data.partners.inc0, '🔻 Others (≤0%)');
@@ -11569,6 +11567,8 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   category.gapValue = gapRow[3]; // Single gap value for display
   category.daily = extractDailyValues(achievementRow, 8);
   
+  console.log('📊', titlePrefix, '- Daily values extracted:', category.daily.length);
+  
   // Breakdown arrays (19 elements: MTD, W1, W2, then daily values)
   category.targetValues = [targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 8));
   category.numPartners = [numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8));
@@ -11577,12 +11577,14 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   category.achievementRate = [achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8));
   category.gapArray = [gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8));
   
-  // Performance tiers (skip first 2 columns which have labels)
-  category.rate100 = extractDailyValues(rate100Row, 8);
-  category.rate95 = extractDailyValues(rate95Row, 8);
-  category.rate90 = extractDailyValues(rate90Row, 8);
-  category.rate80 = extractDailyValues(rate80Row, 8);
-  category.rateLess80 = extractDailyValues(rateLess80Row, 8);
+  // Performance tiers (include MTD, W1, W2, then daily values)
+  category.rate100 = [rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 8));
+  category.rate95 = [rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 8));
+  category.rate90 = [rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 8));
+  category.rate80 = [rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 8));
+  category.rateLess80 = [rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 8));
+  
+  console.log('✅', titlePrefix, 'parsed successfully');
 }
 
 // Fetch data from Google Sheets
@@ -11664,12 +11666,10 @@ window.addEventListener('load', function() {
 });
 
 function renderPartnerCat(cat) {
-  console.log('🎨 Rendering partner category:', cat);
   // Try to use Google Sheets data if available
   var data = null;
   
   if (sheetDataCache && sheetDataCache.partners) {
-    console.log('📦 sheetDataCache.partners exists');
     var sheetCat = null;
     if (cat === 'good') sheetCat = sheetDataCache.partners.good;
     else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
@@ -11679,10 +11679,7 @@ function renderPartnerCat(cat) {
     else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
     else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
     
-    console.log('📊 sheetCat for', cat, ':', sheetCat ? sheetCat.title : 'NULL');
-    
     if (sheetCat && sheetCat.title) {
-      console.log('✅ Using Google Sheets data for', cat);
       // Transform sheet data to match expected format
       data = {};
       data[cat] = {
@@ -11715,7 +11712,6 @@ function renderPartnerCat(cat) {
   
   // Fallback to hardcoded data if sheet data not available
   if (!data) {
-    console.warn('⚠️ Falling back to hardcoded data for category:', cat);
     data = { good: {
     title: '✅ Good Partners (249)',
     target: '10,079',
