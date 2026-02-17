@@ -29882,6 +29882,54 @@ const monthlyData = {
     
     var currentSection = '';
     var userName = localStorage.getItem('dashboardUserName') || '';
+    var previousCommentCounts = {}; // Track previous counts to detect new comments
+    
+    // Request notification permission
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            console.log('Notification permission granted');
+          }
+        });
+      }
+    }
+    
+    // Show browser notification
+    function showCommentNotification(sectionId, comment) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        var sectionNames = {
+          'totalOverview-mtd': '📊 MTD Achievement',
+          'totalOverview-w1': '📊 W1 Performance',
+          'totalOverview-w2': '📊 W2 Performance',
+          'totalOverview-gap': '📊 Total GAP',
+          'totalOverview-table': '📊 Performance Summary',
+          'totalOverview-chart': '📈 Daily Achievement Trend Chart',
+          'partnersStrat': '👥 Partners Stratification',
+          'cityLevel': '🏙️ City Level Data'
+        };
+        
+        var title = '🔔 New Comment';
+        var body = comment.userName + ' commented on ' + (sectionNames[sectionId] || sectionId);
+        
+        var notification = new Notification(title, {
+          body: body,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💬</text></svg>',
+          badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💬</text></svg>',
+          tag: 'comment-' + sectionId,
+          requireInteraction: false
+        });
+        
+        notification.onclick = function() {
+          window.focus();
+          openComments(sectionId, true);
+          notification.close();
+        };
+      }
+    }
+    
+    // Request permission when page loads
+    setTimeout(requestNotificationPermission, 2000);
     
     function openComments(section, scrollToComponent) {
       currentSection = section;
@@ -30411,6 +30459,28 @@ const monthlyData = {
       allSections.forEach(function(sec) {
         firebase.database().ref('comments/' + sec).on('value', function(snapshot) {
           var count = snapshot.numChildren();
+          
+          // Check for new comments and show notification
+          if(previousCommentCounts[sec] !== undefined && count > previousCommentCounts[sec]) {
+            // New comment added - get the latest comment
+            var latestComment = null;
+            var latestTimestamp = 0;
+            snapshot.forEach(function(child) {
+              var comment = child.val();
+              if(comment.timestamp > latestTimestamp) {
+                latestTimestamp = comment.timestamp;
+                latestComment = comment;
+              }
+            });
+            
+            // Show notification only if it's not from the current user
+            if(latestComment && latestComment.userName !== userName) {
+              showCommentNotification(sec, latestComment);
+            }
+          }
+          
+          // Update previous count
+          previousCommentCounts[sec] = count;
           totalComments += count;
           
           var badge = document.getElementById('badge-' + sec);
