@@ -11185,9 +11185,16 @@ function switchAdvSection(section, btn) {
     renderPartnerCat('good');
     renderCityMetric('gap');
   } else if(section === 'partnersStrat') {
-    renderPartnerCat('good');
+    // Find which partner category button is currently active
+    var activePartnerBtn = document.querySelector('#partnersStratContent .adv-sub-btn.active');
+    var activeCat = activePartnerBtn ? activePartnerBtn.getAttribute('data-cat') : 'good';
+    console.log('🔄 Restoring partner category:', activeCat);
+    renderPartnerCat(activeCat);
   } else if(section === 'cityLevel') {
-    renderCityMetric('gap');
+    // Find which city metric button is currently active
+    var activeCityBtn = document.querySelector('#cityLevelContent .adv-sub-btn.active');
+    var activeMetric = activeCityBtn ? activeCityBtn.getAttribute('data-city') : 'gap';
+    renderCityMetric(activeMetric);
   }
 }
 
@@ -11559,30 +11566,33 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   
   console.log('✅ Category rows validated, numPartners:', numPartnersRow[3]);
   
+  function toNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
+  function toNumArr(arr) { return arr.map(toNum); }
+
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
-  category.target = targetRow[3];
-  category.mtd = achievementRow[3];
-  category.w1 = achievementRow[4];
-  category.w2 = achievementRow[5];
-  category.gapValue = gapRow[3]; // Single gap value for display
-  category.daily = extractDailyValues(achievementRow, 8);
+  category.target = toNum(targetRow[3]);
+  category.mtd = toNum(achievementRow[3]);
+  category.w1 = toNum(achievementRow[4]);
+  category.w2 = toNum(achievementRow[5]);
+  category.gapValue = toNum(gapRow[3]);
+  category.daily = extractDailyValues(achievementRow, 8).map(toNum);
   
   console.log('📊', titlePrefix, '- Daily values extracted:', category.daily.length);
   
-  // Breakdown arrays (19 elements: MTD, W1, W2, then daily values)
-  category.targetValues = [targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 8));
-  category.numPartners = [numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8));
-  category.deliveryRiders = [deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8));
-  category.onlineRiders = [onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8));
-  category.achievementRate = [achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8));
-  category.gapArray = [gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8));
+  // Breakdown arrays (19 elements: MTD, W1, W2, then daily values) — all converted to numbers
+  category.targetValues = toNumArr([targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 8)));
+  category.numPartners = toNumArr([numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8)));
+  category.deliveryRiders = toNumArr([deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8)));
+  category.onlineRiders = toNumArr([onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8)));
+  category.achievementRate = toNumArr([achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8)));
+  category.gapArray = toNumArr([gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8)));
   
-  // Performance tiers (include MTD, W1, W2, then daily values)
-  category.rate100 = [rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 8));
-  category.rate95 = [rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 8));
-  category.rate90 = [rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 8));
-  category.rate80 = [rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 8));
-  category.rateLess80 = [rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 8));
+  // Performance tiers — all converted to numbers
+  category.rate100 = toNumArr([rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 8)));
+  category.rate95 = toNumArr([rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 8)));
+  category.rate90 = toNumArr([rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 8)));
+  category.rate80 = toNumArr([rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 8)));
+  category.rateLess80 = toNumArr([rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 8)));
   
   console.log('✅', titlePrefix, 'parsed successfully');
 }
@@ -11661,11 +11671,34 @@ function refreshSheetData() {
 // Initialize data fetch on page load
 window.addEventListener('load', function() {
   setTimeout(function() {
-    fetchSheetData(null);
+    fetchSheetData(function(data) {
+      if (!data) return;
+      // Re-render current section with fresh sheet data
+      initAdvCharts();
+      var activeContent = document.querySelector('.adv-content-box.active');
+      if (activeContent) {
+        if (activeContent.id === 'partnersStratContent') {
+          var activeBtn = document.querySelector('#partnersStratContent .adv-sub-btn.active');
+          var activeCat = activeBtn ? activeBtn.getAttribute('data-cat') : 'good';
+          renderPartnerCat(activeCat);
+        } else if (activeContent.id === 'cityLevelContent') {
+          var activeBtn = document.querySelector('#cityLevelContent .adv-sub-btn.active');
+          var activeMetric = activeBtn ? activeBtn.getAttribute('data-city') : 'gap';
+          renderCityMetric(activeMetric);
+        }
+      }
+    });
   }, 1000);
 });
 
 function renderPartnerCat(cat) {
+  try { _renderPartnerCatInner(cat); } catch(e) {
+    console.error('❌ renderPartnerCat crashed:', e);
+    var el = document.getElementById('partnerCatContent');
+    if(el) el.innerHTML = '<div style="padding:30px;color:#dc2626;font-weight:700;">⚠️ Render error: '+e.message+'<br><small>Check browser console for details. Try clicking Refresh Data.</small></div>';
+  }
+}
+function _renderPartnerCatInner(cat) {
   // Start with fallback data
   var data = { good: {
     title: '✅ Good Partners (249)',
@@ -11824,14 +11857,15 @@ function renderPartnerCat(cat) {
       console.log('🔍 Using Google Sheets data for:', cat, '-', sheetCat.title);
       
       // Override the category with fresh sheet data
+      var _n = function(v){ var x=parseFloat(String(v).replace(/,/g,'')); return isNaN(x)?0:x; };
       data[cat] = {
         title: sheetCat.title || '(No data)',
-        target: sheetCat.target || '0',
-        mtd: sheetCat.mtd || '0%',
-        w1: sheetCat.w1 || '0%',
-        w2: sheetCat.w2 || '0%',
-        gap: sheetCat.gapValue || '0',
-        count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
+        target: _n(sheetCat.target).toLocaleString(),
+        mtd: _n(sheetCat.mtd).toFixed(1) + '%',
+        w1: _n(sheetCat.w1).toFixed(1) + '%',
+        w2: _n(sheetCat.w2).toFixed(1) + '%',
+        gap: _n(sheetCat.gapValue),
+        count: parseInt((sheetCat.title || '').match(/\((\d+)\)/)?.[1] || 0),
         insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
         data: [
           sheetCat.targetValues || [],
