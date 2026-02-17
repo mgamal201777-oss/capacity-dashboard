@@ -10735,6 +10735,18 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 <h2 class="daily-view-title">&#128197; Capacity Target Achievement (Daily View)</h2>
 <p class="daily-view-subtitle">February 1&#8211;15, 2026 &nbsp;|&nbsp; Daily performance tracking across <strong>596</strong> partners &nbsp;|&nbsp; Delivery &amp; Online rider achievement analysis</p>
 
+<!-- Google Sheets Sync Status Banner -->
+<div id="syncBanner" style="background:linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border:2px solid #66bb6a; border-radius:10px; padding:10px 16px; margin:12px 0 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(102,187,106,0.2);">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span id="syncIcon" style="font-size:18px;">🔗</span>
+    <span id="syncStatus" style="font-size:13px; font-weight:600; color:#2e7d32;">Connected to Google Sheets</span>
+    <span id="syncTime" style="font-size:12px; color:#558b2f; margin-left:8px;"></span>
+  </div>
+  <button onclick="refreshSheetData()" style="padding:6px 14px; background:#66bb6a; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 6px rgba(102,187,106,0.3);" onmouseover="this.style.background='#4caf50'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#66bb6a'; this.style.transform='scale(1)'">
+    🔄 Refresh Data
+  </button>
+</div>
+
 <!-- NEW ADVANCED DATA SECTION -->
 <div id="advancedDataSection" style="margin-bottom: 30px;">
   <style>
@@ -11278,8 +11290,315 @@ function initAdvCharts() {
   });
 }
 
+// ============== GOOGLE SHEETS INTEGRATION ==============
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOw50dUYapa3fCtvsW_dxvCQ-eqBymvrTymNJuv82imwbGhdfFu4kHJogQmyQLwOgAY9tGhAx6gbri/pub?output=csv';
+var sheetDataCache = null;
+var lastFetchTime = null;
+
+// Update sync status UI
+function updateSyncStatus(status, message, time) {
+  var banner = document.getElementById('syncBanner');
+  var icon = document.getElementById('syncIcon');
+  var statusText = document.getElementById('syncStatus');
+  var timeText = document.getElementById('syncTime');
+  
+  if (status === 'syncing') {
+    banner.style.background = 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)';
+    banner.style.borderColor = '#ff9800';
+    icon.innerHTML = '⏳';
+    statusText.innerHTML = message || 'Syncing with Google Sheets...';
+    statusText.style.color = '#e65100';
+  } else if (status === 'success') {
+    banner.style.background = 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)';
+    banner.style.borderColor = '#66bb6a';
+    icon.innerHTML = '✅';
+    statusText.innerHTML = message || 'Connected to Google Sheets';
+    statusText.style.color = '#2e7d32';
+    if (time) timeText.innerHTML = 'Last updated: ' + time;
+  } else if (status === 'error') {
+    banner.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+    banner.style.borderColor = '#ef5350';
+    icon.innerHTML = '⚠️';
+    statusText.innerHTML = message || 'Error syncing data';
+    statusText.style.color = '#c62828';
+  }
+}
+
+// Parse CSV text into array of rows
+function parseCSV(csvText) {
+  var rows = [];
+  var lines = csvText.trim().split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var cells = lines[i].split(',');
+    rows.push(cells.map(function(cell) { return cell.trim(); }));
+  }
+  return rows;
+}
+
+// Helper: Extract daily values (16 days) from row starting at column 8
+function extractDailyValues(row, startCol) {
+  var values = [];
+  for (var i = startCol; i < startCol + 16 && i < row.length; i++) {
+    values.push(row[i]);
+  }
+  return values;
+}
+
+// Helper: Format number with commas
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// Parse the sheet rows into dashboard data structure
+function parseSheetData(rows) {
+  if (!rows || rows.length < 100) return null;
+  
+  var data = {
+    totalOverview: {},
+    partners: {
+      good: {},
+      avg: {},
+      bad: {},
+      inc20: {},
+      inc1020: {},
+      inc110: {},
+      inc0: {}
+    },
+    cities: {
+      gap: {},
+      achievement: {}
+    }
+  };
+  
+  // Parse Total Overview (rows 3-7, 0-indexed)
+  var totalRow = rows[3];
+  data.totalOverview.target = totalRow[3]; // MTD target
+  data.totalOverview.daily = extractDailyValues(totalRow, 8);
+  
+  var achieveOnlineRow = rows[4];
+  data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 8);
+  
+  var achieveDeliveryRow = rows[5];
+  data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, 8);
+  
+  var achievementRateRow = rows[6];
+  data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, 8);
+  data.totalOverview.mtd = achievementRateRow[3];
+  data.totalOverview.w1 = achievementRateRow[4];
+  data.totalOverview.w2 = achievementRateRow[5];
+  
+  var gapRow = rows[7];
+  data.totalOverview.gapDaily = extractDailyValues(gapRow, 8);
+  
+  // Parse Partners Stratification
+  // Good Partners (row 8-16)
+  parsePartnerCategory(rows, 8, data.partners.good, '✅ Good Partners');
+  
+  // Average Partners (row 17-25)
+  parsePartnerCategory(rows, 17, data.partners.avg, '⚡ Average Partners');
+  
+  // Bad Partners (row 26-34)
+  parsePartnerCategory(rows, 26, data.partners.bad, '❌ Bad Partners');
+  
+  // Increase >20 (row 35-43)
+  parsePartnerCategory(rows, 35, data.partners.inc20, '📈 Increase >20%');
+  
+  // Increase 10-20 (row 44-52)
+  parsePartnerCategory(rows, 44, data.partners.inc1020, '📊 Increase 10-20%');
+  
+  // Increase 1-10 (row 53-61)
+  parsePartnerCategory(rows, 53, data.partners.inc110, '📉 Increase 1-10%');
+  
+  // Others <=0 (row 62-70)
+  parsePartnerCategory(rows, 62, data.partners.inc0, '🔻 Others (≤0%)');
+  
+  // Parse City Level Data (starting around row 80)
+  var cityNames = ['Al Ahsa', 'Dammam', 'Hafar Albatin', 'Jubail', 'Riyadh', 'Al Kharj', 
+                   'Buraydah', 'Hail', 'Jeddah', 'Madinah', 'Tabuk', 'Yanbu', 
+                   'Abha', 'Jazan', 'Makkah', 'Najran', 'Taif'];
+  
+  // Find City Level Data section
+  for (var i = 70; i < rows.length; i++) {
+    if (rows[i][0] === 'City level data') {
+      // Gap% data starts at i+1
+      for (var c = 0; c < cityNames.length && c < 17; c++) {
+        var cityRow = rows[i + 1 + c];
+        if (!data.cities.gap[cityNames[c]]) {
+          data.cities.gap[cityNames[c]] = {};
+        }
+        data.cities.gap[cityNames[c]].mtd = cityRow[3];
+        data.cities.gap[cityNames[c]].w1 = cityRow[4];
+        data.cities.gap[cityNames[c]].w2 = cityRow[5];
+        data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
+      }
+      
+      // Achievement rate data starts at i + 18
+      for (var c = 0; c < cityNames.length && c < 17; c++) {
+        var cityRowAch = rows[i + 18 + c];
+        if (!data.cities.achievement[cityNames[c]]) {
+          data.cities.achievement[cityNames[c]] = {};
+        }
+        data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
+        data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
+        data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
+        data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
+      }
+      break;
+    }
+  }
+  
+  return data;
+}
+
+// Helper to parse a partner category section
+function parsePartnerCategory(rows, startRow, category, titlePrefix) {
+  var targetRow = rows[startRow];
+  var numPartnersRow = rows[startRow + 1];
+  var onlineRow = rows[startRow + 2];
+  var deliveryRow = rows[startRow + 3];
+  var achievementRow = rows[startRow + 4];
+  var gapRow = rows[startRow + 5];
+  var rate100Row = rows[startRow + 6];
+  var rate95Row = rows[startRow + 7];
+  var rate90Row = rows[startRow + 8];
+  var rate80Row = rows[startRow + 9];
+  var rateLess80Row = rows[startRow + 10];
+  
+  category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
+  category.target = targetRow[3];
+  category.mtd = achievementRow[3];
+  category.w1 = achievementRow[4];
+  category.w2 = achievementRow[5];
+  category.gap = gapRow[3];
+  category.daily = extractDailyValues(achievementRow, 8);
+  
+  // Breakdown arrays (19 elements: MTD, W1, W2, then 16 daily values)
+  category.numPartners = [numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8));
+  category.deliveryRiders = [deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8));
+  category.onlineRiders = [onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8));
+  category.achievementRate = [achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8));
+  category.gap = [gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8));
+  
+  // Performance tiers (skip first 2 columns which have labels)
+  category.rate100 = extractDailyValues(rate100Row, 8);
+  category.rate95 = extractDailyValues(rate95Row, 8);
+  category.rate90 = extractDailyValues(rate90Row, 8);
+  category.rate80 = extractDailyValues(rate80Row, 8);
+  category.rateLess80 = extractDailyValues(rateLess80Row, 8);
+}
+
+// Fetch data from Google Sheets
+function fetchSheetData(callback) {
+  updateSyncStatus('syncing', 'Fetching data from Google Sheets...');
+  
+  fetch(SHEET_CSV_URL)
+    .then(function(response) {
+      if (!response.ok) throw new Error('Failed to fetch sheet');
+      return response.text();
+    })
+    .then(function(csvText) {
+      var rows = parseCSV(csvText);
+      var parsedData = parseSheetData(rows);
+      if (parsedData) {
+        sheetDataCache = parsedData;
+        lastFetchTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        updateSyncStatus('success', 'Data synced successfully', lastFetchTime);
+      } else {
+        updateSyncStatus('error', 'Failed to parse data');
+      }
+      if (callback) callback(parsedData);
+    })
+    .catch(function(error) {
+      console.error('Google Sheets fetch error:', error);
+      updateSyncStatus('error', 'Failed to sync - using fallback data');
+      if (callback) callback(null);
+    });
+}
+
+// Manual refresh button handler
+function refreshSheetData() {
+  fetchSheetData(function(data) {
+    if (data) {
+      // Refresh current view
+      var activeSection = document.querySelector('.adv-content-box.active');
+      if (activeSection) {
+        var sectionId = activeSection.id;
+        if (sectionId === 'totalOverview') {
+          // Refresh total overview
+        } else if (sectionId === 'partnersStrat') {
+          // Refresh partners stratification
+          var activeCat = document.querySelector('.adv-sub-btn.active');
+          if (activeCat) {
+            var cat = activeCat.getAttribute('onclick').match(/'([^']+)'/)[1];
+            renderPartnerCat(cat);
+          }
+        } else if (sectionId === 'cityLevel') {
+          // Refresh city level
+          var activeMetric = document.querySelector('.adv-sub-btn.active');
+          if (activeMetric) {
+            var metric = activeMetric.getAttribute('onclick').match(/'([^']+)'/)[1];
+            renderCityMetric(metric);
+          }
+        }
+      }
+    }
+  });
+}
+
+// Initialize data fetch on page load
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    fetchSheetData(null);
+  }, 1000);
+});
+
 function renderPartnerCat(cat) {
-  var data = { good: {
+  // Try to use Google Sheets data if available
+  var data = null;
+  
+  if (sheetDataCache && sheetDataCache.partners) {
+    var sheetCat = null;
+    if (cat === 'good') sheetCat = sheetDataCache.partners.good;
+    else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
+    else if (cat === 'bad') sheetCat = sheetDataCache.partners.bad;
+    else if (cat === 'inc20') sheetCat = sheetDataCache.partners.inc20;
+    else if (cat === 'inc1020') sheetCat = sheetDataCache.partners.inc1020;
+    else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
+    else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
+    
+    if (sheetCat && sheetCat.title) {
+      // Transform sheet data to match expected format
+      data = {};
+      data[cat] = {
+        title: sheetCat.title || '(No data)',
+        target: sheetCat.target || '0',
+        mtd: sheetCat.mtd || '0%',
+        w1: sheetCat.w1 || '0%',
+        w2: sheetCat.w2 || '0%',
+        gap: (sheetCat.gap && sheetCat.gap[0]) || '0',
+        count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
+        insight: 'Data from Google Sheets',
+        data: [
+          sheetCat.numPartners || [],
+          sheetCat.onlineRiders || [],
+          sheetCat.deliveryRiders || [],
+          sheetCat.achievementRate || []
+        ],
+        breakdown: [
+          sheetCat.rate100 || [],
+          sheetCat.rate95 || [],
+          sheetCat.rate90 || [],
+          sheetCat.rate80 || [],
+          sheetCat.rateLess80 || []
+        ],
+        daily: sheetCat.daily || []
+      };
+    }
+  }
+  
+  // Fallback to hardcoded data if sheet data not available
+  if (!data) {
+    data = { good: {
     title: '✅ Good Partners (249)',
     target: '10,079',
     mtd: '94.4%',
@@ -11413,6 +11732,7 @@ function renderPartnerCat(cat) {
                 [7,30,30,23,22,26,38,32,33,35,36,35,33,30,29,25,25,38,33]],
     daily: [97.1,96.9,96.8,92.9,94.6,94.1,94.1,91.6,92.5,93.4,93.3,94.5,94.9,94.6,91.9,92.2]
   }};
+  } // End fallback data
   
   var d = data[cat];
   var html = '<div class="adv-cards-row">';
