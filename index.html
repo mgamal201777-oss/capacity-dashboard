@@ -11568,6 +11568,7 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   category.daily = extractDailyValues(achievementRow, 8);
   
   // Breakdown arrays (19 elements: MTD, W1, W2, then daily values)
+  category.targetValues = [targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 8));
   category.numPartners = [numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8));
   category.deliveryRiders = [deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8));
   category.onlineRiders = [onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8));
@@ -11687,6 +11688,7 @@ function renderPartnerCat(cat) {
         count: parseInt(sheetCat.title.match(/\((\d+)\)/)?.[1] || 0),
         insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
         data: [
+          sheetCat.targetValues || [],
           sheetCat.numPartners || [],
           sheetCat.onlineRiders || [],
           sheetCat.deliveryRiders || [],
@@ -11716,6 +11718,7 @@ function renderPartnerCat(cat) {
     count: 249,
     insight: 'Good partners maintain strong performance above 94%, with W1 at 95.0% slightly declining to W2 at 94.2%. 43% of partners achieving ≥100%, and 81% above 90%. Only 6% fall below 80%, indicating solid fundamentals with minor decline trend.',
     data: [[10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079,10079],
+           [249,249,249,249,249,249,249,249,249,249,249,249,249,249,249,249,249,249,249],
            [9725,9809,9666,10353,9779,9799,9644,9713,9708,9669,9606,9620,9634,9656,9731,9708,9707,9585,9603],
            [9513,9573,9492,9653,9690,9686,9384,9549,9550,9498,9310,9380,9474,9493,9608,9596,9584,9312,9361],
            [94.4,95.0,94.2,95.8,96.1,96.1,93.1,94.7,94.8,94.2,92.4,93.1,94.0,94.2,95.3,95.2,95.1,92.4,92.9]],
@@ -11735,6 +11738,7 @@ function renderPartnerCat(cat) {
     count: 261,
     insight: 'Average partners show declining trend from W1 (92.9%) to W2 (91.5%), dropping below target. Only 37% achieving ≥100%, with 12.5% below 80%. Performance concentration in 90-95% range suggests need for targeted improvement interventions. Day 16 at 90.3% signals continued weakness.',
     data: [[8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346,8346],
+           [261,261,261,261,261,261,261,261,261,261,261,261,261,261,261,261,261,261,261],
            [7912,7993,7828,8565,7993,7997,7831,7899,7836,7831,7743,7786,7821,7805,7851,7882,7908,7796,7807],
            [7685,7751,7635,7923,7895,7883,7557,7709,7637,7653,7461,7533,7622,7602,7693,7784,7753,7527,7534],
            [92.0,92.9,91.5,94.9,94.6,94.5,90.5,92.4,91.5,91.7,89.4,90.3,91.3,91.1,92.2,93.3,92.9,90.2,90.3]],
@@ -11754,6 +11758,7 @@ function renderPartnerCat(cat) {
     count: 20,
     insight: 'Bad partners show improvement from W1 (92.7%) to W2 (93.4%), positive momentum. Despite "bad" classification, 56% achieve ≥100%, indicating potential for rehabilitation. Only 19.3% below 80% - relatively small absolute numbers allow focused intervention. Day 16 at 93.8% shows continued upward trajectory.',
     data: [[370,370,370,370,370,370,370,370,370,370,370,370,370,370,370,370,370,370,370],
+           [20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],
            [353,355,351,374,349,352,351,355,347,354,350,343,351,351,351,356,355,352,352],
            [345,343,346,346,341,337,341,349,341,347,335,337,347,344,350,355,351,345,347],
            [93.0,92.7,93.4,93.5,92.2,91.1,92.2,94.3,92.2,93.8,90.5,91.1,93.8,93.0,94.6,95.9,94.9,93.2,93.8]],
@@ -11773,6 +11778,7 @@ function renderPartnerCat(cat) {
     count: 18,
     insight: 'Partners with >20 increase show remarkable recovery from W1 (57.6%) to W2 (83.0%), massive 42% improvement. Day 16 reaches 92.0%, approaching target. Only 21% achieve ≥100%, suggesting initially aggressive targets. 44% above 80% shows targets becoming more achievable with time. Notable turnaround story requires continued monitoring.',
     data: [[612,612,612,612,612,612,612,612,612,612,612,612,612,612,612,612,612,612,612],
+           [18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18],
            [537,356,520,257,302,348,370,372,397,443,458,474,511,534,550,550,562,576,578],
            [526,352,508,253,299,348,364,370,396,437,440,458,500,519,544,549,547,554,563],
            [86.0,57.6,83.0,41.3,48.9,56.9,59.5,60.5,64.7,71.4,71.9,74.8,81.7,84.8,88.9,89.7,89.4,90.5,92.0]],
@@ -11792,6 +11798,7 @@ function renderPartnerCat(cat) {
     count: 19,
     insight: 'Moderate increase group shows strong improvement W1→W2 (74.2% to 82.2%), gaining 10.8 points. Day 16 reaches 86.9%, continuing positive momentum. 29% achieve ≥100%, with 61% above 80% indicates progressively manageable targets. Significant recovery trajectory warrants acknowledgment - second-best improvement story.',
     data: [[541,541,541,541,541,541,541,541,541,541,541,541,541,541,541,541,541,541,541],
+           [19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19],
            [475,410,456,389,412,406,403,412,427,424,430,441,453,459,465,471,473,474,485],
            [463,401,445,385,402,397,388,408,418,411,413,426,444,441,456,467,467,459,470],
            [85.6,74.2,82.2,71.2,74.3,73.4,71.7,75.4,77.3,76.0,76.3,78.7,82.1,81.5,84.3,86.3,86.3,84.8,86.9]],
@@ -11811,6 +11818,7 @@ function renderPartnerCat(cat) {
     count: 118,
     insight: 'Minor increase group maintains stable performance (W1: 90.7%, W2: 91.3%), slight upward trend. Day 16 at 90.5% near group average. 24% achieve ≥100%, 64% above 90%, 82% above 80%. Small target increases appear well-managed with consistent execution. Reliability in this segment noteworthy despite modest achievement levels.',
     data: [[4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082,4082],
+           [118,118,118,118,118,118,118,118,118,118,118,118,118,118,118,118,118,118,118],
            [3784,3762,3794,3789,3744,3756,3732,3779,3767,3769,3763,3752,3780,3788,3811,3833,3833,3793,3800],
            [3713,3704,3726,3697,3718,3716,3656,3733,3715,3692,3651,3664,3713,3739,3757,3785,3775,3680,3695],
            [90.9,90.7,91.3,90.6,91.1,91.0,89.6,91.5,91.0,90.4,89.4,89.8,91.0,91.6,92.0,92.7,92.5,90.2,90.5]],
@@ -11830,6 +11838,7 @@ function renderPartnerCat(cat) {
     count: 401,
     insight: 'Partners with flat/reduced targets show declining trend (W1: 95.2% to W2: 93.6%), -1.6 points drop. Day 16 at 91.2% continues downward trajectory, concerning pattern. 46% achieve ≥100%, highest overall. 91% above 80%. May indicate capacity adjustment or operational challenges offsetting target reduction benefit. Requires investigation despite reduced targets.',
     data: [[14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195,14195],
+           [401,401,401,401,401,401,401,401,401,401,401,401,401,401,401,401,401,401,401],
            [13741,13937,13571,15059,13915,13933,13642,13731,13659,13622,13464,13525,13549,13545,13639,13626,13647,13457,13481],
            [13379,13517,13280,13789,13758,13741,13193,13424,13356,13360,13006,13129,13263,13242,13421,13467,13432,13039,13082],
            [94.2,95.2,93.6,97.1,96.9,96.8,92.9,94.6,94.1,94.1,91.6,92.5,93.4,93.3,94.5,94.9,94.6,91.9,92.2]],
@@ -11864,19 +11873,20 @@ function renderPartnerCat(cat) {
   for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
-  var rows = ['Target','Online Riders','Delivery Riders','Achievement %'];
-  for(var r=0; r<4; r++) {
-    html += '<tr><td>'+(r===3?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
+  var rows = ['Target','Number of Partners','Online Riders','Delivery Riders','Achievement %'];
+  for(var r=0; r<5; r++) {
+    html += '<tr><td>'+(r===4?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
     for(var c=0; c<3; c++) {
       var val = d.data[r][c];
       var cls = 'period-col';
-      if(r===3 && c>0) cls += ' '+getColorClass(val);
-      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===3 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+      if(r===4 && c>0) cls += ' '+getColorClass(val);
+      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
       var val = d.data[r][c];
-      var cls = (r===3) ? 'adv-daily-cols '+getColorClass(val) : 'adv-daily-cols';
-      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===3 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+      var cls = (r===4) ? 'adv-daily-cols '+getColorClass(val) : 'adv-daily-cols';
+      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+      html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     html += '</tr>';
   }
