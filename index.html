@@ -11535,10 +11535,14 @@ function parseSheetData(rows) {
 
 // Helper to parse a partner category section
 function parsePartnerCategory(rows, startRow, category, titlePrefix) {
-  // Validate rows exist
-  if (!rows[startRow] || !rows[startRow + 1] || !rows[startRow + 4]) {
-    console.error('❌ Missing rows at startRow:', startRow);
-    return;
+  console.log('🔍 Parsing category at row', startRow, ':', titlePrefix);
+  
+  // Validate rows exist with all 11 rows needed
+  for (var i = 0; i < 11; i++) {
+    if (!rows[startRow + i] || rows[startRow + i].length < 4) {
+      console.error('❌ Invalid row at index', startRow + i, '- row:', rows[startRow + i]);
+      return;
+    }
   }
   
   var targetRow = rows[startRow];
@@ -11553,11 +11557,7 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   var rate80Row = rows[startRow + 9];
   var rateLess80Row = rows[startRow + 10];
   
-  // Validate required fields exist
-  if (!numPartnersRow[3] || !targetRow[3] || !achievementRow[3]) {
-    console.error('❌ Missing data in partner category at row:', startRow);
-    return;
-  }
+  console.log('✅ Category rows validated, numPartners:', numPartnersRow[3]);
   
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = targetRow[3];
