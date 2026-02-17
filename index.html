@@ -11842,10 +11842,36 @@ function _renderPartnerCatInner(cat) {
     daily: [97.1,96.9,96.8,92.9,94.6,94.1,94.1,91.6,92.5,93.4,93.3,94.5,94.9,94.6,91.9,92.2]
   }};
   
-  // Google Sheets override DISABLED — using reliable hardcoded data
-  // Sheet data will only update Total Overview section
-  
-  var d = data[cat];
+  // Safe Google Sheets override — uses sheet data when valid, falls back to hardcoded
+  var d = data[cat]; // Start with hardcoded fallback
+  try {
+    if (sheetDataCache && sheetDataCache.partners) {
+      var catMap = { good:'good', average:'avg', bad:'bad', inc20:'inc20', inc1020:'inc1020', inc110:'inc110', inc0:'inc0' };
+      var sheetKey = catMap[cat];
+      var sc = sheetKey && sheetDataCache.partners[sheetKey];
+      if (sc && typeof sc.mtd === 'number' && !isNaN(sc.mtd) && sc.targetValues && sc.targetValues.length > 0) {
+        console.log('📊 Overriding', cat, 'with Google Sheets data');
+        d = {
+          title: sc.title || d.title,
+          target: sc.target.toLocaleString(),
+          mtd: sc.mtd.toFixed(1) + '%',
+          w1: sc.w1.toFixed(1) + '%',
+          w2: sc.w2.toFixed(1) + '%',
+          gap: Math.abs(sc.gapValue).toLocaleString(),
+          count: sc.numPartners[0],
+          insight: d.insight,
+          data: [sc.targetValues, sc.numPartners, sc.onlineRiders, sc.deliveryRiders, sc.achievementRate],
+          breakdown: [sc.rate100, sc.rate95, sc.rate90, sc.rate80, sc.rateLess80],
+          daily: sc.daily
+        };
+      } else {
+        console.log('⚠️ Sheet data for', cat, 'not valid, using hardcoded fallback');
+      }
+    }
+  } catch(overrideErr) {
+    console.warn('⚠️ Sheet override failed for', cat, '- using hardcoded fallback:', overrideErr);
+    d = data[cat];
+  }
   
   if (!d) {
     console.error('❌ No data found for category:', cat);
@@ -12040,6 +12066,49 @@ function renderCityMetric(metric) {
             [104.2,101.4,102.8,101.4,101.4,101.4,97.2,87.5,91.7,93.1,93.1,93.1,93.1,93.1,93.1,93.1],
             [88.5,90.6,89.9,91.3,93.4,96.2,97.6,99.3,96.9,99.7,99.7,99.7,99.7,99.7,99.7,99.7]]
   };
+  
+  // Safe Google Sheets override for city data — falls back to hardcoded on any error
+  try {
+    if (sheetDataCache && sheetDataCache.cities) {
+      function cityToNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
+      var sheetGap = sheetDataCache.cities.gap;
+      var sheetAch = sheetDataCache.cities.achievement;
+      if (sheetGap && Object.keys(sheetGap).length >= 17) {
+        var newGap = { mtd: [], w1: [], w2: [], daily: [] };
+        var valid = true;
+        for (var ci = 0; ci < cities.length; ci++) {
+          var cd = sheetGap[cities[ci]];
+          if (!cd) { valid = false; break; }
+          newGap.mtd.push(cityToNum(cd.mtd));
+          newGap.w1.push(cityToNum(cd.w1));
+          newGap.w2.push(cityToNum(cd.w2));
+          newGap.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
+        }
+        if (valid && newGap.mtd.length === 17) {
+          console.log('📊 Overriding city GAP data with Google Sheets');
+          gapData = newGap;
+        }
+      }
+      if (sheetAch && Object.keys(sheetAch).length >= 17) {
+        var newAch = { mtd: [], w1: [], w2: [], daily: [] };
+        var valid = true;
+        for (var ci = 0; ci < cities.length; ci++) {
+          var cd = sheetAch[cities[ci]];
+          if (!cd) { valid = false; break; }
+          newAch.mtd.push(cityToNum(cd.mtd));
+          newAch.w1.push(cityToNum(cd.w1));
+          newAch.w2.push(cityToNum(cd.w2));
+          newAch.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
+        }
+        if (valid && newAch.mtd.length === 17) {
+          console.log('📊 Overriding city Achievement data with Google Sheets');
+          achData = newAch;
+        }
+      }
+    }
+  } catch(cityOverrideErr) {
+    console.warn('⚠️ City data override failed - using hardcoded fallback:', cityOverrideErr);
+  }
   
   var data = (metric==='gap') ? gapData : achData;
   var title = (metric==='gap') ? '📉 City GAP % (Delivery vs Capacity)' : '📊 City Achievement Rate';
