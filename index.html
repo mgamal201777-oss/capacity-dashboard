@@ -11585,10 +11585,12 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
 // Fetch data from Google Sheets
 function fetchSheetData(callback) {
   console.log('🔄 Starting Google Sheets fetch...');
-  console.log('📍 URL:', SHEET_CSV_URL);
+  // Add cache-busting parameter to force fresh data
+  var cacheBustUrl = SHEET_CSV_URL + '&t=' + Date.now();
+  console.log('📍 URL:', cacheBustUrl);
   updateSyncStatus('syncing', 'Fetching data from Google Sheets...');
   
-  fetch(SHEET_CSV_URL)
+  fetch(cacheBustUrl)
     .then(function(response) {
       console.log('📡 Fetch response status:', response.status, response.statusText);
       if (!response.ok) throw new Error('Failed to fetch sheet: ' + response.status);
