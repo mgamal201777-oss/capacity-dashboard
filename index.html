@@ -29883,6 +29883,8 @@ const monthlyData = {
     var currentSection = '';
     var userName = localStorage.getItem('dashboardUserName') || '';
     var previousCommentCounts = {}; // Track previous counts to detect new comments
+    var currentPanelListener = null; // Track the current panel listener
+    var currentPanelRef = null; // Track the current panel reference
     
     // Request notification permission
     function requestNotificationPermission() {
@@ -30007,6 +30009,13 @@ const monthlyData = {
     }
     
     function closeComments() {
+      // Remove panel listener when closing
+      if(currentPanelRef && currentPanelListener) {
+        currentPanelRef.off('value', currentPanelListener);
+        currentPanelListener = null;
+        currentPanelRef = null;
+      }
+      
       document.getElementById('commentPanel').classList.remove('open');
       document.getElementById('commentOverlay').classList.remove('show');
       
@@ -30016,9 +30025,16 @@ const monthlyData = {
     }
     
     function loadComments(section) {
+      // Remove previous panel listener if exists
+      if(currentPanelRef && currentPanelListener) {
+        currentPanelRef.off('value', currentPanelListener);
+      }
+      
       var commentsRef = firebase.database().ref('comments/' + section);
-      commentsRef.off(); // Remove previous listeners
-      commentsRef.orderByChild('timestamp').on('value', function(snapshot) {
+      currentPanelRef = commentsRef;
+      
+      // Create new listener function
+      currentPanelListener = function(snapshot) {
         var commentList = document.getElementById('commentList');
         commentList.innerHTML = '';
         var count = 0;
@@ -30064,7 +30080,10 @@ const monthlyData = {
             document.querySelector('[onclick="openComments(\'' + section + '\')"').classList.remove('has-comments');
           }
         }
-      });
+      };
+      
+      // Attach the listener
+      commentsRef.orderByChild('timestamp').on('value', currentPanelListener);
     }
     
     function openCommentHub() {
