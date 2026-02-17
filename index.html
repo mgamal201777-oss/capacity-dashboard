@@ -11480,9 +11480,11 @@ function parseSheetData(rows) {
   
   // Increase 10-20 (row 52-62, 11 rows)
   parsePartnerCategory(rows, 52, data.partners.inc1020, '📊 Increase 10-20%');
+  console.log('✔️ Inc10-20 parsed:', data.partners.inc1020.title, 'Target:', data.partners.inc1020.target);
   
   // Increase 1-10 (row 63-73, 11 rows)
   parsePartnerCategory(rows, 63, data.partners.inc110, '📉 Increase 1-10%');
+  console.log('✔️ Inc1-10 parsed:', data.partners.inc110.title, 'Target:', data.partners.inc110.target);
   
   // Others <=0 (row 74-84, 11 rows)
   parsePartnerCategory(rows, 74, data.partners.inc0, '🔻 Others (≤0%)');
@@ -11662,10 +11664,12 @@ window.addEventListener('load', function() {
 });
 
 function renderPartnerCat(cat) {
+  console.log('🎨 Rendering partner category:', cat);
   // Try to use Google Sheets data if available
   var data = null;
   
   if (sheetDataCache && sheetDataCache.partners) {
+    console.log('📦 sheetDataCache.partners exists');
     var sheetCat = null;
     if (cat === 'good') sheetCat = sheetDataCache.partners.good;
     else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
@@ -11675,7 +11679,10 @@ function renderPartnerCat(cat) {
     else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
     else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
     
+    console.log('📊 sheetCat for', cat, ':', sheetCat ? sheetCat.title : 'NULL');
+    
     if (sheetCat && sheetCat.title) {
+      console.log('✅ Using Google Sheets data for', cat);
       // Transform sheet data to match expected format
       data = {};
       data[cat] = {
@@ -11708,6 +11715,7 @@ function renderPartnerCat(cat) {
   
   // Fallback to hardcoded data if sheet data not available
   if (!data) {
+    console.warn('⚠️ Falling back to hardcoded data for category:', cat);
     data = { good: {
     title: '✅ Good Partners (249)',
     target: '10,079',
