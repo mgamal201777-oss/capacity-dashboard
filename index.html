@@ -11842,50 +11842,8 @@ function _renderPartnerCatInner(cat) {
     daily: [97.1,96.9,96.8,92.9,94.6,94.1,94.1,91.6,92.5,93.4,93.3,94.5,94.9,94.6,91.9,92.2]
   }};
   
-  // Override with Google Sheets data if available
-  if (sheetDataCache && sheetDataCache.partners) {
-    var sheetCat = null;
-    if (cat === 'good') sheetCat = sheetDataCache.partners.good;
-    else if (cat === 'average') sheetCat = sheetDataCache.partners.avg;
-    else if (cat === 'bad') sheetCat = sheetDataCache.partners.bad;
-    else if (cat === 'inc20') sheetCat = sheetDataCache.partners.inc20;
-    else if (cat === 'inc1020') sheetCat = sheetDataCache.partners.inc1020;
-    else if (cat === 'inc110') sheetCat = sheetDataCache.partners.inc110;
-    else if (cat === 'inc0') sheetCat = sheetDataCache.partners.inc0;
-    
-    if (sheetCat && sheetCat.title) {
-      console.log('🔍 Using Google Sheets data for:', cat, '-', sheetCat.title);
-      
-      // Override the category with fresh sheet data
-      var _n = function(v){ var x=parseFloat(String(v).replace(/,/g,'')); return isNaN(x)?0:x; };
-      data[cat] = {
-        title: sheetCat.title || '(No data)',
-        target: _n(sheetCat.target).toLocaleString(),
-        mtd: _n(sheetCat.mtd).toFixed(1) + '%',
-        w1: _n(sheetCat.w1).toFixed(1) + '%',
-        w2: _n(sheetCat.w2).toFixed(1) + '%',
-        gap: _n(sheetCat.gapValue),
-        count: parseInt((sheetCat.title || '').match(/\((\d+)\)/)?.[1] || 0),
-        insight: 'Data from Google Sheets - Last updated: ' + (lastFetchTime || 'just now'),
-        data: [
-          sheetCat.targetValues || [],
-          sheetCat.numPartners || [],
-          sheetCat.onlineRiders || [],
-          sheetCat.deliveryRiders || [],
-          sheetCat.achievementRate || []
-        ],
-        breakdown: [
-          sheetCat.rate100 || [],
-          sheetCat.rate95 || [],
-          sheetCat.rate90 || [],
-          sheetCat.rate80 || [],
-          sheetCat.rateLess80 || []
-        ],
-        daily: sheetCat.daily || []
-      };
-      console.log('✅ Sheet data override complete');
-    }
-  }
+  // Google Sheets override DISABLED — using reliable hardcoded data
+  // Sheet data will only update Total Overview section
   
   var d = data[cat];
   
