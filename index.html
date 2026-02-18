@@ -12146,11 +12146,10 @@ function _renderPartnerCatInner(cat) {
   }};
   
   // Safe Google Sheets override — uses sheet data when valid, falls back to hardcoded
-  // inc0 excluded: CSV row offset causes wrong data mapping
   var d = data[cat]; // Start with hardcoded fallback
   try {
-    if (cat !== 'inc0' && sheetDataCache && sheetDataCache.partners) {
-      var catMap = { good:'good', average:'avg', bad:'bad', inc20:'inc20', inc1020:'inc1020', inc110:'inc110' };
+    if (sheetDataCache && sheetDataCache.partners) {
+      var catMap = { good:'good', average:'avg', bad:'bad', inc20:'inc20', inc1020:'inc1020', inc110:'inc110', inc0:'inc0' };
       var sheetKey = catMap[cat];
       var sc = sheetKey && sheetDataCache.partners[sheetKey];
       if (sc && typeof sc.mtd === 'number' && !isNaN(sc.mtd) && sc.targetValues && sc.targetValues.length > 0) {
