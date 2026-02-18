@@ -11573,28 +11573,40 @@ function parseSheetData(rows) {
       console.error('❌ Invalid totalRow:', totalRow);
       return null;
     }
-    data.totalOverview.target = totalRow[3]; // MTD target
-    data.totalOverview.daily = extractDailyValues(totalRow, 8);
+    // Target row has extra "Total target" label in col[3], so MTD is col[4]
+    data.totalOverview.targetMTD = totalRow[4];
+    data.totalOverview.targetW1 = totalRow[5];
+    data.totalOverview.targetW2 = totalRow[5]; // W2 same as W1 for target
+    data.totalOverview.targetDaily = extractDailyValues(totalRow, 9);
     
     // Determine number of days from the first data row
-    numDaysAvailable = data.totalOverview.daily.length;
+    numDaysAvailable = data.totalOverview.targetDaily.length;
     data.numDays = numDaysAvailable;
     console.log('✅ Total Overview parsed. Days available:', numDaysAvailable);
   
   var achieveOnlineRow = rows[4];
-  data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 8);
+  data.totalOverview.onlineMTD = achieveOnlineRow[3];
+  data.totalOverview.onlineW1 = achieveOnlineRow[4];
+  data.totalOverview.onlineW2 = achieveOnlineRow[5];
+  data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 9);
   
   var achieveDeliveryRow = rows[5];
-  data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, 8);
+  data.totalOverview.deliveryMTD = achieveDeliveryRow[3];
+  data.totalOverview.deliveryW1 = achieveDeliveryRow[4];
+  data.totalOverview.deliveryW2 = achieveDeliveryRow[5];
+  data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, 9);
   
   var achievementRateRow = rows[6];
-  data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, 8);
+  data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, 9);
   data.totalOverview.mtd = achievementRateRow[3];
   data.totalOverview.w1 = achievementRateRow[4];
   data.totalOverview.w2 = achievementRateRow[5];
   
   var gapRow = rows[7];
-  data.totalOverview.gapDaily = extractDailyValues(gapRow, 8);
+  data.totalOverview.gapMTD = gapRow[3];
+  data.totalOverview.gapW1 = gapRow[4];
+  data.totalOverview.gapW2 = gapRow[5];
+  data.totalOverview.gapDaily = extractDailyValues(gapRow, 9);
   
         // Parse Partners Stratification (dynamic row detection to survive sheet row inserts)
         console.log('👥 Parsing Partners Stratification...');
@@ -11803,10 +11815,103 @@ function fetchSheetData(callback) {
     });
 }
 
+// Render Total Overview Table from sheet data
+function renderTotalOverviewTable() {
+  if (!sheetDataCache || !sheetDataCache.totalOverview) {
+    console.warn('⚠️ No sheet data available for Total Overview table');
+    return;
+  }
+  
+  var tov = sheetDataCache.totalOverview;
+  var numDays = tov.targetDaily ? tov.targetDaily.length : 16;
+  
+  // Build table HTML
+  var tbody = document.querySelector('#totalOverviewTable tbody');
+  if (!tbody) return;
+  
+  function fmt(val) {
+    if (!val && val !== 0) return '-';
+    var s = String(val).replace('%', '');
+    if (s.match(/^\d+$/)) return parseInt(s).toLocaleString();
+    if (s.match(/^\d+\.\d+$/)) return parseFloat(s).toLocaleString();
+    return val;
+  }
+  
+  function getCellClass(val, type) {
+    if (type === 'achievement') {
+      var v = parseFloat(String(val).replace('%', ''));
+      if (v >= 95) return 'cell-excellent';
+      if (v >= 90) return 'cell-good';
+      if (v >= 85) return 'cell-warning';
+      return 'cell-critical';
+    }
+    return '';
+  }
+  
+  var html = '';
+  
+  // Row 1: Target
+  html += '<tr><td>Target</td>';
+  html += '<td class="period-col">' + fmt(tov.targetMTD) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.targetW1) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.targetW2) + '</td>';
+  for (var i = 0; i < numDays; i++) {
+    html += '<td class="adv-daily-cols">' + fmt(tov.targetDaily[i]) + '</td>';
+  }
+  html += '</tr>';
+  
+  // Row 2: Online Riders
+  html += '<tr><td>Online Riders</td>';
+  html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.onlineW1) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.onlineW2) + '</td>';
+  for (var i = 0; i < numDays; i++) {
+    html += '<td class="adv-daily-cols">' + fmt(tov.onlineDaily[i]) + '</td>';
+  }
+  html += '</tr>';
+  
+  // Row 3: Delivery Riders
+  html += '<tr><td>Delivery Riders</td>';
+  html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.deliveryW1) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.deliveryW2) + '</td>';
+  for (var i = 0; i < numDays; i++) {
+    html += '<td class="adv-daily-cols">' + fmt(tov.deliveryDaily[i]) + '</td>';
+  }
+  html += '</tr>';
+  
+  // Row 4: Achievement %
+  html += '<tr><td>Achievement %</td>';
+  html += '<td class="period-col ' + getCellClass(tov.mtd, 'achievement') + '">' + fmt(tov.mtd) + '</td>';
+  html += '<td class="period-col ' + getCellClass(tov.w1, 'achievement') + '">' + fmt(tov.w1) + '</td>';
+  html += '<td class="period-col ' + getCellClass(tov.w2, 'achievement') + '">' + fmt(tov.w2) + '</td>';
+  for (var i = 0; i < numDays; i++) {
+    var achVal = tov.achievementDaily[i];
+    html += '<td class="adv-daily-cols ' + getCellClass(achVal, 'achievement') + '">' + fmt(achVal) + '</td>';
+  }
+  html += '</tr>';
+  
+  // Row 5: Gap
+  html += '<tr><td>Gap</td>';
+  html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.gapW1) + '</td>';
+  html += '<td class="period-col">' + fmt(tov.gapW2) + '</td>';
+  for (var i = 0; i < numDays; i++) {
+    html += '<td class="adv-daily-cols">' + fmt(tov.gapDaily[i]) + '</td>';
+  }
+  html += '</tr>';
+  
+  tbody.innerHTML = html;
+  console.log('✅ Total Overview table rendered from sheet data');
+}
+
 // Manual refresh button handler
 function refreshSheetData() {
   fetchSheetData(function(data) {
     if (data) {
+      // Render Total Overview table
+      renderTotalOverviewTable();
+      
       // Reinitialize Total Overview chart with new data
       initAdvCharts();
       
@@ -11815,7 +11920,7 @@ function refreshSheetData() {
       if (activeSection) {
         var sectionId = activeSection.id;
         if (sectionId === 'totalOverview') {
-          // Total Overview chart already refreshed above
+          // Total Overview already refreshed above
         } else if (sectionId === 'partnersStrat') {
           // Refresh partners stratification
           var activeCat = document.querySelector('.adv-sub-btn.active');
@@ -11841,6 +11946,9 @@ window.addEventListener('load', function() {
   setTimeout(function() {
     fetchSheetData(function(data) {
       if (!data) return;
+      // Render Total Overview table with fresh data
+      renderTotalOverviewTable();
+      
       // Re-render current section with fresh sheet data
       initAdvCharts();
       var activeContent = document.querySelector('.adv-content-box.active');
