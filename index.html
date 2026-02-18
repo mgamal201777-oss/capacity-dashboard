@@ -10766,6 +10766,18 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-card .card-label { font-size:11px; color:#546e7a; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
     .adv-card .card-value { font-size:24px; font-weight:800; color:#0d47a1; line-height:1.1; }
     .adv-card .card-sub { font-size:11px; color:#78909c; margin-top:4px; }
+    /* Styled tooltips for cards and rows */
+    .adv-card { position: relative; }
+    .card-tooltip { position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; background: rgba(13,71,161,0.12); color: #1565c0; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: help; z-index: 2; transition: background 0.2s; }
+    .card-tooltip:hover { background: rgba(13,71,161,0.25); }
+    .card-tooltip .card-tip-text { visibility: hidden; opacity: 0; position: absolute; top: 100%; right: 0; margin-top: 6px; min-width: 200px; max-width: 260px; background: #1a237e; color: #fff; font-size: 11px; font-weight: 400; line-height: 1.45; padding: 10px 12px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); z-index: 100; transition: opacity 0.2s, visibility 0.2s; text-transform: none; letter-spacing: 0; pointer-events: none; }
+    .card-tooltip .card-tip-text::before { content: ''; position: absolute; top: -6px; right: 12px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 6px solid #1a237e; }
+    .card-tooltip:hover .card-tip-text { visibility: visible; opacity: 1; }
+    .row-info-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: rgba(13,71,161,0.1); color: #1565c0; font-size: 10px; font-weight: 700; margin-left: 5px; cursor: help; position: relative; vertical-align: middle; }
+    .row-info-icon:hover { background: rgba(13,71,161,0.25); }
+    .row-info-icon .row-tip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 6px; min-width: 220px; background: #1a237e; color: #fff; font-size: 11px; font-weight: 400; line-height: 1.4; padding: 8px 12px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); z-index: 100; transition: opacity 0.2s, visibility 0.2s; white-space: normal; pointer-events: none; }
+    .row-info-icon .row-tip-text::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #1a237e; }
+    .row-info-icon:hover .row-tip-text { visibility: visible; opacity: 1; }
     .adv-card.green { border-left-color:#2e7d32; background:linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%); }
     .adv-card.green .card-value { color:#1b5e20; }
     .adv-card.amber { border-left-color:#f57c00; background:linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
@@ -10981,6 +10993,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-mtd" style="display:none;">0</span>
         </button>
         <div class="card-label">MTD Achievement</div>
+        <span class="card-tooltip">ℹ<span class="card-tip-text">Month-to-date achievement rate calculated as Delivery Riders ÷ Target across all partners.</span></span>
         <div class="card-value">93.1%</div>
         <div class="card-sub">Delivery | Target: 19,430</div>
       </div>
@@ -10990,6 +11003,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w1" style="display:none;">0</span>
         </button>
         <div class="card-label">W1 Performance</div>
+        <span class="card-tooltip">ℹ<span class="card-tip-text">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.</span></span>
         <div class="card-value">92.5%</div>
         <div class="card-sub">Feb 1-7 | Stable</div>
       </div>
@@ -10999,6 +11013,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w2" style="display:none;">0</span>
         </button>
         <div class="card-label">W2 Performance</div>
+        <span class="card-tooltip">ℹ<span class="card-tip-text">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.</span></span>
         <div class="card-value">92.4%</div>
         <div class="card-sub">Feb 8-14 | Declining trend</div>
       </div>
@@ -11008,6 +11023,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-gap" style="display:none;">0</span>
         </button>
         <div class="card-label">Total GAP</div>
+        <span class="card-tooltip">ℹ<span class="card-tip-text">The gap between Target and Online Riders. Calculated as Target − Online Riders.</span></span>
         <div class="card-value">457</div>
         <div class="card-sub">Riders | Online vs Del</div>
       </div>
@@ -11912,7 +11928,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 4: Achievement %
-  html += '<tr><td><strong>Achievement %</strong></td>';
+  html += '<tr><td><strong>Achievement %</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span></td>';
   html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
   html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + '</td>';
   html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + '</td>';
@@ -11925,7 +11941,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 5: Gap
-  html += '<tr><td><strong>Gap</strong></td>';
+  html += '<tr><td><strong>Gap</strong> <span class="row-info-icon">❗<span class="row-tip-text">Gap: The gap for Target − Online Riders</span></span></td>';
   html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW1) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW2) + '</td>';
@@ -12273,10 +12289,10 @@ function _renderPartnerCatInner(cat) {
   console.log('📊 Rendering', cat, 'with data rows:', d.data ? d.data.length : 'undefined');
   
   var html = '<div class="adv-cards-row">';
-  html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
-  html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
-  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-14</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Total GAP</div><div class="card-value">'+d.gap+'</div><div class="card-sub">Riders</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><span class="card-tooltip">ℹ<span class="card-tip-text">Month-to-date achievement rate. Delivery Riders ÷ Target for this partner group.</span></span><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><span class="card-tooltip">ℹ<span class="card-tip-text">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week.</span></span><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
+  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><span class="card-tooltip">ℹ<span class="card-tip-text">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week.</span></span><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-14</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Total GAP</div><span class="card-tooltip">ℹ<span class="card-tip-text">The gap between Target and Online Riders. Calculated as Target − Online Riders.</span></span><div class="card-value">'+d.gap+'</div><div class="card-sub">Riders</div></div>';
   html += '</div>';
   
   html += '<div class="adv-legend"><strong>Color Legend:</strong>';
@@ -12299,7 +12315,10 @@ function _renderPartnerCatInner(cat) {
     var isAch = (r===4);
     var isGap = (r===5);
     var isBold = isAch || isGap;
-    html += '<tr><td>'+(isBold?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
+    var rowLabel = rows[r];
+    if(isAch) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span>';
+    else if(isGap) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">Gap: The gap for Target − Online Riders</span></span>';
+    html += '<tr><td>'+rowLabel+'</td>';
     var rowDailyFlags = isAch ? getDailyFlagIndexes(d.data[r].slice(3), 'low') : (isGap ? getDailyFlagIndexes(d.data[r].slice(3), 'abs-high') : {});
     for(var c=0; c<3; c++) {
       var val = d.data[r][c];
@@ -12546,10 +12565,10 @@ function renderCityMetric(metric) {
   }
   
   var html = '<div class="adv-cards-row">';
-  html += '<div class="adv-card green"><div class="card-label">Best City</div><div class="card-value">'+bestCity+'</div><div class="card-sub">'+bestVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
-  html += '<div class="adv-card red"><div class="card-label">Worst City</div><div class="card-value">'+worstCity+'</div><div class="card-sub">'+worstVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Cities Tracked</div><div class="card-value">17</div><div class="card-sub">Across KSA</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Avg '+(metric==='gap'?'GAP':'Achievement')+'</div><div class="card-value">'+(data.mtd.reduce((a,b)=>a+b,0)/17).toFixed(1)+(metric==='ach'?'%':'%')+'</div><div class="card-sub">MTD Average</div></div>';
+  html += '<div class="adv-card green"><div class="card-label">Best City</div><span class="card-tooltip">ℹ<span class="card-tip-text">City with the '+(metric==='gap'?'lowest GAP (closest to target)':'highest achievement rate')+' this month.</span></span><div class="card-value">'+bestCity+'</div><div class="card-sub">'+bestVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+  html += '<div class="adv-card red"><div class="card-label">Worst City</div><span class="card-tooltip">ℹ<span class="card-tip-text">City with the '+(metric==='gap'?'highest GAP (furthest from target)':'lowest achievement rate')+' requiring attention.</span></span><div class="card-value">'+worstCity+'</div><div class="card-sub">'+worstVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Cities Tracked</div><span class="card-tooltip">ℹ<span class="card-tip-text">Total number of cities being tracked across Saudi Arabia.</span></span><div class="card-value">17</div><div class="card-sub">Across KSA</div></div>';
+  html += '<div class="adv-card"><div class="card-label">Avg '+(metric==='gap'?'GAP':'Achievement')+'</div><span class="card-tooltip">ℹ<span class="card-tip-text">Average '+(metric==='gap'?'GAP percentage':'achievement rate')+' across all 17 cities for the month.</span></span><div class="card-value">'+(data.mtd.reduce((a,b)=>a+b,0)/17).toFixed(1)+(metric==='ach'?'%':'%')+'</div><div class="card-sub">MTD Average</div></div>';
   html += '</div>';
   
   if(metric==='ach') {
