@@ -11689,15 +11689,16 @@ function parseSheetData(rows) {
         for (var r = citySectionStart; r < rows.length; r++) {
             var col1 = normCity(rows[r] && rows[r][1]);
             var col2 = normCity(rows[r] && rows[r][2]);
-            if ((col1.indexOf('achiev') !== -1) && col2 === normCity(cityNames[0])) {
+            if (col1.indexOf('ach') !== -1 && col2 === normCity(cityNames[0])) {
                 achStart = r;
                 break;
             }
         }
         if (achStart === -1) {
-            // Safe fallback: prior logic
-            achStart = citySectionStart + 18;
+            // Safe fallback: 17 GAP rows after citySectionStart
+            achStart = citySectionStart + 17;
         }
+        console.log('🔍 City Achievement achStart:', achStart, 'finder matched:', achStart !== citySectionStart + 17);
 
         for (var c = 0; c < cityNames.length; c++) {
             var cityRowAch = rows[achStart + c];
@@ -12428,22 +12429,26 @@ function renderCityMetric(metric) {
           gapData = newGap;
         }
       }
-      if (sheetAch && Object.keys(sheetAch).length >= 17) {
+      if (sheetAch && Object.keys(sheetAch).length > 0) {
         var newAch = { mtd: [], w1: [], w2: [], daily: [] };
         var valid = true;
         for (var ci = 0; ci < cities.length; ci++) {
           var cd = sheetAch[cities[ci]];
-          if (!cd) { valid = false; break; }
+          if (!cd) {
+            // Fallback to hardcoded for this city
+            newAch.mtd.push(achData.mtd[ci] || 0);
+            newAch.w1.push(achData.w1[ci] || 0);
+            newAch.w2.push(achData.w2[ci] || 0);
+            newAch.daily.push(achData.daily[ci] || []);
+            continue;
+          }
           newAch.mtd.push(cityToNum(cd.mtd));
           newAch.w1.push(cityToNum(cd.w1));
           newAch.w2.push(cityToNum(cd.w2));
           newAch.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
         }
-        console.log('🔍 City Achievement override check - valid:', valid, 'mtd.length:', newAch.mtd.length, 'first city daily length:', newAch.daily[0]?.length);
-        if (valid && newAch.mtd.length === 17) {
-          console.log('📊 Overriding city Achievement data with Google Sheets - Daily data has', newAch.daily[0].length, 'days');
-          achData = newAch;
-        }
+        console.log('📊 Overriding city Achievement data with Google Sheets - cities found:', Object.keys(sheetAch).length, 'daily[0] length:', newAch.daily[0]?.length);
+        achData = newAch;
       }
     }
   } catch(cityOverrideErr) {
