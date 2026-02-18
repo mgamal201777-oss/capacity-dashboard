@@ -11681,7 +11681,7 @@ function parseSheetData(rows) {
             data.cities.gap[cityNames[c]].mtd = cityRow[3];
             data.cities.gap[cityNames[c]].w1 = cityRow[4];
             data.cities.gap[cityNames[c]].w2 = cityRow[5];
-            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
+            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 9);
         }
 
         // Achievement block starts where col1 has achievement label and col2 matches first city
@@ -11706,7 +11706,7 @@ function parseSheetData(rows) {
             data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
             data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
             data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
-            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
+            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 9);
         }
     }
   
@@ -11755,24 +11755,24 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   category.w1 = toNum(achievementRow[4]);
   category.w2 = toNum(achievementRow[5]);
   category.gapValue = toNum(gapRow[3]);
-  category.daily = extractDailyValues(achievementRow, 8).map(toNum);
+  category.daily = extractDailyValues(achievementRow, 9).map(toNum);
   
   console.log('📊', titlePrefix, '- Daily values extracted:', category.daily.length);
   
   // Breakdown arrays (19 elements: MTD, W1, W2, then daily values) — all converted to numbers
-  category.targetValues = toNumArr([targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 8)));
-  category.numPartners = toNumArr([numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 8)));
-  category.deliveryRiders = toNumArr([deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 8)));
-  category.onlineRiders = toNumArr([onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 8)));
-  category.achievementRate = toNumArr([achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 8)));
-  category.gapArray = toNumArr([gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 8)));
+  category.targetValues = toNumArr([targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 9)));
+  category.numPartners = toNumArr([numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 9)));
+  category.deliveryRiders = toNumArr([deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 9)));
+  category.onlineRiders = toNumArr([onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 9)));
+  category.achievementRate = toNumArr([achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 9)));
+  category.gapArray = toNumArr([gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 9)));
   
   // Performance tiers — all converted to numbers
-  category.rate100 = toNumArr([rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 8)));
-  category.rate95 = toNumArr([rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 8)));
-  category.rate90 = toNumArr([rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 8)));
-  category.rate80 = toNumArr([rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 8)));
-  category.rateLess80 = toNumArr([rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 8)));
+  category.rate100 = toNumArr([rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 9)));
+  category.rate95 = toNumArr([rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 9)));
+  category.rate90 = toNumArr([rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 9)));
+  category.rate80 = toNumArr([rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 9)));
+  category.rateLess80 = toNumArr([rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 9)));
   
   console.log('✅', titlePrefix, 'parsed successfully');
 }
