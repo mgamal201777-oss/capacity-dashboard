@@ -10782,10 +10782,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-table tr:hover td { background:#e3f2fd; }
     .adv-table td:first-child { font-weight:600; text-align:left; background:#f5f5f5; position:sticky; left:0; z-index:2; min-width:150px; }
     .adv-table .period-col { background:#f0f4f8; font-weight:600; }
-    .adv-table .val-excellent { color:#2e7d32; font-weight:700; background-color:rgba(46,125,50,0.12); }
-    .adv-table .val-good { color:#558b2f; font-weight:600; background-color:rgba(85,139,47,0.10); }
-    .adv-table .val-warning { color:#f57c00; font-weight:600; background-color:rgba(245,124,0,0.10); }
-    .adv-table .val-critical { color:#c62828; font-weight:700; background-color:rgba(198,40,40,0.10); }
+    .adv-table .val-excellent { color:#2e7d32; font-weight:700; }
+    .adv-table .val-good { color:#558b2f; font-weight:600; }
+    .adv-table .val-warning { color:#f57c00; font-weight:600; }
+    .adv-table .val-critical { color:#c62828; font-weight:700; }
         .partners-strat-table .val-critical,
         .partners-strat-table .bkdn-vlow {
             color:#b71c1c;
@@ -11866,16 +11866,18 @@ function renderTotalOverviewTable() {
     return val;
   }
   
-  function getCellClass(val, type) {
-    if (type === 'achievement') {
-      var v = parseFloat(String(val).replace('%', ''));
-      if (v >= 95) return 'val-excellent';
-      if (v >= 90) return 'val-good';
-      if (v >= 85) return 'val-warning';
-      return 'val-critical';
-    }
-    return '';
+  function fmtPct(val) {
+    var v = parseFloat(String(val).replace('%', ''));
+    return isNaN(v) ? '-' : v.toFixed(1) + '%';
   }
+  
+  // Achievement daily flag indexes (worst cells)
+  var achDailyVals = (tov.achievementDaily || []).map(function(v){ return parseFloat(String(v).replace('%','')); });
+  var achFlags = getDailyFlagIndexes(achDailyVals, 'low');
+  
+  // Gap daily flag indexes (worst cells - highest absolute gap)
+  var gapDailyVals = (tov.gapDaily || []).map(function(v){ return parseFloat(String(v).replace(/[%,]/g,'')); });
+  var gapFlags = getDailyFlagIndexes(gapDailyVals, 'abs-high');
   
   var html = '';
   
@@ -11910,23 +11912,28 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 4: Achievement %
-  html += '<tr><td>Achievement %</td>';
-  html += '<td class="period-col ' + getCellClass(tov.mtd, 'achievement') + '">' + fmt(tov.mtd) + '</td>';
-  html += '<td class="period-col ' + getCellClass(tov.w1, 'achievement') + '">' + fmt(tov.w1) + '</td>';
-  html += '<td class="period-col ' + getCellClass(tov.w2, 'achievement') + '">' + fmt(tov.w2) + '</td>';
+  html += '<tr><td><strong>Achievement %</strong></td>';
+  html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
+  html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + '</td>';
+  html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + '</td>';
   for (var i = 0; i < numDays; i++) {
-    var achVal = tov.achievementDaily[i];
-    html += '<td class="adv-daily-cols ' + getCellClass(achVal, 'achievement') + '">' + fmt(achVal) + '</td>';
+    var achVal = parseFloat(String(tov.achievementDaily[i]).replace('%',''));
+    var cls = 'adv-daily-cols ' + getColorClass(achVal);
+    if (achFlags[i]) cls += ' red-flag-cell ' + getAchievementFlagClass(achVal);
+    html += '<td class="' + cls + '">' + fmtPct(tov.achievementDaily[i]) + '</td>';
   }
   html += '</tr>';
   
   // Row 5: Gap
-  html += '<tr><td>Gap</td>';
+  html += '<tr><td><strong>Gap</strong></td>';
   html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW1) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW2) + '</td>';
   for (var i = 0; i < numDays; i++) {
-    html += '<td class="adv-daily-cols">' + fmt(tov.gapDaily[i]) + '</td>';
+    var gVal = parseFloat(String(tov.gapDaily[i]).replace(/[%,]/g,''));
+    var cls = 'adv-daily-cols';
+    if (gapFlags[i]) cls += ' red-flag-cell ' + getGapFlagClass(gVal);
+    html += '<td class="' + cls + '">' + fmt(tov.gapDaily[i]) + '</td>';
   }
   
   tbody.innerHTML = html;
