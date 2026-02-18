@@ -11404,7 +11404,7 @@ function initAdvCharts() {
   if (sheetDataCache && sheetDataCache.totalOverview && sheetDataCache.totalOverview.achievementDaily) {
     chartData = sheetDataCache.totalOverview.achievementDaily.map(function(v) {
       return parseFloat(v.toString().replace('%', ''));
-    });
+    }).slice().reverse();
     chartNumDays = chartData.length;
   }
   
@@ -11863,7 +11863,7 @@ function renderTotalOverviewTable() {
   // Render thead with dynamic day columns
   var thead = table.querySelector('thead');
   var theadHtml = '<tr><th>Metric</th><th>MTD</th><th>W1 (Feb 1-7)</th><th>W2 (Feb 8-14)</th>';
-  for (var i = 1; i <= numDays; i++) {
+  for (var i = numDays; i >= 1; i--) {
     theadHtml += '<th class="adv-daily-cols">Day ' + i + '</th>';
   }
   theadHtml += '</tr>';
@@ -12304,7 +12304,7 @@ function _renderPartnerCatInner(cat) {
   var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
   
     html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
   var rows = ['Target','Number of Partners','Online Riders','Delivery Riders','Achievement %','Gap'];
@@ -12392,14 +12392,15 @@ function _renderPartnerCatInner(cat) {
     var ctx = document.getElementById('partner'+cat+'Chart');
     if(!ctx) return;
     ctx = ctx.getContext('2d');
-    var chartNumDays = d.daily ? d.daily.length : numDaysAvailable;
+    var chartDailyData = d.daily ? d.daily.slice().reverse() : [];
+    var chartNumDays = chartDailyData.length || numDaysAvailable;
     new Chart(ctx, {
       type: 'line',
       data: {
         labels: generateShortDayLabels(chartNumDays),
         datasets: [{
           label: 'Achievement %',
-          data: d.daily,
+          data: chartDailyData,
           borderColor: '#1976d2',
           backgroundColor: 'rgba(25,118,210,0.1)',
           tension: 0.3,
@@ -12590,7 +12591,7 @@ function renderCityMetric(metric) {
   console.log('🔍 renderCityMetric', metric, '- numDays:', numDays, 'data.daily[0].length:', data.daily[0]?.length);
   
     html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+  for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
   for(var c=0; c<cities.length; c++) {
@@ -12655,7 +12656,7 @@ function renderCityChart(metric, data, cities) {
     var ci = selectedIndices[s];
     datasets.push({
       label: cities[ci],
-      data: data.daily[ci],
+      data: data.daily[ci].slice().reverse(),
       borderColor: allColors[ci%allColors.length],
       backgroundColor: allColors[ci%allColors.length]+'33',
       tension: 0.2,
