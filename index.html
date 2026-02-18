@@ -11707,6 +11707,9 @@ function parseSheetData(rows) {
             data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
             data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
             data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
+            if (c === 0) {
+                console.log('🔍 City Achievement Daily Values for', cityNames[c], ':', data.cities.achievement[cityNames[c]].daily.length, 'days');
+            }
         }
     }
   
@@ -12436,8 +12439,9 @@ function renderCityMetric(metric) {
           newAch.w2.push(cityToNum(cd.w2));
           newAch.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
         }
+        console.log('🔍 City Achievement override check - valid:', valid, 'mtd.length:', newAch.mtd.length, 'first city daily length:', newAch.daily[0]?.length);
         if (valid && newAch.mtd.length === 17) {
-          console.log('📊 Overriding city Achievement data with Google Sheets');
+          console.log('📊 Overriding city Achievement data with Google Sheets - Daily data has', newAch.daily[0].length, 'days');
           achData = newAch;
         }
       }
@@ -12488,6 +12492,7 @@ function renderCityMetric(metric) {
   
   // Determine number of daily columns from data
   var numDays = (data.daily && data.daily[0] && data.daily[0].length > 0) ? data.daily[0].length : numDaysAvailable;
+  console.log('🔍 renderCityMetric', metric, '- numDays:', numDays, 'data.daily[0].length:', data.daily[0]?.length);
   
     html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
   for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
