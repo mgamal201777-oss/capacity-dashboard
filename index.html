@@ -11681,7 +11681,7 @@ function parseSheetData(rows) {
             data.cities.gap[cityNames[c]].mtd = cityRow[3];
             data.cities.gap[cityNames[c]].w1 = cityRow[4];
             data.cities.gap[cityNames[c]].w2 = cityRow[5];
-            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 9);
+            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
         }
 
         // Achievement block starts where col1 has achievement label and col2 matches first city
@@ -11706,7 +11706,7 @@ function parseSheetData(rows) {
             data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
             data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
             data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
-            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 9);
+            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
         }
     }
   
