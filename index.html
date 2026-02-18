@@ -11596,64 +11596,107 @@ function parseSheetData(rows) {
   var gapRow = rows[7];
   data.totalOverview.gapDaily = extractDailyValues(gapRow, 8);
   
-    // Parse Partners Stratification
-    console.log('👥 Parsing Partners Stratification...');
-    // Good Partners (row 8-18, 11 rows)
-    parsePartnerCategory(rows, 8, data.partners.good, '✅ Good Partners');
-  
-  // Average Partners (row 19-29, 11 rows)
-  parsePartnerCategory(rows, 19, data.partners.avg, '⚡ Average Partners');
-  
-  // Bad Partners (row 30-40, 11 rows)
-  parsePartnerCategory(rows, 30, data.partners.bad, '❌ Bad Partners');
-  
-  // Increase >20 (row 41-51, 11 rows)
-  parsePartnerCategory(rows, 41, data.partners.inc20, '📈 Increase >20%');
-  
-  // Increase 10-20 (row 52-62, 11 rows)
-  parsePartnerCategory(rows, 52, data.partners.inc1020, '📊 Increase 10-20%');
-  
-  // Increase 1-10 (row 63-73, 11 rows)
-  parsePartnerCategory(rows, 63, data.partners.inc110, '📉 Increase 1-10%');
-  
-  // Others <=0 (row 74-84, 11 rows)
-  parsePartnerCategory(rows, 74, data.partners.inc0, '🔻 Others (≤0%)');
+        // Parse Partners Stratification (dynamic row detection to survive sheet row inserts)
+        console.log('👥 Parsing Partners Stratification...');
+        function norm(v) { return String(v || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+        function findCategoryStart(labelKey) {
+            var key = norm(labelKey);
+            for (var r = 0; r < rows.length; r++) {
+                var col1 = norm(rows[r] && rows[r][1]);
+                var col2 = norm(rows[r] && rows[r][2]);
+                if (col1.indexOf(key) !== -1 && col2.indexOf('total target') !== -1) {
+                    return r;
+                }
+            }
+            return -1;
+        }
+
+        var partnerStarts = {
+            good: findCategoryStart('good partners'),
+            avg: findCategoryStart('average partners'),
+            bad: findCategoryStart('bad partners'),
+            inc20: findCategoryStart('increase >20'),
+            inc1020: findCategoryStart('increase 10-20'),
+            inc110: (function(){
+                var idx = findCategoryStart('increase >=1 - <=10');
+                if (idx === -1) idx = findCategoryStart('increase 1-10');
+                return idx;
+            })(),
+            inc0: (function(){
+                var idx = findCategoryStart('others (<=0)');
+                if (idx === -1) idx = findCategoryStart('others ≤0');
+                return idx;
+            })()
+        };
+
+        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners');
+        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners');
+        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners');
+        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%');
+        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%');
+        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%');
+        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)');
   
   console.log('🏙️ Parsing City Level Data...');
-  // Parse City Level Data (starting after row 84)
+    // Parse City Level Data with dynamic section anchors
   var cityNames = ['Al Ahsa', 'Dammam', 'Hafar Albatin', 'Jubail', 'Riyadh', 'Al Kharj', 
                    'Buraydah', 'Hail', 'Jeddah', 'Madinah', 'Tabuk', 'Yanbu', 
                    'Abha', 'Jazan', 'Makkah', 'Najran', 'Taif'];
   
-  // Find City Level Data section
-  for (var i = 85; i < rows.length; i++) {
-    if (rows[i][0] === 'City level data') {
-      // Gap% data starts at i+1
-      for (var c = 0; c < cityNames.length && c < 17; c++) {
-        var cityRow = rows[i + 1 + c];
-        if (!data.cities.gap[cityNames[c]]) {
-          data.cities.gap[cityNames[c]] = {};
+    function normCity(s) { return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+    function findCityRowByName(name) {
+        var n = normCity(name);
+        for (var r = 0; r < rows.length; r++) {
+            if (normCity(rows[r] && rows[r][2]) === n) return r;
         }
-        data.cities.gap[cityNames[c]].mtd = cityRow[3];
-        data.cities.gap[cityNames[c]].w1 = cityRow[4];
-        data.cities.gap[cityNames[c]].w2 = cityRow[5];
-        data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
-      }
-      
-      // Achievement rate data starts at i + 18
-      for (var c = 0; c < cityNames.length && c < 17; c++) {
-        var cityRowAch = rows[i + 18 + c];
-        if (!data.cities.achievement[cityNames[c]]) {
-          data.cities.achievement[cityNames[c]] = {};
-        }
-        data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
-        data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
-        data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
-        data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
-      }
-      break;
+        return -1;
     }
-  }
+
+    var citySectionStart = -1;
+    for (var i = 0; i < rows.length; i++) {
+        if (normCity(rows[i] && rows[i][0]) === 'city level data') {
+            citySectionStart = i;
+            break;
+        }
+    }
+
+    if (citySectionStart !== -1) {
+        // GAP rows start at citySectionStart (first row already contains Al Ahsa)
+        for (var c = 0; c < cityNames.length; c++) {
+            var cityRow = rows[citySectionStart + c];
+            if (!cityRow) continue;
+            if (!data.cities.gap[cityNames[c]]) data.cities.gap[cityNames[c]] = {};
+            data.cities.gap[cityNames[c]].mtd = cityRow[3];
+            data.cities.gap[cityNames[c]].w1 = cityRow[4];
+            data.cities.gap[cityNames[c]].w2 = cityRow[5];
+            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
+        }
+
+        // Achievement block starts where col1 has achievement label and col2 matches first city
+        var achStart = -1;
+        for (var r = citySectionStart; r < rows.length; r++) {
+            var col1 = normCity(rows[r] && rows[r][1]);
+            var col2 = normCity(rows[r] && rows[r][2]);
+            if ((col1.indexOf('achiev') !== -1) && col2 === normCity(cityNames[0])) {
+                achStart = r;
+                break;
+            }
+        }
+        if (achStart === -1) {
+            // Safe fallback: prior logic
+            achStart = citySectionStart + 18;
+        }
+
+        for (var c = 0; c < cityNames.length; c++) {
+            var cityRowAch = rows[achStart + c];
+            if (!cityRowAch) continue;
+            if (!data.cities.achievement[cityNames[c]]) data.cities.achievement[cityNames[c]] = {};
+            data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
+            data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
+            data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
+            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
+        }
+    }
   
   console.log('✅ Sheet data parsed successfully!');
   return data;
