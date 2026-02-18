@@ -11933,7 +11933,45 @@ function renderTotalOverviewTable() {
     if (btn) btn.textContent = '📅 Collapse Daily View';
   }
   
-  console.log('✅ Total Overview table rendered from sheet data (days: ' + numDays + ', expanded: ' + wasExpanded + ')');
+  // Update summary cards from sheet data
+  try {
+    var cardsRow = document.querySelector('#totalOverviewContent .adv-cards-row');
+    if (cardsRow) {
+      var cards = cardsRow.querySelectorAll('.adv-card');
+      var mtdVal = parseFloat(String(tov.mtd).replace(/[%,]/g, ''));
+      var w1Val = parseFloat(String(tov.w1).replace(/[%,]/g, ''));
+      var w2Val = parseFloat(String(tov.w2).replace(/[%,]/g, ''));
+      var gapVal = parseFloat(String(tov.gapMTD).replace(/[%,]/g, ''));
+      var targetVal = fmt(tov.targetMTD);
+
+      function cardColor(v) { return v >= 95 ? 'green' : v >= 90 ? 'amber' : 'red'; }
+
+      // Card 0: MTD Achievement
+      if (cards[0]) {
+        cards[0].className = 'adv-card ' + cardColor(mtdVal) + ' commentable-section';
+        cards[0].querySelector('.card-value').textContent = mtdVal.toFixed(1) + '%';
+        cards[0].querySelector('.card-sub').textContent = 'Target: ' + targetVal;
+      }
+      // Card 1: W1 Performance
+      if (cards[1]) {
+        cards[1].className = 'adv-card ' + cardColor(w1Val) + ' commentable-section';
+        cards[1].querySelector('.card-value').textContent = w1Val.toFixed(1) + '%';
+      }
+      // Card 2: W2 Performance
+      if (cards[2]) {
+        cards[2].className = 'adv-card ' + cardColor(w2Val) + ' commentable-section';
+        cards[2].querySelector('.card-value').textContent = w2Val.toFixed(1) + '%';
+      }
+      // Card 3: Total GAP
+      if (cards[3]) {
+        cards[3].querySelector('.card-value').textContent = isNaN(gapVal) ? fmt(tov.gapMTD) : Math.round(gapVal).toLocaleString();
+      }
+    }
+  } catch(cardErr) {
+    console.warn('⚠️ Card update failed:', cardErr);
+  }
+
+  console.log('✅ Total Overview table & cards rendered from sheet data (days: ' + numDays + ', expanded: ' + wasExpanded + ')');
 }
 
 // Manual refresh button handler
