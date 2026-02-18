@@ -10790,18 +10790,39 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
         .partners-strat-table .bkdn-vlow {
             color:#b71c1c;
             font-weight:800;
-            background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22);
-            animation:partnersCriticalPulse 1.8s ease-in-out infinite;
+        }
+        .partners-strat-table .red-flag-cell,
+        .city-level-table .red-flag-cell {
+            position: relative;
+            background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+            box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.38);
+            animation:partnersCriticalPulse 1.3s ease-in-out infinite;
+        }
+        .partners-strat-table .red-flag-cell::after,
+        .city-level-table .red-flag-cell::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 2px;
+            pointer-events: none;
+            animation:partnersCriticalRing 1.3s ease-out infinite;
         }
         @keyframes partnersCriticalPulse {
-            0% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22), 0 0 0 0 rgba(239, 68, 68, 0.20); }
-            55% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.34), 0 0 0 6px rgba(239, 68, 68, 0); }
-            100% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22), 0 0 0 0 rgba(239, 68, 68, 0); }
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.16); }
+        }
+        @keyframes partnersCriticalRing {
+            0% { opacity: 0.9; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.03); }
         }
         @media (prefers-reduced-motion: reduce) {
             .partners-strat-table .val-critical,
-            .partners-strat-table .bkdn-vlow {
+            .partners-strat-table .bkdn-vlow,
+            .city-level-table .red-flag-cell,
+            .city-level-table .red-flag-cell::after,
+            .partners-strat-table .red-flag-cell,
+            .partners-strat-table .red-flag-cell::after {
                 animation: none;
             }
         }
@@ -11260,6 +11281,56 @@ function getGapColorClass(val) {
   if(v <= 2.0) return 'val-good';
   if(v <= 3.0) return 'val-warning';
   return 'val-critical';
+}
+
+function getDailyFlagIndexes(values, mode) {
+    if(!Array.isArray(values) || values.length === 0) return {};
+
+    var clean = values.map(function(v) {
+        var n = parseFloat(v);
+        return isNaN(n) ? null : n;
+    });
+
+    var valid = clean.filter(function(v) { return v !== null; });
+    if(valid.length === 0) return {};
+
+    var avg = valid.reduce(function(a, b) { return a + b; }, 0) / valid.length;
+    var avgAbs = valid.reduce(function(a, b) { return a + Math.abs(b); }, 0) / valid.length;
+    var candidates = [];
+
+    for(var i=0; i<clean.length; i++) {
+        var v = clean[i];
+        if(v === null) continue;
+
+        var severity = 0;
+        if(mode === 'high') {
+            severity = v - avg;
+        } else if(mode === 'abs-high') {
+            severity = Math.abs(v) - avgAbs;
+        } else {
+            severity = avg - v;
+        }
+
+        if(severity > 0) {
+            candidates.push({ idx: i, score: severity, value: v });
+        }
+    }
+
+    if(candidates.length === 0) return {};
+
+    candidates.sort(function(a, b) {
+        if(b.score !== a.score) return b.score - a.score;
+        if(mode === 'low') return a.value - b.value;
+        if(mode === 'high') return b.value - a.value;
+        return Math.abs(b.value) - Math.abs(a.value);
+    });
+
+    var dynamicMax = Math.max(1, Math.round(valid.length * 0.2));
+    var maxFlags = Math.min(4, dynamicMax);
+    var chosen = candidates.slice(0, Math.min(maxFlags, candidates.length));
+    var flagged = {};
+    chosen.forEach(function(item) { flagged[item.idx] = true; });
+    return flagged;
 }
 
 var advChartInited = false;
@@ -11870,6 +11941,29 @@ function _renderPartnerCatInner(cat) {
       var sheetKey = catMap[cat];
       var sc = sheetKey && sheetDataCache.partners[sheetKey];
       if (sc && typeof sc.mtd === 'number' && !isNaN(sc.mtd) && sc.targetValues && sc.targetValues.length > 0) {
+                var sheetBreakdown = [sc.rate100, sc.rate95, sc.rate90, sc.rate80, sc.rateLess80];
+                var fallbackBreakdown = d.breakdown;
+                var partnerCount = (sc.numPartners && sc.numPartners.length > 0) ? sc.numPartners[0] : 0;
+                var hasValidBreakdown = sheetBreakdown.every(function(row) {
+                    return Array.isArray(row) && row.length >= 3 && row.every(function(v) {
+                        return typeof v === 'number' && !isNaN(v) && v >= 0;
+                    });
+                });
+
+                if (hasValidBreakdown && partnerCount > 0) {
+                    hasValidBreakdown = sheetBreakdown.every(function(row) {
+                        if (row[0] > 100) return false; // MTD value should be a percentage
+                        for (var i = 1; i < row.length; i++) {
+                            if (row[i] > partnerCount) return false; // Count cannot exceed total partners
+                        }
+                        return true;
+                    });
+                }
+
+                if (!hasValidBreakdown) {
+                    console.warn('⚠️ Invalid/missing slab breakdown for', cat, '- using hardcoded fallback slabs');
+                }
+
         console.log('📊 Overriding', cat, 'with Google Sheets data');
         d = {
           title: sc.title || d.title,
@@ -11881,7 +11975,7 @@ function _renderPartnerCatInner(cat) {
           count: sc.numPartners[0],
           insight: d.insight,
           data: [sc.targetValues, sc.numPartners, sc.onlineRiders, sc.deliveryRiders, sc.achievementRate],
-          breakdown: [sc.rate100, sc.rate95, sc.rate90, sc.rate80, sc.rateLess80],
+                    breakdown: hasValidBreakdown ? sheetBreakdown : fallbackBreakdown,
           daily: sc.daily
         };
       } else {
@@ -11925,15 +12019,24 @@ function _renderPartnerCatInner(cat) {
   var rows = ['Target','Number of Partners','Online Riders','Delivery Riders','Achievement %'];
   for(var r=0; r<5; r++) {
     html += '<tr><td>'+(r===4?'<strong>'+rows[r]+'</strong>':rows[r])+'</td>';
+        var rowDailyFlags = (r===4) ? getDailyFlagIndexes(d.data[r].slice(3), 'low') : {};
     for(var c=0; c<3; c++) {
       var val = d.data[r][c];
       var cls = 'period-col';
-      if(r===4 && c>0) cls += ' '+getColorClass(val);
+            if(r===4 && c>0) {
+                var periodColorClass = getColorClass(val);
+                cls += ' '+periodColorClass;
+            }
       html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
       var val = d.data[r][c];
-      var cls = (r===4) ? 'adv-daily-cols '+getColorClass(val) : 'adv-daily-cols';
+            var cls = 'adv-daily-cols';
+            if(r===4) {
+                var dailyColorClass = getColorClass(val);
+                cls += ' '+dailyColorClass;
+                if(rowDailyFlags[c-3]) cls += ' red-flag-cell';
+            }
       html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
     html += '</tr>';
@@ -11957,23 +12060,24 @@ function _renderPartnerCatInner(cat) {
   }
   for(var b=0; b<5; b++) {
     var isNeg = (b === 4); // <80% row
+        var breakdownDailyFlags = getDailyFlagIndexes(d.breakdown[b].slice(3), isNeg ? 'high' : 'low');
     html += '<tr><td>'+breakdownRows[b]+'</td>';
     // MTD column (index 0) is already a percentage
     var mtdVal = d.breakdown[b][0];
     var mtdCls = getBkdnColor(mtdVal, isNeg);
-    html += '<td class="period-col '+mtdCls+'">'+(mtdVal % 1 !== 0 ? mtdVal.toFixed(1) : mtdVal)+'%</td>';
+        html += '<td class="period-col '+mtdCls+'">'+(mtdVal % 1 !== 0 ? mtdVal.toFixed(1) : mtdVal)+'%</td>';
     // W1 and W2 columns (index 1,2) are counts
     for(var c=1; c<3; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
       var cls = getBkdnColor(pct, isNeg);
-      html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+            html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     for(var c=3; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
       var cls = getBkdnColor(pct, isNeg);
-      html += '<td class="adv-daily-cols '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-3] ? ' red-flag-cell' : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     html += '</tr>';
   }
@@ -12173,17 +12277,21 @@ function renderCityMetric(metric) {
   // Determine number of daily columns from data
   var numDays = (data.daily && data.daily[0] && data.daily[0].length > 0) ? data.daily[0].length : numDaysAvailable;
   
-  html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
+    html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
   for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
   for(var c=0; c<cities.length; c++) {
+        var cityDaily = (data.daily[c] || []).slice(0, numDays);
+        var cityDailyFlags = getDailyFlagIndexes(cityDaily, metric==='gap' ? 'abs-high' : 'low');
     html += '<tr><td>'+cities[c]+'</td>';
     html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+data.mtd[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+data.w1[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+data.w2[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
-    for(var d=0; d<16; d++) {
-      html += '<td class="adv-daily-cols '+(metric==='ach'?getColorClass(data.daily[c][d]):getGapColorClass(data.daily[c][d]))+'">'+data.daily[c][d].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+        for(var d=0; d<numDays; d++) {
+            var dailyVal = cityDaily[d];
+            var dailyClass = (metric==='ach'?getColorClass(dailyVal):getGapColorClass(dailyVal));
+            html += '<td class="adv-daily-cols '+dailyClass+(cityDailyFlags[d] ? ' red-flag-cell' : '')+'">'+dailyVal.toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     }
     html += '</tr>';
   }
