@@ -10786,6 +10786,25 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-table .val-good { color:#558b2f; font-weight:600; }
     .adv-table .val-warning { color:#f57c00; font-weight:600; }
     .adv-table .val-critical { color:#c62828; font-weight:700; }
+        .partners-strat-table .val-critical,
+        .partners-strat-table .bkdn-vlow {
+            color:#b71c1c;
+            font-weight:800;
+            background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22);
+            animation:partnersCriticalPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes partnersCriticalPulse {
+            0% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22), 0 0 0 0 rgba(239, 68, 68, 0.20); }
+            55% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.34), 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.22), 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .partners-strat-table .val-critical,
+            .partners-strat-table .bkdn-vlow {
+                animation: none;
+            }
+        }
     .adv-legend { display:flex; gap:16px; margin:10px 0 14px; font-size:11px; flex-wrap:wrap; align-items:center; padding:10px 14px; background:#f9fafb; border-radius:8px; border:1px solid #e0e0e0; }
     .adv-legend-item { display:flex; align-items:center; gap:6px; }
     .adv-legend-dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
@@ -11899,7 +11918,7 @@ function _renderPartnerCatInner(cat) {
   // Determine number of daily columns from data
   var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
   
-  html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
+    html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
   for(var i=1; i<=numDays; i++) html+='<th class="adv-daily-cols">Day '+i+'</th>';
   html += '</tr></thead><tbody>';
   
@@ -30598,10 +30617,10 @@ const monthlyData = {
           if(count > 0) {
             badge.textContent = count;
             badge.style.display = 'flex';
-            document.querySelector('[onclick="openComments(\'' + section + '\')"').classList.add('has-comments');
+            document.querySelector('[onclick="openComments(\'' + section + '\')"]')?.classList.add('has-comments');
           } else {
             badge.style.display = 'none';
-            document.querySelector('[onclick="openComments(\'' + section + '\')"').classList.remove('has-comments');
+            document.querySelector('[onclick="openComments(\'' + section + '\')"]')?.classList.remove('has-comments');
           }
         }
       };
@@ -31039,11 +31058,11 @@ const monthlyData = {
             if(count > 0) {
               badge.textContent = count;
               badge.style.display = 'flex';
-              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"');
+              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"]');
               if(btn) btn.classList.add('has-comments');
             } else {
               badge.style.display = 'none';
-              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"');
+              var btn = document.querySelector('[onclick="openComments(\'' + sec + '\')"]');
               if(btn) btn.classList.remove('has-comments');
             }
           }

@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Open Dashboard (One Click)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5500/index.html",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Run Dashboard (Local Server)"
+    },
+    {
+      "name": "Open Live Dashboard",
+      "type": "msedge",
+      "request": "launch",
+      "url": "https://mgamal201777-oss.github.io/capacity-dashboard/"
+    }
+  ]
+}

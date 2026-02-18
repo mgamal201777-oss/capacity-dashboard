@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Dashboard (Local Server)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".vscode/serve.ps1",
+				"-Port",
+				"5500"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Publish Dashboard (Live)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".vscode/publish.ps1",
+				"-Message",
+				"dashboard publish"
+			],
+			"isBackground": false
+		}
+	]
+}
