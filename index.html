@@ -11825,9 +11825,25 @@ function renderTotalOverviewTable() {
   var tov = sheetDataCache.totalOverview;
   var numDays = tov.targetDaily ? tov.targetDaily.length : 16;
   
-  // Build table HTML
-  var tbody = document.querySelector('#totalOverviewTable tbody');
-  if (!tbody) return;
+  // Get table and check expanded state
+  var table = document.getElementById('totalOverviewTable');
+  if (!table) return;
+  
+  var wasExpanded = false;
+  var firstDailyCol = table.querySelector('.adv-daily-cols');
+  wasExpanded = firstDailyCol && firstDailyCol.classList.contains('expanded');
+  
+  // Render thead with dynamic day columns
+  var thead = table.querySelector('thead');
+  var theadHtml = '<tr><th>Metric</th><th>MTD</th><th>W1 (Feb 1-7)</th><th>W2 (Feb 8-14)</th>';
+  for (var i = 1; i <= numDays; i++) {
+    theadHtml += '<th class="adv-daily-cols">Day ' + i + '</th>';
+  }
+  theadHtml += '</tr>';
+  thead.innerHTML = theadHtml;
+  
+  // Render tbody
+  var tbody = table.querySelector('tbody');
   
   function fmt(val) {
     if (!val && val !== 0) return '-';
@@ -11899,10 +11915,21 @@ function renderTotalOverviewTable() {
   for (var i = 0; i < numDays; i++) {
     html += '<td class="adv-daily-cols">' + fmt(tov.gapDaily[i]) + '</td>';
   }
-  html += '</tr>';
   
   tbody.innerHTML = html;
-  console.log('✅ Total Overview table rendered from sheet data');
+  
+  // Restore expanded state after re-rendering
+  if (wasExpanded) {
+    var dailyCols = table.querySelectorAll('.adv-daily-cols');
+    dailyCols.forEach(function(col) {
+      col.classList.add('expanded');
+    });
+    // Update button text
+    var btn = table.closest('.adv-table-wrap').parentElement.querySelector('.adv-expand-btn');
+    if (btn) btn.textContent = '📅 Collapse Daily View';
+  }
+  
+  console.log('✅ Total Overview table rendered from sheet data (days: ' + numDays + ', expanded: ' + wasExpanded + ')');
 }
 
 // Manual refresh button handler
