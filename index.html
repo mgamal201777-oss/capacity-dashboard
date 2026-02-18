@@ -10794,25 +10794,37 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
         .partners-strat-table .red-flag-cell,
         .city-level-table .red-flag-cell {
             position: relative;
-            background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
-            box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.38);
-            animation:partnersCriticalPulse 1.3s ease-in-out infinite;
+            animation:partnersFlagPulse 0.9s ease-in-out 3;
+        }
+        .partners-strat-table .red-flag-cell.flag-light,
+        .city-level-table .red-flag-cell.flag-light {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%) !important;
+            box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.45);
+        }
+        .partners-strat-table .red-flag-cell.flag-high,
+        .city-level-table .red-flag-cell.flag-high {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+            box-shadow: inset 0 0 0 1px rgba(183, 28, 28, 0.42);
         }
         .partners-strat-table .red-flag-cell::after,
         .city-level-table .red-flag-cell::after {
             content: '';
             position: absolute;
             inset: 0;
-            border: 2px solid rgba(220, 38, 38, 0.4);
+            border: 2px solid rgba(245, 158, 11, 0.35);
             border-radius: 2px;
             pointer-events: none;
-            animation:partnersCriticalRing 1.3s ease-out infinite;
+            animation:partnersFlagRing 0.9s ease-out 3;
         }
-        @keyframes partnersCriticalPulse {
+        .partners-strat-table .red-flag-cell.flag-high::after,
+        .city-level-table .red-flag-cell.flag-high::after {
+            border-color: rgba(220, 38, 38, 0.42);
+        }
+        @keyframes partnersFlagPulse {
             0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.16); }
+            50% { filter: brightness(1.12); }
         }
-        @keyframes partnersCriticalRing {
+        @keyframes partnersFlagRing {
             0% { opacity: 0.9; transform: scale(1); }
             100% { opacity: 0; transform: scale(1.03); }
         }
@@ -11331,6 +11343,29 @@ function getDailyFlagIndexes(values, mode) {
     var flagged = {};
     chosen.forEach(function(item) { flagged[item.idx] = true; });
     return flagged;
+}
+
+function getAchievementFlagClass(value) {
+    var v = parseFloat(value);
+    if (isNaN(v)) return 'flag-light';
+    if (v < 85) return 'flag-high';
+    return 'flag-light';
+}
+
+function getGapFlagClass(value) {
+    var v = Math.abs(parseFloat(value));
+    if (isNaN(v)) return 'flag-light';
+    if (v > 3.0) return 'flag-high';
+    return 'flag-light';
+}
+
+function getBreakdownFlagClass(pct, isNegRow) {
+    var v = parseFloat(pct);
+    if (isNaN(v)) return 'flag-light';
+    if (isNegRow) {
+        return v > 20 ? 'flag-high' : 'flag-light';
+    }
+    return v < 40 ? 'flag-high' : 'flag-light';
 }
 
 var advChartInited = false;
@@ -12035,7 +12070,7 @@ function _renderPartnerCatInner(cat) {
             if(r===4) {
                 var dailyColorClass = getColorClass(val);
                 cls += ' '+dailyColorClass;
-                if(rowDailyFlags[c-3]) cls += ' red-flag-cell';
+                if(rowDailyFlags[c-3]) cls += ' red-flag-cell ' + getAchievementFlagClass(val);
             }
       html += '<td class="'+cls+'">'+(typeof val === 'number' && r===4 ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
     }
@@ -12077,7 +12112,7 @@ function _renderPartnerCatInner(cat) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
       var cls = getBkdnColor(pct, isNeg);
-            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-3] ? ' red-flag-cell' : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-3] ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     html += '</tr>';
   }
@@ -12291,7 +12326,8 @@ function renderCityMetric(metric) {
         for(var d=0; d<numDays; d++) {
             var dailyVal = cityDaily[d];
             var dailyClass = (metric==='ach'?getColorClass(dailyVal):getGapColorClass(dailyVal));
-            html += '<td class="adv-daily-cols '+dailyClass+(cityDailyFlags[d] ? ' red-flag-cell' : '')+'">'+dailyVal.toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+            var cityFlagClass = metric==='ach' ? getAchievementFlagClass(dailyVal) : getGapFlagClass(dailyVal);
+            html += '<td class="adv-daily-cols '+dailyClass+(cityDailyFlags[d] ? ' red-flag-cell ' + cityFlagClass : '')+'">'+dailyVal.toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
     }
     html += '</tr>';
   }
