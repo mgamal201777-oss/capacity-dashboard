@@ -12254,7 +12254,7 @@ function _renderPartnerCatInner(cat) {
 
                 if (hasValidBreakdown && partnerCount > 0) {
                     hasValidBreakdown = sheetBreakdown.every(function(row) {
-                        if (row[0] > 100) return false; // MTD value should be a percentage
+                        if (row[0] > partnerCount) return false; // MTD is now a count
                         for (var i = 1; i < row.length; i++) {
                             if (row[i] > partnerCount) return false; // Count cannot exceed total partners
                         }
