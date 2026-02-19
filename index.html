@@ -12353,18 +12353,12 @@ function _renderPartnerCatInner(cat) {
   // Achievement breakdown rows
   var breakdownRows = ['achievement rate ≥100%','achievement rate >=95% - <100%','achievement rate >=90% - <95%','achievement rate >=80% - <90%','achievement rate <80%'];
   var totalP = d.count;
-  function getBkdnColor(pct, isNeg) {
-    if(isNeg) { // <80% row: lower is better
-      if(pct <= 5) return 'bkdn-high';
-      if(pct <= 10) return 'bkdn-mid';
-      if(pct <= 20) return 'bkdn-low';
-      return 'bkdn-vlow';
-    } else { // ≥100%, >95%, >90%, >80%: higher is better
-      if(pct >= 80) return 'bkdn-high';
-      if(pct >= 60) return 'bkdn-mid';
-      if(pct >= 40) return 'bkdn-low';
-      return 'bkdn-vlow';
-    }
+    function getBkdnColorByRow(rowIdx) {
+        if (rowIdx === 0) return 'bkdn-high'; // >=100% positive
+        if (rowIdx === 1) return 'bkdn-mid';  // >=95% - <100% good
+        if (rowIdx === 2) return 'bkdn-low';  // >=90% - <95% warning
+        if (rowIdx === 3) return 'bkdn-low';  // >=80% - <90% warning
+        return 'bkdn-vlow';                    // <80% concern
   }
   for(var b=0; b<5; b++) {
     var isNeg = (b === 4); // <80% row
@@ -12373,19 +12367,19 @@ function _renderPartnerCatInner(cat) {
     // MTD column (index 0) is a count; show count + % of total partners
     var mtdVal = d.breakdown[b][0];
     var mtdPct = (mtdVal/totalP*100);
-    var mtdCls = getBkdnColor(mtdPct, isNeg);
+        var mtdCls = getBkdnColorByRow(b);
         html += '<td class="period-col '+mtdCls+'">'+mtdVal+' <span style="font-size:10px;opacity:0.85">('+mtdPct.toFixed(1)+'%)</span></td>';
     // W1 and W2 columns (index 1,2) are counts
     for(var c=1; c<3; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
-      var cls = getBkdnColor(pct, isNeg);
+            var cls = getBkdnColorByRow(b);
             html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     for(var c=3; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
-      var cls = getBkdnColor(pct, isNeg);
+            var cls = getBkdnColorByRow(b);
             html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-3] ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     html += '</tr>';
