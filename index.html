@@ -12370,10 +12370,11 @@ function _renderPartnerCatInner(cat) {
     var isNeg = (b === 4); // <80% row
         var breakdownDailyFlags = getDailyFlagIndexes(d.breakdown[b].slice(3), isNeg ? 'high' : 'low');
     html += '<tr><td>'+breakdownRows[b]+'</td>';
-    // MTD column (index 0) is already a percentage
+    // MTD column (index 0) is a count; show count + % of total partners
     var mtdVal = d.breakdown[b][0];
-    var mtdCls = getBkdnColor(mtdVal, isNeg);
-        html += '<td class="period-col '+mtdCls+'">'+(mtdVal % 1 !== 0 ? mtdVal.toFixed(1) : mtdVal)+'%</td>';
+    var mtdPct = (mtdVal/totalP*100);
+    var mtdCls = getBkdnColor(mtdPct, isNeg);
+        html += '<td class="period-col '+mtdCls+'">'+mtdVal+' <span style="font-size:10px;opacity:0.85">('+mtdPct.toFixed(1)+'%)</span></td>';
     // W1 and W2 columns (index 1,2) are counts
     for(var c=1; c<3; c++) {
       var val = d.breakdown[b][c];
