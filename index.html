@@ -10936,6 +10936,10 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .adv-expand-btn:hover { background:#1976d2; color:#fff; }
 .adv-daily-cols { display:none; }
     .adv-daily-cols.expanded { display:table-cell; }
+    .ach-trend { display:block; font-size:10px; font-weight:700; margin-top:2px; line-height:1.1; }
+    .ach-trend.up { color:#2e7d32; }
+    .ach-trend.down { color:#c62828; }
+    .ach-trend.flat { color:#607d8b; }
     .adv-table .bkdn-high { color:#2e7d32; font-weight:700; }
     .adv-table .bkdn-mid { color:#558b2f; font-weight:600; }
     .adv-table .bkdn-low { color:#f57c00; font-weight:600; }
@@ -11895,6 +11899,15 @@ function renderTotalOverviewTable() {
     var v = parseFloat(String(val).replace('%', ''));
     return isNaN(v) ? '-' : v.toFixed(1) + '%';
   }
+
+    function fmtTrendPct(curr, prev, label) {
+        if (isNaN(curr) || isNaN(prev) || prev === 0) return '';
+        var delta = ((curr - prev) / Math.abs(prev)) * 100;
+        if (!isFinite(delta)) return '';
+        var cls = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+        var arrow = delta > 0 ? '▲' : (delta < 0 ? '▼' : '▶');
+        return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
+    }
   
   // Achievement daily flag indexes (worst cells)
   var achDailyVals = (tov.achievementDaily || []).map(function(v){ return parseFloat(String(v).replace('%','')); });
@@ -11938,14 +11951,18 @@ function renderTotalOverviewTable() {
   
   // Row 4: Achievement %
   html += '<tr><td><strong>Achievement %</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span></td>';
-  html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
-  html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + '</td>';
-  html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + '</td>';
+    var mtdAch = parseFloat(String(tov.mtd).replace('%',''));
+    var w1Ach = parseFloat(String(tov.w1).replace('%',''));
+    var w2Ach = parseFloat(String(tov.w2).replace('%',''));
+    html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
+    html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + fmtTrendPct(w1Ach, mtdAch, 'WoW') + '</td>';
+    html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + fmtTrendPct(w2Ach, w1Ach, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
     var achVal = parseFloat(String(tov.achievementDaily[i]).replace('%',''));
     var cls = 'adv-daily-cols ' + getColorClass(achVal);
     if (achFlags[i]) cls += ' red-flag-cell ' + getAchievementFlagClass(achVal);
-    html += '<td class="' + cls + '">' + fmtPct(tov.achievementDaily[i]) + '</td>';
+        var prevAchVal = (i < numDays - 1) ? parseFloat(String(tov.achievementDaily[i + 1]).replace('%','')) : NaN;
+        html += '<td class="' + cls + '">' + fmtPct(tov.achievementDaily[i]) + fmtTrendPct(achVal, prevAchVal, 'DoD') + '</td>';
   }
   html += '</tr>';
   
