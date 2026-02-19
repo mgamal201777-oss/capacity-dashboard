@@ -12362,6 +12362,8 @@ function _renderPartnerCatInner(cat) {
             var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
             if (isAch && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
             if (isAch && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
+            if (isGap && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
+            if (isGap && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
@@ -12378,6 +12380,10 @@ function _renderPartnerCatInner(cat) {
             if (isAch) {
                 var prevDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
                 dailyDisplayVal += fmtTrendPct(val, prevDailyVal, 'DoD');
+            }
+            if (isGap) {
+                var prevGapDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
+                dailyDisplayVal += fmtTrendPct(val, prevGapDailyVal, 'DoD');
             }
             html += '<td class="'+cls+'">'+dailyDisplayVal+'</td>';
     }
@@ -12650,7 +12656,7 @@ function renderCityMetric(metric) {
         var mtdCellVal = data.mtd[c].toFixed(1) + '%';
         var w1CellVal = data.w1[c].toFixed(1) + '%';
         var w2CellVal = data.w2[c].toFixed(1) + '%';
-        if (metric === 'ach') {
+        if (metric === 'ach' || metric === 'gap') {
             w1CellVal += fmtTrendPct(data.w1[c], data.mtd[c], 'WoW');
             w2CellVal += fmtTrendPct(data.w2[c], data.w1[c], 'WoW');
         }
@@ -12662,7 +12668,7 @@ function renderCityMetric(metric) {
             var dailyClass = (metric==='ach'?getColorClass(dailyVal):getGapColorClass(dailyVal));
             var cityFlagClass = metric==='ach' ? getAchievementFlagClass(dailyVal) : getGapFlagClass(dailyVal);
                         var dailyCellVal = dailyVal.toFixed(1) + '%';
-                        if (metric === 'ach') {
+                        if (metric === 'ach' || metric === 'gap') {
                             var prevDailyVal = (d < numDays - 1) ? cityDaily[d + 1] : NaN;
                             dailyCellVal += fmtTrendPct(dailyVal, prevDailyVal, 'DoD');
                         }
