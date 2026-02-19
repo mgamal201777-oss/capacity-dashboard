@@ -11931,21 +11931,31 @@ function renderTotalOverviewTable() {
   
   // Row 2: Online Riders
   html += '<tr><td>Online Riders</td>';
-  html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.onlineW1) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.onlineW2) + '</td>';
+    var onlineMTD = parseFloat(String(tov.onlineMTD).replace(/[%,]/g,''));
+    var onlineW1 = parseFloat(String(tov.onlineW1).replace(/[%,]/g,''));
+    var onlineW2 = parseFloat(String(tov.onlineW2).replace(/[%,]/g,''));
+    html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
+    html += '<td class="period-col">' + fmt(tov.onlineW1) + fmtTrendPct(onlineW1, onlineMTD, 'WoW') + '</td>';
+    html += '<td class="period-col">' + fmt(tov.onlineW2) + fmtTrendPct(onlineW2, onlineW1, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
-    html += '<td class="adv-daily-cols">' + fmt(tov.onlineDaily[i]) + '</td>';
+        var onlineDailyVal = parseFloat(String(tov.onlineDaily[i]).replace(/[%,]/g,''));
+        var prevOnlineDailyVal = (i < numDays - 1) ? parseFloat(String(tov.onlineDaily[i + 1]).replace(/[%,]/g,'')) : NaN;
+        html += '<td class="adv-daily-cols">' + fmt(tov.onlineDaily[i]) + fmtTrendPct(onlineDailyVal, prevOnlineDailyVal, 'DoD') + '</td>';
   }
   html += '</tr>';
   
   // Row 3: Delivery Riders
   html += '<tr><td>Delivery Riders</td>';
-  html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.deliveryW1) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.deliveryW2) + '</td>';
+    var deliveryMTD = parseFloat(String(tov.deliveryMTD).replace(/[%,]/g,''));
+    var deliveryW1 = parseFloat(String(tov.deliveryW1).replace(/[%,]/g,''));
+    var deliveryW2 = parseFloat(String(tov.deliveryW2).replace(/[%,]/g,''));
+    html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
+    html += '<td class="period-col">' + fmt(tov.deliveryW1) + fmtTrendPct(deliveryW1, deliveryMTD, 'WoW') + '</td>';
+    html += '<td class="period-col">' + fmt(tov.deliveryW2) + fmtTrendPct(deliveryW2, deliveryW1, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
-    html += '<td class="adv-daily-cols">' + fmt(tov.deliveryDaily[i]) + '</td>';
+        var deliveryDailyVal = parseFloat(String(tov.deliveryDaily[i]).replace(/[%,]/g,''));
+        var prevDeliveryDailyVal = (i < numDays - 1) ? parseFloat(String(tov.deliveryDaily[i + 1]).replace(/[%,]/g,'')) : NaN;
+        html += '<td class="adv-daily-cols">' + fmt(tov.deliveryDaily[i]) + fmtTrendPct(deliveryDailyVal, prevDeliveryDailyVal, 'DoD') + '</td>';
   }
   html += '</tr>';
   
@@ -12349,6 +12359,9 @@ function _renderPartnerCatInner(cat) {
   for(var r=0; r<totalRows; r++) {
     var isAch = (r===4);
     var isGap = (r===5);
+        var isOnline = (r===2);
+        var isDelivery = (r===3);
+        var isTrendRow = isAch || isGap || isOnline || isDelivery;
     var isBold = isAch || isGap;
     var rowLabel = rows[r];
     if(isAch) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span>';
@@ -12360,10 +12373,8 @@ function _renderPartnerCatInner(cat) {
       var cls = 'period-col';
       if(isAch && c>0) { cls += ' '+getColorClass(val); }
             var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
-            if (isAch && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
-            if (isAch && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
-            if (isGap && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
-            if (isGap && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
+            if (isTrendRow && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
+            if (isTrendRow && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
@@ -12381,7 +12392,7 @@ function _renderPartnerCatInner(cat) {
                 var prevDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
                 dailyDisplayVal += fmtTrendPct(val, prevDailyVal, 'DoD');
             }
-            if (isGap) {
+            if (isGap || isOnline || isDelivery) {
                 var prevGapDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
                 dailyDisplayVal += fmtTrendPct(val, prevGapDailyVal, 'DoD');
             }
