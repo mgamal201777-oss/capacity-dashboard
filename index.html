@@ -11935,7 +11935,7 @@ function renderTotalOverviewTable() {
     var onlineW1 = parseFloat(String(tov.onlineW1).replace(/[%,]/g,''));
     var onlineW2 = parseFloat(String(tov.onlineW2).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.onlineW1) + fmtTrendPct(onlineW1, onlineMTD, 'WoW') + '</td>';
+    html += '<td class="period-col">' + fmt(tov.onlineW1) + '</td>';
     html += '<td class="period-col">' + fmt(tov.onlineW2) + fmtTrendPct(onlineW2, onlineW1, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
         var onlineDailyVal = parseFloat(String(tov.onlineDaily[i]).replace(/[%,]/g,''));
@@ -11950,7 +11950,7 @@ function renderTotalOverviewTable() {
     var deliveryW1 = parseFloat(String(tov.deliveryW1).replace(/[%,]/g,''));
     var deliveryW2 = parseFloat(String(tov.deliveryW2).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.deliveryW1) + fmtTrendPct(deliveryW1, deliveryMTD, 'WoW') + '</td>';
+    html += '<td class="period-col">' + fmt(tov.deliveryW1) + '</td>';
     html += '<td class="period-col">' + fmt(tov.deliveryW2) + fmtTrendPct(deliveryW2, deliveryW1, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
         var deliveryDailyVal = parseFloat(String(tov.deliveryDaily[i]).replace(/[%,]/g,''));
@@ -11965,7 +11965,7 @@ function renderTotalOverviewTable() {
     var w1Ach = parseFloat(String(tov.w1).replace('%',''));
     var w2Ach = parseFloat(String(tov.w2).replace('%',''));
     html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
-    html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + fmtTrendPct(w1Ach, mtdAch, 'WoW') + '</td>';
+    html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + '</td>';
     html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + fmtTrendPct(w2Ach, w1Ach, 'WoW') + '</td>';
   for (var i = 0; i < numDays; i++) {
     var achVal = parseFloat(String(tov.achievementDaily[i]).replace('%',''));
@@ -12373,7 +12373,6 @@ function _renderPartnerCatInner(cat) {
       var cls = 'period-col';
       if(isAch && c>0) { cls += ' '+getColorClass(val); }
             var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
-            if (isTrendRow && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
             if (isTrendRow && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
@@ -12667,8 +12666,7 @@ function renderCityMetric(metric) {
         var mtdCellVal = data.mtd[c].toFixed(1) + '%';
         var w1CellVal = data.w1[c].toFixed(1) + '%';
         var w2CellVal = data.w2[c].toFixed(1) + '%';
-        if (metric === 'ach' || metric === 'gap') {
-            w1CellVal += fmtTrendPct(data.w1[c], data.mtd[c], 'WoW');
+            if (metric === 'ach' || metric === 'gap') {
             w2CellVal += fmtTrendPct(data.w2[c], data.w1[c], 'WoW');
         }
         html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+mtdCellVal+'</td>';
