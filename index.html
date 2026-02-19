@@ -12330,6 +12330,15 @@ function _renderPartnerCatInner(cat) {
   
   // Determine number of daily columns from data
   var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
+
+    function fmtTrendPct(curr, prev, label) {
+        if (isNaN(curr) || isNaN(prev) || prev === 0) return '';
+        var delta = ((curr - prev) / Math.abs(prev)) * 100;
+        if (!isFinite(delta)) return '';
+        var cls = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+        var arrow = delta > 0 ? '▲' : (delta < 0 ? '▼' : '▶');
+        return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
+    }
   
     html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
   for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
@@ -12350,7 +12359,10 @@ function _renderPartnerCatInner(cat) {
       var val = d.data[r][c];
       var cls = 'period-col';
       if(isAch && c>0) { cls += ' '+getColorClass(val); }
-      html += '<td class="'+cls+'">'+(typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+            var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
+            if (isAch && c === 1) displayVal += fmtTrendPct(val, d.data[r][0], 'WoW');
+            if (isAch && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
+            html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
     for(var c=3; c<d.data[r].length; c++) {
       var val = d.data[r][c];
@@ -12362,7 +12374,12 @@ function _renderPartnerCatInner(cat) {
       if(isGap && rowDailyFlags[c-3]) {
         cls += ' red-flag-cell ' + getGapFlagClass(val);
       }
-      html += '<td class="'+cls+'">'+(typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val))+'</td>';
+            var dailyDisplayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
+            if (isAch) {
+                var prevDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
+                dailyDisplayVal += fmtTrendPct(val, prevDailyVal, 'DoD');
+            }
+            html += '<td class="'+cls+'">'+dailyDisplayVal+'</td>';
     }
     html += '</tr>';
   }
@@ -12612,6 +12629,15 @@ function renderCityMetric(metric) {
   // Determine number of daily columns from data
   var numDays = (data.daily && data.daily[0] && data.daily[0].length > 0) ? data.daily[0].length : numDaysAvailable;
   console.log('🔍 renderCityMetric', metric, '- numDays:', numDays, 'data.daily[0].length:', data.daily[0]?.length);
+
+    function fmtTrendPct(curr, prev, label) {
+        if (isNaN(curr) || isNaN(prev) || prev === 0) return '';
+        var delta = ((curr - prev) / Math.abs(prev)) * 100;
+        if (!isFinite(delta)) return '';
+        var cls = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+        var arrow = delta > 0 ? '▲' : (delta < 0 ? '▼' : '▶');
+        return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
+    }
   
     html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
   for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
@@ -12621,14 +12647,26 @@ function renderCityMetric(metric) {
         var cityDaily = (data.daily[c] || []).slice(0, numDays);
         var cityDailyFlags = getDailyFlagIndexes(cityDaily, metric==='gap' ? 'abs-high' : 'low');
     html += '<tr><td>'+cities[c]+'</td>';
-    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+data.mtd[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
-    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+data.w1[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
-    html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+data.w2[c].toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+        var mtdCellVal = data.mtd[c].toFixed(1) + '%';
+        var w1CellVal = data.w1[c].toFixed(1) + '%';
+        var w2CellVal = data.w2[c].toFixed(1) + '%';
+        if (metric === 'ach') {
+            w1CellVal += fmtTrendPct(data.w1[c], data.mtd[c], 'WoW');
+            w2CellVal += fmtTrendPct(data.w2[c], data.w1[c], 'WoW');
+        }
+        html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+mtdCellVal+'</td>';
+        html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+w1CellVal+'</td>';
+        html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+w2CellVal+'</td>';
         for(var d=0; d<numDays; d++) {
             var dailyVal = cityDaily[d];
             var dailyClass = (metric==='ach'?getColorClass(dailyVal):getGapColorClass(dailyVal));
             var cityFlagClass = metric==='ach' ? getAchievementFlagClass(dailyVal) : getGapFlagClass(dailyVal);
-            html += '<td class="adv-daily-cols '+dailyClass+(cityDailyFlags[d] ? ' red-flag-cell ' + cityFlagClass : '')+'">'+dailyVal.toFixed(1)+(metric==='ach'?'%':'%')+'</td>';
+                        var dailyCellVal = dailyVal.toFixed(1) + '%';
+                        if (metric === 'ach') {
+                            var prevDailyVal = (d < numDays - 1) ? cityDaily[d + 1] : NaN;
+                            dailyCellVal += fmtTrendPct(dailyVal, prevDailyVal, 'DoD');
+                        }
+                        html += '<td class="adv-daily-cols '+dailyClass+(cityDailyFlags[d] ? ' red-flag-cell ' + cityFlagClass : '')+'">'+dailyCellVal+'</td>';
     }
     html += '</tr>';
   }
