@@ -6990,29 +6990,6 @@ startBriefingAuto();
     <strong>💡 Note:</strong> Biggest partners = highest actual rider count. Smallest partners = lowest rider count. <strong>New partners</strong> = less than 3 months since their first delivery date with Keeta.
                             </p>
     </div>
-    <div style="margin-top: 15px;">
-    <h4 style="color: #0284c7; margin-bottom: 10px; font-size: 15px;">🏅 Top 20 Ranked Partners (by City Coverage)</h4>
-    <div class="table-container" style="margin: 0; max-height: 400px; overflow-y: auto;">
-    <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
-    <thead style="position: sticky; top: 0; background: #0284c7; z-index: 10;">
-    <tr style="color: white;">
-    <th style="padding: 6px; border: 1px solid #ddd;">#</th>
-    <th style="padding: 6px; border: 1px solid #ddd;">Partner</th>
-    <th style="padding: 6px; border: 1px solid #ddd;">Cities</th>
-    <th style="padding: 6px; border: 1px solid #ddd;">New/Old</th>
-    <th style="padding: 6px; border: 1px solid #ddd;">Actual Riders</th>
-    <th style="padding: 6px; border: 1px solid #ddd;">Target</th>
-    </tr>
-    </thead>
-    <tbody id="topRankedTableBody"></tbody>
-    </table>
-    </div>
-    <div style="margin-top: 8px; padding: 8px; background: #e0f2fe; border-left: 4px solid #0284c7; border-radius: 4px;">
-    <p style="margin: 0; font-size: 11px; color: #0c4a6e;">
-    <strong>📊</strong> Ranked by highest number of covered cities across the Kingdom (Feb only).
-    </p>
-    </div>
-    </div>
 </div>
 </div>
 </div>
@@ -25857,31 +25834,7 @@ const monthlyData = {
                 });
             }
 
-            // Update ranked partners table (by city coverage) - Feb only
-            const rankedBody = document.getElementById('topRankedTableBody');
-            if (rankedBody) {
-                if (monthData.top_ranked) {
-                    rankedBody.innerHTML = '';
-                    monthData.top_ranked.forEach((mover, idx) => {
-                        const bg = idx % 2 === 0 ? '#ffffff' : '#f9fafb';
-                        const newOldColor = mover.newold === 'New' ? '#10b981' : '#6b7280';
-                        const newOldBg = mover.newold === 'New' ? '#d1fae5' : '#f3f4f6';
-                        
-                        rankedBody.innerHTML += `
-                            <tr style="background: ${bg};">
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 700;">${mover.rank}</td>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-size: 10px;" title="${mover.partner}">${mover.partner.substring(0, 28)}</td>
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 600;">${mover.cities}</td>
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;"><span style="background: ${newOldBg}; color: ${newOldColor}; padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 10px;">${mover.newold}</span></td>
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 600;">${mover.actual}</td>
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${mover.target}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    rankedBody.innerHTML = '<tr><td colspan="6" style="padding: 12px; text-align: center; color: #6b7280; font-style: italic;">No ranked data available for this month.</td></tr>';
-                }
-            }
+            // City Coverage table removed per user request
         } catch(e) {
             console.error('Error updating Top Movers:', e);
         }
