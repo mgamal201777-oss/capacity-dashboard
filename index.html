@@ -504,7 +504,10 @@
 
         /* Slicer panel animations */
         .slicer-panel {
-            animation: slicerFadeIn 0.4s ease-out;
+            animation: none;
+        }
+        .slicer-panel-animate {
+            animation: slicerFadeIn 0.35s ease-out;
         }
         
         @keyframes slicerFadeIn {
@@ -7101,11 +7104,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = (view === 'performance') ? perf : size;
             target.style.display = 'block';
             
-            // Trigger animation if not initial load
+            // Trigger animation if not initial load - use rAF to avoid forced reflow
             if (animate) {
-                // Force reflow to restart animation
-                void target.offsetWidth;
-                target.classList.add('slicer-panel');
+                target.classList.remove('slicer-panel-animate');
+                requestAnimationFrame(function() { target.classList.add('slicer-panel-animate'); });
             }
             
             buttons.forEach(b => b.classList.toggle('active', b.dataset.view === view));
@@ -7169,9 +7171,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (p.dataset.view === view) {
                     p.style.display = 'block';
                     if (animate) {
-                        // Force reflow to restart animation
-                        void p.offsetWidth;
-                        p.classList.add('slicer-panel');
+                        // Use rAF to avoid forced reflow
+                        p.classList.remove('slicer-panel-animate');
+                        requestAnimationFrame(function() { p.classList.add('slicer-panel-animate'); });
                     }
                 }
             });
@@ -7224,9 +7226,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 panel.style.display = isActive ? 'block' : 'none';
                 
                 if (isActive && animate) {
-                    panel.classList.remove('slicer-panel');
-                    void panel.offsetWidth; // trigger reflow
-                    panel.classList.add('slicer-panel');
+                    panel.classList.remove('slicer-panel-animate');
+                    requestAnimationFrame(function() { panel.classList.add('slicer-panel-animate'); });
                 }
             });
         }
@@ -32958,8 +32959,6 @@ const monthlyData = {
                 if (shouldSkipTextNode(node)) continue;
                 // Skip text inside data-i18n-html blocks (already handled above)
                 if (node.parentElement && node.parentElement.closest('[data-i18n-html]')) continue;
-                // Skip text inside hidden panels (display:none on ancestor via inline style)
-                if (node.parentElement && node.parentElement.closest('[style*="display: none"]')) continue;
                 if (!textNodeOriginal.has(node)) textNodeOriginal.set(node, node.nodeValue);
                 var base = textNodeOriginal.get(node);
                 if (!base || !base.trim()) continue;
