@@ -12895,6 +12895,8 @@ if(ovChartDet) {
                     }
                 }, 60);
             }
+            // Re-apply language translation after tab switch
+            if (window.dashboardScheduleLanguage) window.dashboardScheduleLanguage();
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -31670,10 +31672,25 @@ const monthlyData = {
     var isApplyingLanguage = false;
 
     var zhDict = {
+        // ── TAB LABELS ──
+        'Executive Summary': '执行摘要',
+        'Framework & Methodology': '框架与方法论',
+        'Month Overview': '月度概览',
+        'Monthly Insights (6 Months Overview)': '月度洞察（6个月概览）',
+        'Monthly insights (6 months comparison)': '月度洞察（6个月对比）',
+        'Target Adjustment Analysis': '目标调整分析',
+        'Future Strategy & Roadmap': '未来战略与路线图',
+        'Capacity Achievement "Daily View"': '产能达成「每日视图」',
+        // ── HEADER ──
+        'Partner Capacity Dashboard': '合作商产能仪表盘',
+        'January 2026 vs February 2026 Analysis': '2026年1月 vs 2026年2月分析',
+        'Print': '打印',
+        'Export CSV': '导出CSV',
+        'Refresh Data': '刷新数据',
+        // ── DAILY VIEW ──
         'Total Overview': '总览',
         'Partners Stratification': '合作商分层',
         'City Level Data': '城市层级数据',
-        'Refresh Data': '刷新数据',
         'Data synced successfully': '数据同步成功',
         'Fetching data from Google Sheets...': '正在从 Google 表格获取数据...',
         'Syncing with Google Sheets...': '正在与 Google 表格同步...',
@@ -31682,7 +31699,6 @@ const monthlyData = {
         'Color Legend (GAP %):': '颜色图例（GAP %）：',
         'Overall Performance Summary': '整体表现汇总',
         'Metric': '指标',
-        'Target': '目标',
         'Online Riders': '在线骑手',
         'Delivery Riders': '配送骑手',
         'Number of Partners': '合作商数量',
@@ -31703,7 +31719,6 @@ const monthlyData = {
         'W1 Performance': 'W1 表现',
         'W2 Performance': 'W2 表现',
         'Total GAP': '总差距',
-        'Riders': '骑手',
         'Riders | Online vs Del': '骑手 | 在线 vs 配送',
         'Target:': '目标：',
         'Good Partners': '优质合作商',
@@ -31725,31 +31740,319 @@ const monthlyData = {
         'Post Comment': '发布评论',
         'WoW': '周环比',
         'DoD': '日环比',
-        'Stable': '稳定',
         'Declining trend': '下降趋势',
-        'Excellent': '优秀',
-        'Good': '良好',
-        'Warning': '预警',
-        'Critical': '严重',
         'achievement rate ≥100%': '达成率 ≥100%',
         'achievement rate >=95% - <100%': '达成率 >=95% - <100%',
         'achievement rate >=90% - <95%': '达成率 >=90% - <95%',
         'achievement rate >=80% - <90%': '达成率 >=80% - <90%',
-        'achievement rate <80%': '达成率 <80%'
+        'achievement rate <80%': '达成率 <80%',
+        // ── EXECUTIVE SUMMARY ──
+        'February 2026 Partner Capacity Analysis': '2026年2月合作商产能分析',
+        'High-Level Management View': '管理层高层视图',
+        'MoM Change': '月环比变化',
+        'Total Riders': '骑手总数',
+        'Active Partners': '活跃合作商',
+        'Total Riders (Feb)': '骑手总数（2月）',
+        'Partners with Target': '有目标的合作商',
+        'of 643 total partners': '共643个合作商',
+        'Avg Target/Partner': '平均目标/合作商',
+        'Stable vs January': '较1月保持稳定',
+        'New Partners': '新合作商',
+        '17 out of assessment': '17家完成评估',
+        'Zero-Target Partners': '零目标合作商',
+        '3 Term, 70 Phased, 19 No Jan': '3家终止，70家分阶段，19家无1月',
+        '↓ 17.5% capacity vs Jan': '↓较1月产能降低17.5%',
+        '↓ 3,088 from Jan (22,453)': '↓较1月（22,453）减少3,088',
+        'February 2026 Capacity Strategy': '2026年2月产能策略',
+        'Re-balancing:': '再平衡：',
+        'Strategic redistribution, not uniform cuts': '战略性重新分配，非统一削减',
+        'Overall Reduction:': '整体降幅：',
+        '13.8% below Jan (-3,088 riders)': '低于1月13.8%（-3,088名骑手）',
+        'Headcount Alignment:': '人员编制调整：',
+        'Restructure base for high avg scale': '重构基础以提升平均规模',
+        'FR% Primary Gate:': 'FR%主要门槛：',
+        'Low FR = no growth; severe = zero target': '低FR=不增长；严重=零目标',
+        'Performance-Based:': '绩效导向：',
+        'Quality + scale → allocation': '质量+规模→分配',
+        'New Partner Protection:': '新合作商保护：',
+        'Shield new partners from sharp cuts': '保护新合作商免受大幅削减',
+        'Primary Gate': '主要门槛',
+        'Zero Target': '零目标',
+        'Positive Highlights': '积极亮点',
+        'Bad Partners ↓72.6%:': '待改善合作商↓72.6%：',
+        'Dropped from 73 → 20 partners': '从73家降至20家',
+        'Average Partners Stable:': '中等合作商稳定：',
+        '262 partners at 8,414 riders (+1.0%)': '262家合作商，8,414名骑手（+1.0%）',
+        'Avg Target Held:': '平均目标保持：',
+        '35.1 riders/partner despite reduction': '尽管削减仍维持35.1名骑手/合作商',
+        'Quality Improvement:': '质量提升：',
+        'Portfolio mix shifting toward compliance': '组合结构向合规方向转变',
+        'Avg Partners': '中等合作商',
+        'Avg Target': '平均目标',
+        'Concerns & Risks': '关注点与风险',
+        'Overall Decline:': '整体下滑：',
+        'Total capacity down 13.8% (-3,088)': '总产能下降13.8%（-3,088）',
+        'Good Partners Down:': '优质合作商下降：',
+        'target reduction by 6.6%': '目标削减6.6%',
+        'Zero-Target Impact:': '零目标影响：',
+        '70 partners phased partners with no allocation (Impact on partner experience)': '70家合作商分阶段停止分配（影响合作商体验）',
+        'Capacity Contraction:': '产能收缩：',
+        'Fleet size reduction pressure': '车队规模压缩压力',
+        'Good Cap.': '优质产能',
+        'Q1 2026 Success Targets': 'Q1 2026成功目标',
+        'Avg riders/partner:': '平均骑手/合作商：',
+        'Raise from ~33 to ≥45': '从约33提升至≥45',
+        'Stability:': '稳定性：',
+        'Lock 3-month bands; ≥70% peak retention': '锁定3个月波段；≥70%高峰保留率',
+        'CPO impact:': 'CPO影响：',
+        '≥0.39 SAR/order reduction': '≥0.39沙特里亚尔/订单降低',
+        'Controls:': '管控：',
+        'SOP + maker/checker; -10% manual adj.': 'SOP+制作/核查；-10%人工调整',
+        'Mix shift:': '结构转变：',
+        'Good 58-60%; Bad 5%; add driver card': '优质58-60%；待改善5%；增加司机卡',
+        'Compliance:': '合规性：',
+        'FR 98-100% by March': '3月前FR达98-100%',
+        'Scale top:': '规模提升：',
+        '≥20 partners to ≥150 riders': '≥20家合作商达到≥150名骑手',
+        'Good Share': '优质占比',
+        'FR Target': 'FR目标',
+        'Strategy Logic:': '战略逻辑：',
+        // ── FRAMEWORK & METHODOLOGY ──
+        'How monthly capacity targets are built, protected, and aligned.': '每月产能目标如何建立、保护和校准。',
+        'Model: Multi-layer rules': '模型：多层规则',
+        'Cycle: Jan -> Feb': '周期：1月→2月',
+        'Signals: Perf + FR + Ops': '信号：绩效+FR+运营',
+        'Background': '背景',
+        'Context (Feb 2026)': '背景（2026年2月）',
+        'Stabilize good partners, reduce more from average/bad, protect new partners, and allow limited PMM exceptions.': '稳定优质合作商，进一步削减中等/待改善，保护新合作商，允许有限PMM例外。',
+        'Challenges': '挑战',
+        'Strategic Goals': '战略目标',
+        'Demand Coverage': '需求覆盖',
+        'Quality & Compliance': '质量与合规',
+        'Risk Mitigation': '风险缓解',
+        'Budget Adherence': '预算遵守',
+        'Model Layers': '模型层次',
+        'Calculation Flow (Feb)': '计算流程（2月）',
+        'For more info about the rules check out this link': '更多规则信息请查看此链接',
+        'Capacity target rules details': '产能目标规则详情',
+        'Short, auditable path from Jan baseline to Feb targets': '从1月基线到2月目标的简短可审计路径',
+        'Start Point': '起始点',
+        'Jan final target per partner serves as the baseline for Feb calculations.': '每个合作商1月最终目标作为2月计算基线。',
+        'Base Multipliers': '基础乘数',
+        'Performance, FR%, and ops factors reduce low performers and protect high performers.': '绩效、FR%和运营因素降低低绩效并保护高绩效。',
+        'Protected Partners': '受保护合作商',
+        'Term & Warnings': '终止与警告',
+        'FR% Fine-Tune': 'FR%微调',
+        'Apply FR% slabs by performance tier to fine-tune output and reward compliance.': '按绩效层级应用FR%档次微调输出并奖励合规。',
+        'Manual Override': '人工覆盖',
+        'PMM/ops exceptions for contracts, launches, staffing, or data issues.': 'PMM/运营针对合同、上线、人员或数据问题的例外。',
+        'Align to Feb Plan': '与2月计划对齐',
+        'Scale to Feb national total, then apply city-level scaling factors.': '扩展至2月全国总量，然后应用城市级别缩放因子。',
+        'Compliance Blocked Riders': '合规封锁骑手',
+        'Waiting for final list from compliance team. PMMs confirm recovery plans; actions follow on flagged risks. Critical for maintaining fleet quality standards.': '等待合规团队最终名单。PMM确认恢复计划；对标记风险采取行动。对维护车队质量标准至关重要。',
+        'Driver Card Slab': '司机卡档次',
+        'Not a core factor (overall rate 40.5%). Used to keep targets stable with smaller cuts for good/average partners >80%. Ensures compliance-ready capacity.': '非核心因素（整体比率40.5%）。用于对优质/中等合作商>80%进行较小削减以保持目标稳定。确保合规就绪产能。',
+        'Model Structure': '模型结构',
+        'Flexibility': '灵活性',
+        'Monthly tuning of coefficients and thresholds keeps alignment with CPO, service, and partner mix goals. Adapts to market conditions.': '对系数和阈值的每月调整保持与CPO、服务和合作商结构目标的一致性。适应市场条件。',
+        'Governance': '治理',
+        'Manual overrides are limited and audited to keep results consistent and defensible. SOP + maker/checker ensures accountability.': '人工覆盖受到限制和审计，以保持结果一致性和可辩护性。SOP+制作/核查确保问责制。',
+        'Audit Trail': '审计跟踪',
+        'Maker/Checker': '制作/核查',
+        'Monthly Tuning': '月度调整',
+        'CPO Alignment': 'CPO对齐',
+        'Adaptive': '自适应',
+        'Baseline': '基线',
+        'Protection': '保护',
+        // ── FUTURE STRATEGY ──
+        'Planning Horizon': '规划时间跨度',
+        'Next Implementation Phase:': '下一实施阶段：',
+        'February 2026 or Post-Ramadan (depending on timing)': '2026年2月或斋月后（视时机而定）',
+        '1. Refine Logic & Factors': '1. 优化逻辑与因素',
+        'Adjust performance and FR thresholds based on January results': '根据1月结果调整绩效和FR阈值',
+        'Fine-tune coefficients using real performance data': '使用真实绩效数据微调系数',
+        'Optimize balance between quality gates and growth targets': '优化质量门槛与增长目标之间的平衡',
+        '2. City-Tier Minimums & Order Targets': '2. 城市层级最低值与订单目标',
+        'Set differentiated minimum targets per city tier (T1 vs T2)': '为每个城市层级设定差异化最低目标（T1 vs T2）',
+        'Ensure city-level capacity aligns with demand': '确保城市级产能与需求对齐',
+        'Balance service level requirements with budget constraints': '平衡服务水平要求与预算限制',
+        '3. Partner Willingness & Commitment': '3. 合作商意愿与承诺',
+        'Introduce PMM-recorded partner willingness sheet': '引入PMM记录的合作商意愿表',
+        'Track recruitment plans and fleet investment commitments': '跟踪招募计划和车队投资承诺',
+        'Integrate as model signal post-Ramadan (when demand stabilizes)': '斋月后作为模型信号整合（需求稳定时）',
+        '4. Long-Term Strategic Partnerships': '4. 长期战略合作关系',
+        'Share capacity targets 2–3 months in advance for key partners': '提前2-3个月与关键合作商分享产能目标',
+        'Enable early hiring and operational planning': '支持提前招聘和运营规划',
+        'Build longer-term, win-win partnership relationships': '建立更长期、互利共赢的合作关系',
+        '5. Partner Retention Focus (Critical Priority)': '5. 合作商留存重点（关键优先项）',
+        'Prevent loss of good, compliant partners due to unrealistic capacity reductions': '防止因不切实际产能削减而流失优质合规合作商',
+        'Protection Strategies': '保护策略',
+        'Provide reasonable, profitable targets for quality partners': '为优质合作商提供合理、有利润的目标',
+        'Ensure targets support sustainable partner economics': '确保目标支持可持续合作商经济',
+        'Regular follow-up on partner concerns and feedback': '定期跟进合作商关切和反馈',
+        'Quick resolution of operational blockers': '快速解决运营障碍',
+        'Success Metrics': '成功指标',
+        'Partner satisfaction and engagement levels': '合作商满意度和参与度',
+        'Retention rate of "Good" performing partners': '"优质"绩效合作商留存率',
+        'Partner profitability and earning potential': '合作商盈利能力和创收潜力',
+        'Long-term partnership commitment indicators': '长期合作承诺指标',
+        'Implementation Timeline': '实施时间表',
+        'Phase 1: Immediate': '第1阶段：立即',
+        'Logic refinement': '逻辑优化',
+        'Partner retention focus': '合作商留存重点',
+        'Phase 2: Post-Ramadan': '第2阶段：斋月后',
+        'City-tier targets': '城市层级目标',
+        'Willingness tracking': '意愿跟踪',
+        'Phase 3: Long-term': '第3阶段：长期',
+        'Strategic partnerships': '战略合作关系',
+        'Advance planning (2-3 months)': '提前规划（2-3个月）',
+        'Strategic Outcomes': '战略成果',
+        'By implementing these initiatives, we aim to achieve:': '通过实施这些举措，我们旨在实现：',
+        'Enhanced Predictability:': '增强可预测性：',
+        'Partners can plan ahead with confidence': '合作商可以自信地提前规划',
+        'Improved Retention:': '改善留存率：',
+        'Keep quality partners engaged and profitable': '保持优质合作商的参与度和盈利能力',
+        'Better Alignment:': '更好对齐：',
+        'Partner capacity matches actual demand and capability': '合作商产能与实际需求和能力相匹配',
+        'Stronger Partnerships:': '更强合作关系：',
+        'Move from transactional to strategic relationships': '从交易性关系转向战略性关系',
+        'Operational Excellence:': '卓越运营：',
+        'Right capacity, right place, right time': '正确的产能，正确的地点，正确的时间',
+        // ── MONTHLY INSIGHTS ──
+        'Sep 2025 – Feb 2026 Structure (capacity target monthly overview)': '2025年9月-2026年2月结构（产能目标月度概览）',
+        'All months': '所有月份',
+        "What's inside:": '内容包括：',
+        'Overview & Trends': '概览与趋势',
+        'KPIs, targets, scale & MoM': '关键指标、目标、规模及月环比',
+        'Vehicle Type': '车辆类型',
+        'Target split by vehicle': '按车辆类型分割目标',
+        'Partner Movement': '合作商变动',
+        'Joiners, leavers & net flow': '加入者、离开者及净流量',
+        'New vs Old': '新vs旧',
+        'Tenure-based contribution': '基于任期的贡献',
+        'City Distribution': '城市分布',
+        'Allocation across cities': '跨城市分配',
+        'Tier City (T1 vs T2)': '城市层级（T1 vs T2）',
+        'Tier performance compare': '层级绩效对比',
+        'Partner Willingness': '合作商意愿',
+        'Sentiment & growth intent': '情绪与增长意向',
+        'Monthly Overview & Trends': '月度概览与趋势',
+        'Active Partners (with target)': '活跃合作商（有目标）',
+        'Total Partners': '合作商总数',
+        'Total Target': '总目标',
+        'Average Scale (riders / active partner)': '平均规模（骑手/活跃合作商）',
+        '# Of Partners with target increase in a month (all)': '每月目标增加的合作商数量（全部）',
+        'MoM change (Increase all)': '月环比变化（全部增加）',
+        'Monthly trend: Total Target & Total Partners': '月度趋势：总目标与合作商总数',
+        'Hover a month to see details.': '悬停月份查看详情。',
+        'MoM Change in Total Target (%)': '总目标月环比变化（%）',
+        'Monthly Target by Vehicle Type (Cars vs Bikes)': '按车辆类型的月度目标（汽车vs摩托车）',
+        'Monthly View': '月度视图',
+        'City View': '城市视图',
+        'Cars vs Bikes Evolution': '汽车vs摩托车演变',
+        'Cars Monthly Trend': '汽车月度趋势',
+        'Bikes Monthly Trend': '摩托车月度趋势',
+        // ── MONTH OVERVIEW (Business Metrics) ──
+        'Business Metrics Dashboard': '业务指标仪表盘',
+        'Executive Briefing': '执行简报',
+        'Keep Open': '保持展开',
+        'Highlights, Lowlights & Notes': '亮点、低点与说明',
+        'Key Challenges & Outcomes': '关键挑战与成果',
+        'Need to Know': '必知事项',
+        'Highlights': '亮点',
+        'Lowlights': '低点',
+        'Expand ▾': '展开 ▾',
+        'Collapse ▴': '收起 ▴',
+        'Challenge': '挑战',
+        'Solution': '解决方案',
+        'Outcome': '结果',
+        // ── TARGET ADJUSTMENT ANALYSIS ──
+        'Target Adjustment Analysis - February 2026': '目标调整分析 - 2026年2月',
+        'Strategic Capacity Reduction via Manual Adjustments': '通过人工调整实现战略性产能削减',
+        '61 partners received manual adjustments': '61家合作商接受了人工调整',
+        'Given Target': '给定目标',
+        'Adjusted Target': '调整后目标',
+        'Adjustments (Total capacity moved)': '调整（总移动产能）',
+        'Total Capacity Moved': '总移动产能',
+        'NET CHANGE': '净变化',
+        'GIVEN TARGET (BEFORE)': '给定目标（之前）',
+        'Algorithmic allocation': '算法分配',
+        'ADJUSTED TARGET (AFTER)': '调整后目标（之后）',
+        'Manual adjustment': '人工调整',
+        'Change Direction': '变化方向',
+        '# Of Partners with adjustment': '有调整的合作商数量',
+        '% of Total': '占总数百分比',
+        'Total Capacity': '总产能',
+        'Avg Change per Partner': '每合作商平均变化',
+        '📈 Target Increases': '📈 目标增加',
+        '📉 Target Decreases': '📉 目标减少',
+        '➡️ No Change': '➡️ 无变化',
+        'Capacity Addition': '产能增加',
+        'Capacity Reduction': '产能削减',
+        'Given Target vs Adjusted Target - Deep Dive': '给定目标 vs 调整后目标 - 深入分析',
+        'Target Allocation Comparison': '目标分配对比',
+        'City-Level Adjustment Analysis': '城市级调整分析',
+        'City': '城市',
+        'TOP REDUCTION REASON': '首要削减原因',
+        'STRATEGIC ALLOCATIONS': '战略分配',
+        'Driver Card Compliance Crisis': '司机卡合规危机',
+        'Driver card issues as the dominant factor': '司机卡问题为主导因素',
+        // ── COMMON TABLE / UI LABELS ──
+        'Target': '目标',
+        'Riders': '骑手',
+        'Partners': '合作商',
+        'Capacity': '产能',
+        'Allocation': '分配',
+        'Performance': '绩效',
+        'Compliance': '合规',
+        'Growth': '增长',
+        'Reduction': '削减',
+        'MoM': '月环比',
+        'Status': '状态',
+        'Overall': '整体',
+        'Stable': '稳定',
+        'Excellent': '优秀',
+        'Warning': '预警',
+        'Critical': '严重',
+        'Good': '良好',
+        'Average': '中等',
+        'Scale': '规模',
+        'New Partners': '新合作商',
+        'Total': '总计',
+        'Click to view detailed data table ▼': '点击查看详细数据表 ▼',
+        'Click to view detailed data ▼': '点击查看详细数据 ▼',
+        '▼ Click to view detailed data table ▼': '▼ 点击查看详细数据表 ▼',
+        '▼ Click to view detailed data ▼': '▼ 点击查看详细数据 ▼',
+        'Prev': '上一月',
+        'Next': '下一月',
+        'SOP': '标准操作程序',
+        'Controls': '管控',
+        'Monthly Insights (6 months comparison)': '月度洞察（6个月对比）',
     };
+
+    // Pre-sort keys once for performance
+    var _sortedKeys = null;
+    function getSortedKeys() {
+        if (!_sortedKeys) _sortedKeys = Object.keys(zhDict).sort(function(a, b) { return b.length - a.length; });
+        return _sortedKeys;
+    }
 
     function translateText(input) {
         if (!input || currentLang === 'en') return input;
         var output = input;
-
+        // Regex patterns for dynamic content
         output = output.replace(/\bDay\s*(\d+)\b/g, '第$1天');
-        output = output.replace(/\bFeb\s*1-7\b/g, '2月1-7日');
-        output = output.replace(/\bFeb\s*8-14\b/g, '2月8-14日');
-
-        var keys = Object.keys(zhDict).sort(function(a, b) { return b.length - a.length; });
+        output = output.replace(/\bFeb\s*1-7\b/gi, '2月1-7日');
+        output = output.replace(/\bFeb\s*8-14\b/gi, '2月8-14日');
+        output = output.replace(/\bWeek\s*(\d+)\b/g, '第$1周');
+        output = output.replace(/\bW(\d+)\b/g, 'W$1');
+        // Dictionary replacement (longest key first to avoid partial matches)
+        var keys = getSortedKeys();
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            output = output.split(key).join(zhDict[key]);
+            if (output.indexOf(key) !== -1) {
+                output = output.split(key).join(zhDict[key]);
+            }
         }
         return output;
     }
@@ -31776,7 +32079,8 @@ const monthlyData = {
                 if (!textNodeOriginal.has(node)) textNodeOriginal.set(node, node.nodeValue);
                 var base = textNodeOriginal.get(node);
                 if (!base || !base.trim()) continue;
-                node.nodeValue = translateText(base);
+                var translated = translateText(base);
+                if (node.nodeValue !== translated) node.nodeValue = translated;
             }
 
             var attrTargets = document.querySelectorAll('[title], [placeholder]');
@@ -31785,12 +32089,14 @@ const monthlyData = {
                 if (el.hasAttribute('title')) {
                     if (!el.hasAttribute('data-i18n-title-orig')) el.setAttribute('data-i18n-title-orig', el.getAttribute('title'));
                     var baseTitle = el.getAttribute('data-i18n-title-orig') || '';
-                    el.setAttribute('title', translateText(baseTitle));
+                    var tTitle = translateText(baseTitle);
+                    if (el.getAttribute('title') !== tTitle) el.setAttribute('title', tTitle);
                 }
                 if (el.hasAttribute('placeholder')) {
                     if (!el.hasAttribute('data-i18n-placeholder-orig')) el.setAttribute('data-i18n-placeholder-orig', el.getAttribute('placeholder'));
                     var basePh = el.getAttribute('data-i18n-placeholder-orig') || '';
-                    el.setAttribute('placeholder', translateText(basePh));
+                    var tPh = translateText(basePh);
+                    if (el.getAttribute('placeholder') !== tPh) el.setAttribute('placeholder', tPh);
                 }
             }
         } finally {
@@ -31800,12 +32106,14 @@ const monthlyData = {
 
     function scheduleApplyLanguage() {
         if (applyLangTimer) clearTimeout(applyLangTimer);
-        applyLangTimer = setTimeout(applyLanguageToDocument, 20);
+        applyLangTimer = setTimeout(applyLanguageToDocument, 150);
     }
 
     function setLanguage(lang) {
         currentLang = (lang === 'zh') ? 'zh' : 'en';
         localStorage.setItem(LANG_STORAGE_KEY, currentLang);
+        // Apply immediately then also schedule a follow-up for any dynamic content
+        applyLanguageToDocument();
         scheduleApplyLanguage();
     }
 
@@ -31830,15 +32138,27 @@ const monthlyData = {
         document.body.appendChild(wrap);
     }
 
-    var observer = new MutationObserver(function() {
-        if (currentLang !== 'en') scheduleApplyLanguage();
+    // MutationObserver: re-apply on any DOM change when Chinese is active
+    var observer = new MutationObserver(function(mutations) {
+        if (currentLang !== 'en') {
+            // Only schedule if actual content was added (not just attribute/text changes from our own translation)
+            for (var m = 0; m < mutations.length; m++) {
+                if (mutations[m].addedNodes && mutations[m].addedNodes.length > 0) {
+                    scheduleApplyLanguage();
+                    break;
+                }
+            }
+        }
     });
 
     initLanguageSelector();
     applyLanguageToDocument();
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Expose globals for use by switchTab and render functions
     window.dashboardSetLanguage = setLanguage;
+    window.dashboardApplyLanguage = applyLanguageToDocument;
+    window.dashboardScheduleLanguage = scheduleApplyLanguage;
 })();
 </script>
 
