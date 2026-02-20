@@ -31688,24 +31688,6 @@ const monthlyData = {
     var _i18nPendingNodes = []; // {node, base} pairs that autoTranslateMissing should patch directly
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
-    // ── Load persisted auto-translations from previous sessions ──
-    // These are merged into zhDict immediately so the API is never called again
-    (function loadPersistedTranslations() {
-        try {
-            var saved = localStorage.getItem(TRANS_CACHE_KEY);
-            if (saved) {
-                var parsed = JSON.parse(saved);
-                var keys = Object.keys(parsed);
-                for (var k = 0; k < keys.length; k++) {
-                    var key = keys[k];
-                    if (!zhDict[key]) { // don't overwrite manual dict entries
-                        zhDict[key] = parsed[key];
-                        _autoTranslateCache[key] = true; // mark as already known
-                    }
-                }
-            }
-        } catch(e) {}
-    })();
 
     var _properNounSet = new Set([
         'Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj',
@@ -32804,6 +32786,28 @@ const monthlyData = {
 
     // Pre-sort keys once for performance
     var _sortedKeys = null;
+
+    // ── Load persisted auto-translations from previous sessions ──
+    // Must run AFTER zhDict is fully defined. Merges saved API results into
+    // zhDict so the Google Translate API is never called again after first visit.
+    (function() {
+        try {
+            var saved = localStorage.getItem(TRANS_CACHE_KEY);
+            if (saved) {
+                var parsed = JSON.parse(saved);
+                var keys = Object.keys(parsed);
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    if (!zhDict[key]) {          // never overwrite manual entries
+                        zhDict[key] = parsed[key];
+                        _autoTranslateCache[key] = true; // skip re-fetching
+                    }
+                }
+                _sortedKeys = null;             // force key-sort refresh
+            }
+        } catch(e) {}
+    })();
+
     function getSortedKeys() {
         if (!_sortedKeys) _sortedKeys = Object.keys(zhDict).sort(function(a, b) { return b.length - a.length; });
         return _sortedKeys;
