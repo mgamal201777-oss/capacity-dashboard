@@ -5114,9 +5114,9 @@ startBriefingAuto();
     </div>
 
     <div style="display: flex; justify-content: center; gap: 12px; margin: 10px 0 18px 0; flex-wrap: wrap;">
-        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky active" data-view="top" data-tooltip="Top 20 partners by rider count, showing Jan vs Feb targets, riders, performance, and compliance." style="padding: 10px 18px; border: 2px solid #0ea5e9; border-radius: 10px; background: #0ea5e9; color: white; font-weight: 700; cursor: pointer; font-size: 13px;">Top 20 Biggest Partners</button>
-        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky" data-view="bottom" data-tooltip="Bottom 20 partners by rider count, highlighting low-scale partners and their Jan vs Feb target movement." style="padding: 10px 18px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-weight: 700; cursor: pointer; font-size: 13px;">Bottom 20 Smallest Partners</button>
-        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky" data-view="ranked" data-tooltip="Top 20 partners ranked by the highest number of covered cities across the Kingdom, reflecting the widest geographic reach." style="padding: 10px 18px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-weight: 700; cursor: pointer; font-size: 13px;">Top 20 Ranked Partners</button>
+        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky active" data-view="top" data-tooltip="Top 20 partners by rider count, showing Jan vs Feb targets, riders, performance, and compliance." data-i18n="Top 20 Biggest Partners" style="padding: 10px 18px; border: 2px solid #0ea5e9; border-radius: 10px; background: #0ea5e9; color: white; font-weight: 700; cursor: pointer; font-size: 13px;">Top 20 Biggest Partners</button>
+        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky" data-view="bottom" data-tooltip="Bottom 20 partners by rider count, highlighting low-scale partners and their Jan vs Feb target movement." data-i18n="Bottom 20 Smallest Partners" style="padding: 10px 18px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-weight: 700; cursor: pointer; font-size: 13px;">Bottom 20 Smallest Partners</button>
+        <button class="partners-overview-btn tooltip-btn tooltip-btn-sky" data-view="ranked" data-tooltip="Top 20 partners ranked by the highest number of covered cities across the Kingdom, reflecting the widest geographic reach." data-i18n="Top 20 Ranked Partners" style="padding: 10px 18px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-weight: 700; cursor: pointer; font-size: 13px;">Top 20 Ranked Partners</button>
     </div>
 
     <div class="table-container" style="margin-bottom: 14px; overflow-x: auto;">
@@ -30116,7 +30116,7 @@ const monthlyData = {
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('New/Old')}</th>
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Delivery riders')}</th>
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Total target')}</th>
-                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">${translateText('MoM %')}<br>(${translateText('Target')})</th>
+                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">${translateText('MoM %')}<br>(${translateText('Total target')})</th>
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Performance')}</th>
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg FR %')}</th>
                         <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg Driver Card %')}</th>
@@ -30143,9 +30143,9 @@ const monthlyData = {
             // Update note
             if (noteDiv) {
                 if (view === 'ranked') {
-                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb Note:</strong> Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.';
+                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb ' + translateText('Note:') + '</strong> ' + translateText('Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.');
                 } else {
-                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb Note:</strong> Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.';
+                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb ' + translateText('Note:') + '</strong> ' + translateText('Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.');
                 }
             }
 
@@ -31992,9 +31992,7 @@ const monthlyData = {
         'Warning': '预警',
         'Critical': '严重',
         'Good': '良好',
-        'good': '良好',
         'Average': '中等',
-        'average': '中等',
         'Scale': '规模',
         'Size': '规模',
         'Trend %': '趋势 %',
@@ -32305,17 +32303,9 @@ const monthlyData = {
         'Mid Partners Avg Scale': '中型合作商平均规模',
         'Small Partners Avg Scale': '小型合作商平均规模',
         'Bad': '待改善',
-        'bad': '待改善',
         'Big': '大型',
-        'big': '大型',
         'Mid': '中型',
-        'mid': '中型',
         'Small': '小型',
-        'small': '小型',
-        'New': '新',
-        'new': '新',
-        'Old': '旧',
-        'old': '旧',
         'Period:': '时段：',
 
         // Riders view sub-toggle buttons
@@ -32798,6 +32788,28 @@ const monthlyData = {
         'Top 20 partners by rider count, showing Jan vs Feb targets, riders, performance, and compliance.': '按骑手数量排名前20的合作商，显示1月 vs 2月目标、骑手、绩效和合规性。',
         'Bottom 20 partners by rider count, highlighting low-scale partners and their Jan vs Feb target movement.': '按骑手数量排名后20的合作商，突出显示小规模合作商及其1月 vs 2月目标变动。',
         'Top 20 partners ranked by the highest number of covered cities across the Kingdom, reflecting the widest geographic reach.': '按覆盖王国城市数量最多排名前20的合作商，反映最广泛的地理覆盖范围。',
+        
+        // Partner Overview - Table Elements
+        'Top 20 Biggest Partners': '前20大合作商',
+        'Bottom 20 Smallest Partners': '后20小合作商',
+        'Top 20 Ranked Partners': '前20排名合作商',
+        'Partner': '合作商',
+        '# of cities': '城市数',
+        'New/Old': '新/旧',
+        'Delivery riders': '配送骑手',
+        'Total target': '总目标',
+        'Performance': '绩效',
+        'Avg FR %': '平均FR%',
+        'Avg Driver Card %': '平均司机卡%',
+        'MoM %': '月环比%',
+        'good': '优质',
+        'average': '中等',
+        'bad': '待改善',
+        'new': '新',
+        'old': '旧',
+        'Note:': '注意：',
+        'Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.': '按王国最高城市覆盖率排名前20的合作商（仅2月）。显示地理覆盖范围最广的合作商。绩效、FR及DC比例均为所有覆盖城市的平均值。',
+        'Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.': '表格按合作商比较1月 vs 2月。仅显示总目标的月环比%。总目标反映所有覆盖城市的骑手数。绩效基于最高目标城市。FR及DC比例为城市平均值。',
     };
 
     // ── HTML BLOCK DICTIONARY (for elements with mixed <strong>+text content) ──
