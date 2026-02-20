@@ -7110,7 +7110,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             buttons.forEach(b => b.classList.toggle('active', b.dataset.view === view));
             if (window.monthlyCharts && Array.isArray(window.monthlyCharts)) {
-                window.monthlyCharts.forEach(c => { try { c.resize(); } catch(e) {} });
+                // Only resize charts that are currently visible
+                window.monthlyCharts.forEach(c => { try { if (c && c.canvas && c.canvas.offsetParent) c.resize(); } catch(e) {} });
             }
             // Resize Total Target Share charts
             if (targetKey === 'totalTargetShare') {
@@ -8831,7 +8832,8 @@ setTimeout(function() {
         if (dec) dec.style.display = (view === 'decreased') ? 'block' : 'none';
         buttons.forEach(b => b.classList.toggle('active', b.dataset.view === view));
         if (window.ridersSlabCharts) {
-            Object.values(window.ridersSlabCharts).forEach(c => { try { c && c.resize(); } catch(e) {} });
+            // Only resize charts that are currently visible
+            Object.values(window.ridersSlabCharts).forEach(c => { try { if (c && c.canvas && c.canvas.offsetParent) c.resize(); } catch(e) {} });
         }
     }
 
@@ -31680,6 +31682,7 @@ const monthlyData = {
     var textNodeOriginal = new WeakMap();
     var applyLangTimer = null;
     var isApplyingLanguage = false;
+    var _i18nQuickMode = false; // when true: skip expensive chart-update step (used for autoTranslate callbacks)
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
     // Proper nouns (city names, partner brand names, month abbreviations) — never translated
@@ -32899,6 +32902,7 @@ const monthlyData = {
         }
         if (added > 0) {
             _sortedKeys = null; // reset sorted key cache
+            _i18nQuickMode = true; // only re-translate text nodes, skip chart rebuild
             scheduleApplyLanguage(); // re-apply with new translations
         }
     }
@@ -32906,6 +32910,8 @@ const monthlyData = {
     function applyLanguageToDocument() {
         if (isApplyingLanguage) return;
         isApplyingLanguage = true;
+        var quickMode = _i18nQuickMode; // capture and reset before any async
+        _i18nQuickMode = false;
         try {
             // ── Step 1: Handle data-i18n-html blocks (innerHTML swap) ──
             var htmlBlocks = document.querySelectorAll('[data-i18n-html]');
@@ -32941,6 +32947,8 @@ const monthlyData = {
                 if (shouldSkipTextNode(node)) continue;
                 // Skip text inside data-i18n-html blocks (already handled above)
                 if (node.parentElement && node.parentElement.closest('[data-i18n-html]')) continue;
+                // Skip text inside hidden panels (display:none on ancestor via inline style)
+                if (node.parentElement && node.parentElement.closest('[style*="display: none"]')) continue;
                 if (!textNodeOriginal.has(node)) textNodeOriginal.set(node, node.nodeValue);
                 var base = textNodeOriginal.get(node);
                 if (!base || !base.trim()) continue;
@@ -32985,7 +32993,9 @@ const monthlyData = {
             }
 
             // ── Step 5: Chart.js canvas label translation ──
-            if (typeof Chart !== 'undefined' && Chart.getChart) {
+            // Only translate visible charts (offsetParent is null when display:none on element or ancestor)
+            // Skip entirely on quick-mode passes (autoTranslateMissing callbacks) - charts already translated
+            if (!quickMode && typeof Chart !== 'undefined' && Chart.getChart) {
                 var chartIds = [
                     'changesChart','ridersSlabChart','partnerMovementTrendChart','partnerMovementQualityChart',
                     'manualAdjustChart','changesChart2','performanceChart','scaleChart','ridersSlabChartIncreased',
@@ -33010,6 +33020,7 @@ const monthlyData = {
                 for (var ci = 0; ci < chartIds.length; ci++) {
                     var ctxEl = document.getElementById(chartIds[ci]);
                     if (!ctxEl) continue;
+                    if (!ctxEl.offsetParent) continue; // skip charts in hidden tabs/panels
                     var chartInst = Chart.getChart(ctxEl);
                     if (!chartInst) continue;
                     var changed = false;
