@@ -32876,6 +32876,11 @@ const monthlyData = {
         // Regex patterns for dynamic content
         // Never translate proper nouns (city names, partner brand names)
         if (_properNounSet.has(output.trim())) return input;
+        
+        // ── PRIORITY: Check dictionary for exact match FIRST (before any regex) ──
+        // This prevents tooltips and other complete phrases from being broken by partial replacements
+        if (zhDict[input]) return zhDict[input];
+        
         output = output.replace(/\bDay\s*(\d+)\b/g, '第$1天');
         output = output.replace(/\bFeb\s*1-7\b/gi, '2月1-7日');
         output = output.replace(/\bFeb\s*8-14\b/gi, '2月8-14日');
