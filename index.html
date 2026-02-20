@@ -2474,16 +2474,17 @@ function pinBriefingCards() {
     const icon = document.getElementById('briefingPinIcon');
     const text = document.getElementById('briefingPinText');
     const autoLabel = document.getElementById('briefingAutoLabel');
+    const isZh = localStorage.getItem('dashboard_lang_pref_v1') === 'zh';
 
     if (window._briefingPinned) {
         // Pin = keep expanded, stop auto
         setBriefingState(true);
         icon.textContent = '🔒';
-        text.textContent = 'Pinned Open';
+        text.textContent = isZh ? '已固定展开' : 'Pinned Open';
         btn.style.borderColor = '#6366f1';
         btn.style.background = 'linear-gradient(135deg, #eef2ff, #e0e7ff)';
         btn.style.color = '#4f46e5';
-        autoLabel.textContent = '■ PINNED';
+        autoLabel.textContent = isZh ? '■ 已固定' : '■ PINNED';
         autoLabel.style.color = '#059669';
         autoLabel.style.background = '#d1fae5';
         autoLabel.style.animation = 'none';
@@ -2491,11 +2492,11 @@ function pinBriefingCards() {
         // Unpin = resume auto
         setBriefingState(false);
         icon.textContent = '📌';
-        text.textContent = 'Keep Open';
+        text.textContent = isZh ? '保持展开' : 'Keep Open';
         btn.style.borderColor = '#cbd5e1';
         btn.style.background = 'linear-gradient(135deg, #f8fafc, #f1f5f9)';
         btn.style.color = '#475569';
-        autoLabel.textContent = '● AUTO';
+        autoLabel.textContent = isZh ? '● 自动' : '● AUTO';
         autoLabel.style.color = '#6366f1';
         autoLabel.style.background = '#eef2ff';
         autoLabel.style.animation = 'briefingPulse 2s ease-in-out infinite';
@@ -2512,12 +2513,13 @@ function toggleBriefingCards() {
         const text = document.getElementById('briefingPinText');
         const btn = document.getElementById('briefingPinBtn');
         const autoLabel = document.getElementById('briefingAutoLabel');
+        const isZh = localStorage.getItem('dashboard_lang_pref_v1') === 'zh';
         icon.textContent = '📌';
-        text.textContent = 'Keep Open';
+        text.textContent = isZh ? '保持展开' : 'Keep Open';
         btn.style.borderColor = '#cbd5e1';
         btn.style.background = 'linear-gradient(135deg, #f8fafc, #f1f5f9)';
         btn.style.color = '#475569';
-        autoLabel.textContent = '● AUTO';
+        autoLabel.textContent = isZh ? '● 自动' : '● AUTO';
         autoLabel.style.color = '#6366f1';
         autoLabel.style.background = '#eef2ff';
         autoLabel.style.animation = 'briefingPulse 2s ease-in-out infinite';
@@ -32028,6 +32030,226 @@ const monthlyData = {
         'SOP': '标准操作程序',
         'Controls': '管控',
         'Monthly Insights (6 months comparison)': '月度洞察（6个月对比）',
+
+        // ── SECTION SLICER BAR ──
+        'Jump to section:': '跳转至：',
+        '📈 Performance Breakdown': '📈 绩效分解',
+        '📌 Performance & Scale Summary': '📌 绩效与规模汇总',
+        '📊 FR & Driver Card Compliance': '📊 FR与司机卡合规',
+        '🏙️ City Tier Performance': '🏙️ 城市层级绩效',
+        '🎯 Target Movement Analysis': '🎯 目标变动分析',
+        '📌 Top & Bottom Partners Overview': '📌 头尾部合作商概览',
+        '✅ February 2026 Success Metrics': '✅ 2026年2月成功指标',
+        '📊 Monthly Overview & Trends': '📊 月度概览与趋势',
+        '🚗🏍️ Vehicle Type Breakdown': '🚗🏍️ 车辆类型分解',
+        '📊 Partner Movement Analysis': '📊 合作商变动分析',
+        '👥 New vs Old Partners Analysis': '👥 新旧合作商分析',
+        '🏙️ City-wise Target Distribution': '🏙️ 城市目标分布',
+        '📊 Tier City Overview (T1 vs T2)': '📊 层级城市概览（T1 vs T2）',
+        '📊 Partner Willing Analysis': '📊 合作商意愿分析',
+
+        // ── KEY SECTION HEADERS ──
+        'Performance Breakdown': '绩效分解',
+        'Performance & Scale Summary (Jan vs Feb)': '绩效与规模汇总（1月 vs 2月）',
+        'FR & Driver Card Compliance Analysis': 'FR与司机卡合规分析',
+        'Top & Bottom Partners Overview (Jan vs Feb)': '头尾部合作商概览（1月 vs 2月）',
+        'Target Movement Analysis (Partners)': '目标变动分析（合作商）',
+        'Rider Slab Distribution (Jan vs Feb)': '骑手档次分布（1月 vs 2月）',
+        'City Tier Performance Analysis (Jan vs Feb)': '城市层级绩效分析（1月 vs 2月）',
+        'February 2026 Success Metrics': '2026年2月成功指标',
+        'Partner Movement Analysis (Increase / Decrease / No Change) — click to expand/collapse': '合作商变动分析（增加/减少/无变化）— 点击展开/收起',
+        'New vs Old Partners Analysis (by Partner Age) — click to expand/collapse': '新旧合作商分析（按合作商年龄）— 点击展开/收起',
+
+        // ── CARD LABELS (Month Overview) ──
+        'Good Perf.': '良好绩效',
+        'Avg Perf.': '平均绩效',
+        'Avg FR / DC %': '平均FR / DC%',
+        'MoM Partners': '月环比合作商',
+        'Net Movement': '净变动',
+        'Increased': '目标增加',
+        'Decreased': '目标减少',
+        'No Change': '无变化',
+        'Increase Partners': '增加合作商',
+        'Decrease Partners': '减少合作商',
+        'Partners with Target': '有目标的合作商',
+        'Total Target': '总目标',
+        'Avg Scale': '平均规模',
+        'Delivery Riders': '配送骑手',
+        'Small Scale': '小规模',
+        'Mid Scale': '中规模',
+        'Large Scale': '大规模',
+        'Peak Slab': '峰值档次',
+        'Partners with target in Feb.': '2月有目标的合作商',
+        'partners with target in Feb': '2月有目标的合作商',
+        'of 551 partners with target in Feb': '551家合作商中有目标在2月',
+        'Total partners with active capacity target in Feb. Tracks overall partner base.': '2月具有有效产能目标的合作商总数。追踪整体合作商基数。',
+        'Total capacity target value in Feb. Shows overall target volume.': '2月总产能目标值。展示整体目标规模。',
+        'Average scale per partner in Feb. Measures capacity density.': '2月每合作商平均规模。衡量产能密度。',
+        'Delivery riders across all partners in Feb. Tracks rider availability.': '2月所有合作商的配送骑手数。追踪骑手可用性。',
+
+        // ── BUTTONS / VIEW OPTIONS ──
+        'View:': '视图：',
+        'Total with Target': '含目标总计',
+        'Increased Target': '目标增加',
+        'Decreased Target': '目标减少',
+        'Top 20 Biggest Partners': '前20大合作商',
+        'Bottom 20 Smallest Partners': '后20小合作商',
+        'Top 20 Ranked Partners': '前20排名合作商',
+        'Compliance Distribution': '合规分布',
+        'Target Range Impact': '目标范围影响',
+        'City-wise Analysis': '城市分析',
+        'Breakdown': '分解',
+        'Total Increased': '总增加',
+        'Total Decreased': '总减少',
+        'Filter by:': '筛选：',
+        'All Partners': '全部合作商',
+        'All Partners with Performance': '含绩效的全部合作商',
+        'Compare Months:': '对比月份：',
+        'All vs With Target': '全部 vs 有目标',
+        'new vs old': '新 vs 旧',
+        'New vs Old': '新 vs 旧',
+        'Collapsed': '已收起',
+        'Pinned Open': '已固定展开',
+        '■ PINNED': '■ 已固定',
+        '● AUTO': '● 自动',
+        'FR Rate Distribution': 'FR比率分布',
+        'Driver Card Rate Distribution': '司机卡比率分布',
+        'Face Recognition (FR) Rate - All Partners vs Partners with Target': '面部识别（FR）比率 - 全部合作商 vs 有目标合作商',
+        'Overall view compares Jan vs Feb totals for partners with target, and splits movement into Increase, Decrease, and No Change so you can see net direction at a glance.': '总览视图对比1月 vs 2月有目标合作商总量，按增加、减少和无变化分解变动，快速感知净方向。',
+        'Breakdown view drills into the movement type and shows how Good/Average/Bad segments shifted from Jan to Feb, with MoM labels on Feb values for quick read.': '分解视图深入变动类型，展示优质/中等/待改善细分从1月到2月的变化，2月数值附月环比标签便于阅读。',
+        'Total with a target in selected view': '所选视图中有目标的总数',
+        'Number of partners shown in selected view': '所选视图中显示的合作商数量',
+        'Total target riders across all partners in Feb': '2月所有合作商的目标骑手总数',
+        'Partners with Good performance rating in Feb': '2月绩效评级为优质的合作商',
+        'Partners with Average performance rating in Feb': '2月绩效评级为中等的合作商',
+        'Average Face Recognition Rate / Driver Card % across partners in Feb': '2月合作商的平均面部识别率 / 司机卡比率',
+        'Top 20 partners by rider count, showing Jan vs Feb targets, riders, performance, and compliance.': '按骑手数量排序前20合作商，展示1月 vs 2月目标、骑手、绩效及合规情况。',
+        'Bottom 20 partners by rider count, highlighting low-scale partners and their Jan vs Feb target movement.': '按骑手数量排序后20合作商，重点展示小规模合作商及其1月 vs 2月目标变动。',
+        'Top 20 partners ranked by the highest number of covered cities across the Kingdom, reflecting the widest geographic reach.': '按覆盖城市数量排序前20合作商，反映最广泛的地理覆盖范围。',
+        'All partners with a target, shown by riders slab to compare Jan vs Feb distribution.': '所有有目标的合作商，按骑手档次展示以对比1月 vs 2月分布。',
+        'Only partners whose targets increased; shows which rider slabs gained the most.': '仅显示目标增加的合作商；展示哪些骑手档次增长最多。',
+        'Only partners whose targets decreased; highlights slabs with the biggest declines.': '仅显示目标减少的合作商；重点显示降幅最大的档次。',
+        'Partner counts by compliance range for FR/Driver Card.': 'FR/司机卡合规范围内的合作商数量。',
+        'Target changes across compliance ranges (Jan → Feb) for FR/Driver Card.': 'FR/司机卡合规范围内目标变化（1月→2月）。',
+        'City averages and range distributions with risk highlights.': '城市平均值及范围分布，重点显示风险。',
+
+        // ── TABLE HEADERS ──
+        '# of cities': '城市数',
+        'New/Old': '新/旧',
+        'Total target': '总目标',
+        'MoM % (Target)': '月环比%（目标）',
+        'Avg FR %': '平均FR%',
+        'Avg Driver Card %': '平均司机卡%',
+        'Slab': '档次',
+        'Month': '月份',
+        'Total Increase': '总增加',
+        'Total Decrease': '总减少',
+        'No change': '无变化',
+        'Subtotal': '小计',
+        'Total With Target': '含目标总计',
+        'Partner': '合作商',
+        '#': '#',
+
+        // ── CHART TITLES ──
+        'Partner Capacity Changes': '合作商产能变化',
+        'Quality Distribution by Movement Type': '按变动类型的质量分布',
+        'Partner Movement by Type (Trend)': '按类型的合作商变动（趋势）',
+        'Partners with Increased Target by Riders Slab Distribution': '目标增加合作商的骑手档次分布',
+        'Partners with Decreased Target by Riders Slab Distribution': '目标减少合作商的骑手档次分布',
+        'Feb Target vs After Manual Adjustment (Good / Average / Bad Partners)': '2月目标 vs 人工调整后（优质/中等/待改善合作商）',
+        'Riders Slab Distribution (Jan vs Feb)': '骑手档次分布（1月 vs 2月）',
+        'Partner Performance Breakdown - Willingness by Target Size': '合作商绩效分解 - 按目标规模的意愿',
+        'Final Capacity Target — Our Rules vs Last Month Achievement (Performance breakdown)': '最终产能目标 — 规则 vs 上月达成（绩效分解）',
+        'Movement Distribution - All Partners': '变动分布 - 全部合作商',
+        'Quality Distribution - All Partners': '质量分布 - 全部合作商',
+        'Partners with Increased Target': '目标增加的合作商',
+        'Partners with Decreased Target': '目标减少的合作商',
+        'Partners with Same Target': '目标不变的合作商',
+        'Partners with Increases': '目标增加合作商',
+        'Partners with Decreases': '目标减少合作商',
+        'Active Partner Count': '活跃合作商数',
+
+        // ── CHART NOTES & DESCRIPTION PARAGRAPHS ──
+        'Distribution of 551 partners with active targets showing capacity direction: increases, unchanged, or decreases vs previous month.': '551家有效目标合作商的分布，展示产能方向：与上月相比增加、不变或减少。',
+        'Capacity targets for partners by performance segment (Good / Average / Bad) before and after PMM manual adjustments; shows how manual overrides impacted our rule-based targets.': '按绩效分段（优质/中等/待改善）的合作商产能目标，含PMM人工调整前后；展示人工覆盖对规则目标的影响。',
+        'Track partner target capacity movements: partners who increased, decreased, or maintained their targets across 6 months. Segmented by quality performance (Good ≥80% FR, Average 50-80% FR, Bad <50% FR).': '追踪合作商目标产能变动：6个月内增加、减少或维持目标的合作商，按质量绩效分段（优质≥80% FR，中等50-80% FR，待改善<50% FR）。',
+        'Analyze partner composition by tenure: newly onboarded (<1 month), recently added (<3 months), and established (>3 months). Compare capacity (Target), engagement (Active Count), scale efficiency (Avg Scale), and quality breakdown across all 6 months. Green/Red arrows show month-over-month trends.': '按任期分析合作商构成：新加入（<1个月）、近期加入（<3个月）和成熟合作商（>3个月）。对比6个月内的产能（目标）、参与度（活跃数量）、规模效率（平均规模）及质量分解。绿色/红色箭头显示月环比趋势。',
+        'Note: MoM% shown on Feb values. Bars: Jan vs Feb comparison.': '说明：月环比%显示在2月数值上。柱形图：1月 vs 2月对比。',
+        'Filter by period, performance, or scale to view avg scale & capacity breakdown. Overall avg scale is always included.': '按时段、绩效或规模筛选以查看平均规模和产能分解。整体平均规模始终包含。',
+        '🧭 Filter by period, performance, or scale to view avg scale & capacity breakdown. Overall avg scale is always included.': '🧭 按时段、绩效或规模筛选以查看平均规模和产能分解。整体平均规模始终包含。',
+        'ℹ️ Note: Table shows partners who completed assessment during each month. Partners without assessment data (new sign-ups, incomplete metrics) are excluded from these numbers.': 'ℹ️ 说明：表格显示每月完成评估的合作商。没有评估数据的合作商（新注册、指标不完整）不计入此数据。',
+        '📋 View Detailed Movement Table — click to expand': '📋 查看详细变动表 — 点击展开',
+        '📋 Note: Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.': '📋 说明：表格按合作商对比1月 vs 2月。月环比%仅适用于总目标。总目标反映所有覆盖城市的骑手数。绩效基于最高目标城市。FR和司机卡比率按城市平均。',
+        '📋 Overview: Analyze partner distribution by Face Recognition (FR) and Driver Card compliance rates across all segments.': '📋 概述：按面部识别（FR）和司机卡合规率分析各细分的合作商分布。',
+        '(Data updated till 25th Feb 2026)': '（数据更新至2026年2月25日）',
+        'Compliance Distribution': '合规分布',
+
+        // ── FR/DC SECTION LABELS ──
+        'AVG FR RATE': '平均FR比率',
+        'AVG DC RATE': '平均DC比率',
+        'All / With Target': '全部 / 有目标',
+        'FR Rate Distribution': 'FR比率分布',
+        'Driver Card Rate Distribution': '司机卡比率分布',
+        'All (643)': '全部（643）',
+        'New (158)': '新（158）',
+        'Old (485)': '旧（485）',
+        'All (551)': '全部（551）',
+        'New (127)': '新（127）',
+        'Old (424)': '旧（424）',
+        'All (534)': '全部（534）',
+        'Good (252)': '优质（252）',
+        'Bad (20)': '待改善（20）',
+
+        // ── LEGEND / CHART LABELS ──
+        'Increased': '增加',
+        'Decreased': '减少',
+        'No Change': '无变化',
+        'Good Partners Only': '仅优质合作商',
+        'Average Partners Only': '仅中等合作商',
+        'Bad Partners Only': '仅待改善合作商',
+
+        // ── COLLAPSED SECTION HEADERS (section headings that show when collapsed) ──
+        '📌 Performance & Scale Summary (Jan vs Feb)': '📌 绩效与规模汇总（1月 vs 2月）',
+        '📌 Rider Slab Distribution (Jan vs Feb)': '📌 骑手档次分布（1月 vs 2月）',
+        '📌 Top & Bottom Partners Overview (Jan vs Feb)': '📌 头尾部合作商概览（1月 vs 2月）',
+        '📊 FR & Driver Card Compliance Analysis': '📊 FR与司机卡合规分析',
+        '🎯 Target Movement Analysis (Partners)': '🎯 目标变动分析（合作商）',
+        '🏙️ City Tier Performance Analysis (Jan vs Feb)': '🏙️ 城市层级绩效分析（1月 vs 2月）',
+        '✅ February 2026 Success Metrics': '✅ 2026年2月成功指标',
+
+        // ── MONTHLY SLICER BUTTONS (additional entries) ──
+        'Monthly Overview & Trends': '月度概览与趋势',
+        'Vehicle Type Breakdown': '车辆类型分解',
+        'Partner Movement Analysis': '合作商变动分析',
+        'New vs Old Partners Analysis': '新旧合作商分析',
+        'City-wise Target Distribution': '城市目标分布',
+        'Tier City Overview (T1 vs T2)': '层级城市概览（T1 vs T2）',
+        'Partner Willing Analysis': '合作商意愿分析',
+        'Highlights & takeaways (selected month)': '亮点与收获（所选月份）',
+
+        // ── FRAMEWORK TAB extras ──
+        'Targets are built monthly to match demand, protect quality, and keep partner capacity healthy using performance and compliance signals.': '每月根据需求、质量保护和合作商合规绩效信号构建目标。',
+        'Upfront Alignment & PMM Ownership': '前期对齐与PMM所有权',
+        'Pre-cycle session → Share wiki:': '周期前会议 → 分享维基：',
+        'Target rules & logic': '目标规则与逻辑',
+        'Stratification metrics & criteria': '分层指标与标准',
+        'Examples & common cases': '示例与常见案例',
+        'After alignment → PMM authority:': '对齐后 → PMM权限：',
+        'without pre-approval': '无需预先审批',
+        'Real Example — Push-back on removing a good partner\'s target': '真实案例 — 拒绝取消优质合作商目标的请求',
+        'Purpose:': '目的：',
+        'Result:': '结果：',
+        'Rule:': '规则：',
+        'PMMs need valid proof (screenshot/record) to remove any target.': 'PMM需要有效证明（截图/记录）才能移除目标。',
+        'Eliminate decisions not backed by data.': '消除无数据支撑的决策。',
+        'Adjustments drop — all exceptions are controlled & traceable.': '调整减少——所有例外均受控且可追溯。',
+
+        // ── SUCCESS METRICS TOOLTIPS / LABELS ──
+        'Performance Breakdown: Toggle between Capacity Target & Avg Scale, and Next Month Target to review achievement, gaps, % by segment, and strategic planning.': '绩效分解：在产能目标与平均规模、下月目标之间切换，查看达成率、差距、细分占比及战略规划。',
+
+        // ── COMMON DYNAMIC LABELS ──
+        'Loading...': '加载中...',
+        'N/A': '不适用',
     };
 
     // ── HTML BLOCK DICTIONARY (for elements with mixed <strong>+text content) ──
@@ -32141,6 +32363,73 @@ const monthlyData = {
                     if (el.getAttribute('placeholder') !== tPh) el.setAttribute('placeholder', tPh);
                 }
             }
+
+            // ── Step 4: data-tooltip attributes ──
+            var tooltipEls = document.querySelectorAll('[data-tooltip]');
+            for (var k = 0; k < tooltipEls.length; k++) {
+                var tel = tooltipEls[k];
+                if (!tel.hasAttribute('data-tooltip-orig')) tel.setAttribute('data-tooltip-orig', tel.getAttribute('data-tooltip'));
+                var baseTooltip = tel.getAttribute('data-tooltip-orig') || '';
+                var tTip = translateText(baseTooltip);
+                if (tel.getAttribute('data-tooltip') !== tTip) tel.setAttribute('data-tooltip', tTip);
+            }
+
+            // ── Step 5: Chart.js canvas label translation ──
+            if (typeof Chart !== 'undefined' && Chart.getChart) {
+                var chartIds = [
+                    'changesChart','ridersSlabChart','partnerMovementTrendChart','partnerMovementQualityChart',
+                    'manualAdjustChart','changesChart2','performanceChart','scaleChart','ridersSlabChartIncreased',
+                    'ridersSlabChartDecreased'
+                ];
+                for (var ci = 0; ci < chartIds.length; ci++) {
+                    var ctxEl = document.getElementById(chartIds[ci]);
+                    if (!ctxEl) continue;
+                    var chartInst = Chart.getChart(ctxEl);
+                    if (!chartInst) continue;
+                    var changed = false;
+                    // Translate x/y axis labels array
+                    if (chartInst.data && chartInst.data.labels) {
+                        for (var li = 0; li < chartInst.data.labels.length; li++) {
+                            var origLbl = chartInst.data.labels[li];
+                            if (!origLbl) continue;
+                            var origKey = 'chart-orig-lbl-' + ci + '-' + li;
+                            if (!chartInst._i18nOrigLabels) chartInst._i18nOrigLabels = {};
+                            if (!chartInst._i18nOrigLabels[li]) chartInst._i18nOrigLabels[li] = origLbl;
+                            var newLbl = translateText(chartInst._i18nOrigLabels[li]);
+                            if (chartInst.data.labels[li] !== newLbl) {
+                                chartInst.data.labels[li] = newLbl;
+                                changed = true;
+                            }
+                        }
+                    }
+                    // Translate dataset labels
+                    if (chartInst.data && chartInst.data.datasets) {
+                        for (var di = 0; di < chartInst.data.datasets.length; di++) {
+                            var ds = chartInst.data.datasets[di];
+                            if (!ds.label) continue;
+                            if (!chartInst._i18nOrigDatasetLabels) chartInst._i18nOrigDatasetLabels = {};
+                            if (!chartInst._i18nOrigDatasetLabels[di]) chartInst._i18nOrigDatasetLabels[di] = ds.label;
+                            var newDsLabel = translateText(chartInst._i18nOrigDatasetLabels[di]);
+                            if (ds.label !== newDsLabel) {
+                                ds.label = newDsLabel;
+                                changed = true;
+                            }
+                        }
+                    }
+                    // Translate chart title plugin text
+                    try {
+                        var titleOpts = chartInst.options && chartInst.options.plugins && chartInst.options.plugins.title;
+                        if (titleOpts && titleOpts.text) {
+                            if (!chartInst._i18nOrigTitleText) chartInst._i18nOrigTitleText = titleOpts.text;
+                            var newTitle = translateText(chartInst._i18nOrigTitleText);
+                            if (titleOpts.text !== newTitle) { titleOpts.text = newTitle; changed = true; }
+                        }
+                    } catch(e) {}
+                    if (changed) {
+                        try { chartInst.update('none'); } catch(e) {}
+                    }
+                }
+            }
         } finally {
             isApplyingLanguage = false;
         }
@@ -32201,6 +32490,7 @@ const monthlyData = {
     window.dashboardSetLanguage = setLanguage;
     window.dashboardApplyLanguage = applyLanguageToDocument;
     window.dashboardScheduleLanguage = scheduleApplyLanguage;
+    window._i18nT = translateText; // exposed for chart builders
 })();
 </script>
 
