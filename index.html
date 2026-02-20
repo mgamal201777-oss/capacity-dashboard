@@ -31683,6 +31683,7 @@ const monthlyData = {
     var applyLangTimer = null;
     var isApplyingLanguage = false;
     var _i18nQuickMode = false; // when true: skip expensive chart-update step (used for autoTranslate callbacks)
+    var _i18nPendingNodes = []; // {node, base} pairs that autoTranslateMissing should patch directly
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
     // Proper nouns (city names, partner brand names, month abbreviations) — never translated
@@ -32902,8 +32903,17 @@ const monthlyData = {
         }
         if (added > 0) {
             _sortedKeys = null; // reset sorted key cache
-            _i18nQuickMode = true; // only re-translate text nodes, skip chart rebuild
-            scheduleApplyLanguage(); // re-apply with new translations
+            // Directly patch only the pending nodes - NO full document re-scan
+            var pending = _i18nPendingNodes;
+            _i18nPendingNodes = [];
+            for (var pi = 0; pi < pending.length; pi++) {
+                try {
+                    var pn = pending[pi].node;
+                    var pb = pending[pi].base;
+                    var pt = translateText(pb);
+                    if (pn.nodeValue !== pt) pn.nodeValue = pt;
+                } catch(e) {}
+            }
         }
     }
 
@@ -32942,6 +32952,7 @@ const monthlyData = {
             while (walker.nextNode()) textNodes.push(walker.currentNode);
 
             var untranslatedTexts = [];
+            _i18nPendingNodes = []; // reset pending node list each pass
             for (var i = 0; i < textNodes.length; i++) {
                 var node = textNodes[i];
                 if (shouldSkipTextNode(node)) continue;
@@ -32954,9 +32965,10 @@ const monthlyData = {
                 if (!base || !base.trim()) continue;
                 var translated = translateText(base);
                 if (node.nodeValue !== translated) node.nodeValue = translated;
-                // Collect strings that weren't translated (for API fallback)
+                // Collect nodes that weren't translated (for API fallback)
                 if (currentLang === 'zh' && translated === base && /[a-zA-Z]{3,}/.test(base)) {
                     untranslatedTexts.push(base);
+                    _i18nPendingNodes.push({ node: node, base: base }); // store node ref
                 }
             }
             // Fire async API fallback for anything the dict didn't cover
