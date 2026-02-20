@@ -10968,6 +10968,46 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
     .comment-indicator:hover { transform:scale(1.15); box-shadow:0 3px 12px rgba(25,118,210,0.5); }
     .comment-indicator-badge { position:absolute; top:-4px; right:-4px; background:#f44336; color:#fff; border-radius:50%; width:16px; height:16px; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
     @keyframes fadeInBounce { 0%{opacity:0; transform:scale(0.8);} 60%{transform:scale(1.1);} 100%{opacity:1; transform:scale(1);} }
+
+        .lang-switcher-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #d6e4f0;
+            border-radius: 999px;
+            padding: 6px 10px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(4px);
+        }
+        .lang-switcher-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #0d47a1;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #90caf9;
+            user-select: none;
+        }
+        .lang-switcher-select {
+            border: none;
+            background: transparent;
+            color: #0d47a1;
+            font-size: 12px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+            min-width: 92px;
+            padding-right: 4px;
+        }
   </style>
 
   <div class="adv-toggle-row">
@@ -31620,6 +31660,187 @@ const monthlyData = {
     <button id="submitCommentBtn" onclick="submitComment()">Post Comment</button>
   </div>
 </div>
+
+<script>
+(function() {
+    var LANG_STORAGE_KEY = 'dashboard_lang_pref_v1';
+    var currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'en';
+    var textNodeOriginal = new WeakMap();
+    var applyLangTimer = null;
+    var isApplyingLanguage = false;
+
+    var zhDict = {
+        'Total Overview': '总览',
+        'Partners Stratification': '合作商分层',
+        'City Level Data': '城市层级数据',
+        'Refresh Data': '刷新数据',
+        'Data synced successfully': '数据同步成功',
+        'Fetching data from Google Sheets...': '正在从 Google 表格获取数据...',
+        'Syncing with Google Sheets...': '正在与 Google 表格同步...',
+        'Failed to sync - using fallback data': '同步失败 - 使用备用数据',
+        'Color Legend:': '颜色图例：',
+        'Color Legend (GAP %):': '颜色图例（GAP %）：',
+        'Overall Performance Summary': '整体表现汇总',
+        'Metric': '指标',
+        'Target': '目标',
+        'Online Riders': '在线骑手',
+        'Delivery Riders': '配送骑手',
+        'Number of Partners': '合作商数量',
+        'Achievement %': '达成率 %',
+        'Achievement Rate': '达成率',
+        'Gap': '差距',
+        'GAP % (Del vs Capacity)': 'GAP %（配送 vs 容量）',
+        'Expand Daily View': '展开每日视图',
+        'Collapse Daily View': '收起每日视图',
+        'Daily Trend Chart': '每日趋势图',
+        'Daily Achievement Trend Chart': '每日达成率趋势图',
+        'City Comparison Chart': '城市对比图',
+        'Best City': '最佳城市',
+        'Worst City': '最弱城市',
+        'Cities Tracked': '追踪城市数',
+        'Across KSA': '覆盖沙特全境',
+        'MTD Achievement': '月累计达成',
+        'W1 Performance': 'W1 表现',
+        'W2 Performance': 'W2 表现',
+        'Total GAP': '总差距',
+        'Riders': '骑手',
+        'Riders | Online vs Del': '骑手 | 在线 vs 配送',
+        'Target:': '目标：',
+        'Good Partners': '优质合作商',
+        'Average Partners': '中等合作商',
+        'Bad Partners': '待改善合作商',
+        'Increase >20': '增长 >20',
+        'Increase 10-20': '增长 10-20',
+        'Increase 1-10': '增长 1-10',
+        'Others (≤0)': '其他（≤0）',
+        'Others (<=0)': '其他（<=0）',
+        'Filter:': '筛选：',
+        'T1 Cities': 'T1 城市',
+        'T2 Cities': 'T2 城市',
+        'View All Comments': '查看全部评论',
+        'Add Comment': '添加评论',
+        'Comments:': '评论：',
+        'Write your comment... (Use @ to mention someone)': '输入评论...（使用 @ 提及成员）',
+        'Your name': '你的姓名',
+        'Post Comment': '发布评论',
+        'WoW': '周环比',
+        'DoD': '日环比',
+        'Stable': '稳定',
+        'Declining trend': '下降趋势',
+        'Excellent': '优秀',
+        'Good': '良好',
+        'Warning': '预警',
+        'Critical': '严重',
+        'achievement rate ≥100%': '达成率 ≥100%',
+        'achievement rate >=95% - <100%': '达成率 >=95% - <100%',
+        'achievement rate >=90% - <95%': '达成率 >=90% - <95%',
+        'achievement rate >=80% - <90%': '达成率 >=80% - <90%',
+        'achievement rate <80%': '达成率 <80%'
+    };
+
+    function translateText(input) {
+        if (!input || currentLang === 'en') return input;
+        var output = input;
+
+        output = output.replace(/\bDay\s*(\d+)\b/g, '第$1天');
+        output = output.replace(/\bFeb\s*1-7\b/g, '2月1-7日');
+        output = output.replace(/\bFeb\s*8-14\b/g, '2月8-14日');
+
+        var keys = Object.keys(zhDict).sort(function(a, b) { return b.length - a.length; });
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            output = output.split(key).join(zhDict[key]);
+        }
+        return output;
+    }
+
+    function shouldSkipTextNode(node) {
+        var parent = node.parentElement;
+        if (!parent) return true;
+        if (parent.closest('script, style, textarea, code, pre')) return true;
+        if (parent.closest('#commentList')) return true;
+        return false;
+    }
+
+    function applyLanguageToDocument() {
+        if (isApplyingLanguage) return;
+        isApplyingLanguage = true;
+        try {
+            var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+            var textNodes = [];
+            while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+            for (var i = 0; i < textNodes.length; i++) {
+                var node = textNodes[i];
+                if (shouldSkipTextNode(node)) continue;
+                if (!textNodeOriginal.has(node)) textNodeOriginal.set(node, node.nodeValue);
+                var base = textNodeOriginal.get(node);
+                if (!base || !base.trim()) continue;
+                node.nodeValue = translateText(base);
+            }
+
+            var attrTargets = document.querySelectorAll('[title], [placeholder]');
+            for (var j = 0; j < attrTargets.length; j++) {
+                var el = attrTargets[j];
+                if (el.hasAttribute('title')) {
+                    if (!el.hasAttribute('data-i18n-title-orig')) el.setAttribute('data-i18n-title-orig', el.getAttribute('title'));
+                    var baseTitle = el.getAttribute('data-i18n-title-orig') || '';
+                    el.setAttribute('title', translateText(baseTitle));
+                }
+                if (el.hasAttribute('placeholder')) {
+                    if (!el.hasAttribute('data-i18n-placeholder-orig')) el.setAttribute('data-i18n-placeholder-orig', el.getAttribute('placeholder'));
+                    var basePh = el.getAttribute('data-i18n-placeholder-orig') || '';
+                    el.setAttribute('placeholder', translateText(basePh));
+                }
+            }
+        } finally {
+            isApplyingLanguage = false;
+        }
+    }
+
+    function scheduleApplyLanguage() {
+        if (applyLangTimer) clearTimeout(applyLangTimer);
+        applyLangTimer = setTimeout(applyLanguageToDocument, 20);
+    }
+
+    function setLanguage(lang) {
+        currentLang = (lang === 'zh') ? 'zh' : 'en';
+        localStorage.setItem(LANG_STORAGE_KEY, currentLang);
+        scheduleApplyLanguage();
+    }
+
+    function initLanguageSelector() {
+        if (document.getElementById('langSwitcherFixed')) return;
+        var wrap = document.createElement('div');
+        wrap.id = 'langSwitcherFixed';
+        wrap.className = 'lang-switcher-fixed';
+
+        var icon = document.createElement('span');
+        icon.className = 'lang-switcher-icon';
+        icon.textContent = '🌐';
+
+        var select = document.createElement('select');
+        select.className = 'lang-switcher-select';
+        select.innerHTML = '<option value="en">English</option><option value="zh">简体中文</option>';
+        select.value = currentLang;
+        select.addEventListener('change', function() { setLanguage(this.value); });
+
+        wrap.appendChild(icon);
+        wrap.appendChild(select);
+        document.body.appendChild(wrap);
+    }
+
+    var observer = new MutationObserver(function() {
+        if (currentLang !== 'en') scheduleApplyLanguage();
+    });
+
+    initLanguageSelector();
+    applyLanguageToDocument();
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    window.dashboardSetLanguage = setLanguage;
+})();
+</script>
 
 </div></body>
 </html>
