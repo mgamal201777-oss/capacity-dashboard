@@ -32718,11 +32718,76 @@ const monthlyData = {
         'N/A': '不适用',
 
         // ── TOOLTIP TRANSLATIONS ──
+        // Manual Adjustment Summary
+        'MoM change in adjusted partners. Jan: 123 → Feb: 61 → (61−123)/123 = −50.4%': '人工调整合作商月环比变化。1月：123家 → 2月：61家 → (61−123)/123 = −50.4%',
+        'Net capacity change as % of total target assigned to adjusted partners. Net change (423−596) = −173 ÷ Total given target (2,012) = −8.6%': '净产能变化占调整合作商总目标的百分比。净变化 (423−596) = −173 ÷ 总分配目标 (2,012) = −8.6%',
+        'Total unique partners with manual capacity adjustments applied in Feb 2026. Down from 123 in Jan (−62 partners).': '2026年2月应用人工产能调整的唯一合作商总数。从1月的123家下降至61家（−62家合作商）。',
         'Total absolute capacity units moved. 423 added + 596 reduced = 1,019 total capacity movements.': '总计绝对产能单位变动。423个新增 + 596个减少 = 1,019个总产能变动。',
         'Most common reason for manual adjustments: Driver Card issues — 23 partners (37.7% of all adjustments).': '人工调整最常见原因：司机卡问题 — 23家合作商（占所有调整的37.7%）。',
+
+        // Performance & Scale Section
+        'Net impact after manual adjustment across all segments. Computed as After Manual Total minus Rule Total (18,976 − 19,242 = −266 riders).': '所有细分人工调整后的净影响。计算为人工调整后总计减去规则总计（18,976 − 19,242 = −266名骑手）。',
         'Segment with the largest shift after manual adjustment. Bad segment increased by +226 riders (+157%), while Good segment decreased.': '人工调整后变化最大的细分。待改善细分增加了+226名骑手（+157%），而良好细分下降。',
+        'Partners whose target increased vs previous month. Share is calculated out of 551 partners with target in Feb.': '目标较上月增加的合作商。占比按2月有目标的551家合作商计算。',
+        'Partners whose target decreased vs previous month. Share is calculated out of 551 partners with target in Feb.': '目标较上月减少的合作商。占比按2月有目标的551家合作商计算。',
+        'Total partners with active capacity target in Feb. Tracks overall partner base.': '2月有活跃产能目标的合作商总数。追踪整体合作商基数。',
+        'Total capacity target value in Feb. Shows overall target volume.': '2月总产能目标值。显示整体目标量。',
+        'Average scale per partner in Feb. Measures capacity density.': '2月每家合作商平均规模。衡量产能密度。',
+        'Delivery riders across all partners in Feb. Tracks rider availability.': '2月所有合作商的配送骑手总数。追踪骑手可用性。',
+        'Executive summary of avg scale & capacity changes between Jan and Feb; filter by period, performance, and scale.': '1月和2月间平均规模和产能变化的执行摘要；按时期、绩效和规模筛选。',
         'Detailed breakdown of performance & scale segments (Jan vs Feb) to compare mix shifts.': '绩效和规模细分的详细分解（1月 vs 2月）以比较构成转变。',
+        'Capacity target breakdown by performance level (Good/Average/Bad) with New vs Old partner split comparison.': '按绩效水平（优质/中等/待改善）的产能目标分解，附新合作商 vs 老合作商拆分对比。',
+        'Target breakdown by vehicle type (Cars vs Bikes) with city-level comparison across Jan and Feb.': '按车辆类型（汽车 vs 摩托车）的目标分解，附1月和2月的城市级对比。',
+        'Shows both riders breakdown and avg scale together for a full comparison (Jan vs Feb).': '同时显示骑手分解和平均规模以进行全面对比（1月 vs 2月）。',
+        'Focuses only on riders breakdown by category for Jan vs Feb.': '仅关注按类别划分的骑手分解（1月 vs 2月）。',
+        'Focuses only on avg scale (partners with target) for Jan vs Feb.': '仅关注平均规模（有目标的合作商）（1月 vs 2月）。',
+
+        // FR & Driver Card Analysis
+        'Partner counts by compliance range for FR/Driver Card.': '按FR/司机卡合规范围统计的合作商数量。',
+        'Target changes across compliance ranges (Jan → Feb) for FR/Driver Card.': '按合规范围的目标变化（1月 → 2月）（FR/司机卡）。',
+        'City averages and range distributions with risk highlights.': '城市平均值和范围分布，附风险提示。',
+
+        // City Tier Performance
+        'City with the most partners with target in Feb. Tracks which city leads in partner capacity.': '2月有目标合作商最多的城市。追踪哪个城市在合作商产能方面领先。',
+        'City with the fewest partners with target in Feb. Highlights underrepresented areas.': '2月有目标合作商最少的城市。突出显示代表性不足的地区。',
+        'Total partners with an active target in Feb across all cities. MoM% shows month-over-month change.': '2月所有城市有活跃目标的合作商总数。月环比%显示逐月变化。',
+        'City with the largest MoM% swing in partner count. Flags rapid growth or decline areas.': '合作商数量月环比%波动最大的城市。标记快速增长或下降的地区。',
+        'City-level comparison of Jan vs Feb by selected metric.': '按所选指标进行的1月 vs 2月城市级对比。',
         'Tier breakdown showing Jan vs Feb by city tier.': '按城市层级显示1月 vs 2月的层级分解。',
+        'Distribution of partner performance across cities.': '各城市合作商绩效分布。',
+        'Distribution of partner scale across cities.': '各城市合作商规模分布。',
+
+        // Target Movement Analysis
+        'MoM change in total partners with target (Jan: 625 → Feb: 551)': '有目标合作商总数月环比变化（1月：625家 → 2月：551家）',
+        'Increased − Decreased: 153 − 284 = -131 (more decreases than increases)': '增加 − 减少：153 − 284 = -131（减少多于增加）',
+        'Partners with increased target: Jan 212 → Feb 153 | Change: -59 (-27.8%)': '目标增加的合作商：1月212家 → 2月153家 | 变化：-59（-27.8%）',
+        'Partners with decreased target: Jan 240 → Feb 284 | Change: +44 (+18.3%)': '目标减少的合作商：1月240家 → 2月284家 | 变化：+44（+18.3%）',
+        'Partners with no change: Jan 173 → Feb 114 | Change: -59 (-34.1%)': '目标无变化的合作商：1月173家 → 2月114家 | 变化：-59（-34.1%）',
+        'Overall view compares Jan vs Feb totals for partners with target, and splits movement into Increase, Decrease, and No Change so you can see net direction at a glance.': '总体视图比较有目标合作商的1月 vs 2月总计，并将变动拆分为增加、减少和无变化，以便快速查看净方向。',
+        'Breakdown view drills into the movement type and shows how Good/Average/Bad segments shifted from Jan to Feb, with MoM labels on Feb values for quick read.': '分解视图深入到变动类型，显示优质/中等/待改善细分如何从1月变化到2月，2月值附月环比标签便于快速阅读。',
+        'Partners whose targets increased. Use this to see which performance segments drove growth from Jan to Feb.': '目标增加的合作商。使用此项查看哪些绩效细分推动了从1月到2月的增长。',
+        'Partners whose targets decreased. Highlights segments contributing to the drop and where reductions are concentrated.': '目标减少的合作商。突出显示导致下降的细分及减少集中的区域。',
+        'Partners with no target change. Useful for stability analysis and identifying segments with steady targets.': '目标无变化的合作商。适用于稳定性分析和识别目标稳定的细分。',
+
+        // Riders Slab Distribution
+        'Total partners: Jan 625 → Feb 551 | Change: -74 (-11.8%)': '合作商总数：1月625家 → 2月551家 | 变化：-74（-11.8%）',
+        'Small scale (1-19 riders): Jan 181 → Feb 141 | Change: -40 (-22.1%)': '小规模（1-19名骑手）：1月181家 → 2月141家 | 变化：-40（-22.1%）',
+        'Mid scale (20-49 riders): Jan 328 → Feb 316 | Change: -12 (-3.7%)': '中等规模（20-49名骑手）：1月328家 → 2月316家 | 变化：-12（-3.7%）',
+        'Large scale (50+ riders): Jan 116 → Feb 94 | Change: -22 (-19.0%)': '大规模（50+名骑手）：1月116家 → 2月94家 | 变化：-22（-19.0%）',
+        'Most common target range in Feb: 20-30 riders with 160 partners': '2月最常见目标范围：20-30名骑手，160家合作商',
+        'All partners with a target, shown by riders slab to compare Jan vs Feb distribution.': '所有有目标的合作商，按骑手层级显示以比较1月 vs 2月分布。',
+        'Only partners whose targets increased; shows which rider slabs gained the most.': '仅目标增加的合作商；显示哪些骑手层级增长最多。',
+        'Only partners whose targets decreased; highlights slabs with the biggest declines.': '仅目标减少的合作商；突出显示降幅最大的层级。',
+
+        // Partner Overview
+        'Number of partners shown in selected view': '所选视图中显示的合作商数量',
+        'Total target riders across all partners in Feb': '2月所有合作商的总目标骑手数',
+        'Partners with Good performance rating in Feb': '2月绩效评级为优质的合作商',
+        'Partners with Average performance rating in Feb': '2月绩效评级为中等的合作商',
+        'Average Face Recognition Rate / Driver Card % across partners in Feb': '2月合作商的平均面部识别率/司机卡比率',
+        'Top 20 partners by rider count, showing Jan vs Feb targets, riders, performance, and compliance.': '按骑手数量排名前20的合作商，显示1月 vs 2月目标、骑手、绩效和合规性。',
+        'Bottom 20 partners by rider count, highlighting low-scale partners and their Jan vs Feb target movement.': '按骑手数量排名后20的合作商，突出显示小规模合作商及其1月 vs 2月目标变动。',
+        'Top 20 partners ranked by the highest number of covered cities across the Kingdom, reflecting the widest geographic reach.': '按覆盖王国城市数量最多排名前20的合作商，反映最广泛的地理覆盖范围。',
     };
 
     // ── HTML BLOCK DICTIONARY (for elements with mixed <strong>+text content) ──
