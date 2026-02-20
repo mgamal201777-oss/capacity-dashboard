@@ -4962,7 +4962,7 @@ startBriefingAuto();
             <h4 style="color: #1f4e78; margin: 0 0 12px 0; font-size: 16px;">📈 Overall</h4>
 
             <div style="background: #ede9fe; border-left: 4px solid #7c3aed; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; min-height: 36px; display: flex; align-items: center;">
-                <p style="color: #4c1d95; margin: 0; font-size: 12px;"><strong>Note:</strong> MoM% shown on Feb values. Bars: Jan vs Feb comparison.</p>
+                <p id="targetMovementOverallNoteText" style="color: #4c1d95; margin: 0; font-size: 12px;"><strong>Note:</strong> MoM% shown on Feb values. Bars: Jan vs Feb comparison.</p>
             </div>
 
             <div class="chart-container" style="margin-bottom: 16px; height: 340px;">
@@ -29122,6 +29122,9 @@ const monthlyData = {
 
         const targetMovementBreakdownLabels = ['Good', 'Average', 'Bad'];
 
+        const tmIsZh = () => localStorage.getItem('dashboard_lang_pref_v1') === 'zh';
+        const tmT = (en, zh) => tmIsZh() ? zh : en;
+
         const ridersSlabData = {
             increased: {
                 labels: ['>=1 - <20', '>=20 - <30', '>=30 - <50', '>=50 - <80', '>=80 - <100', '>=100 - <150', '>=150 - <200', '>=200 - <300', '>=300'],
@@ -29254,6 +29257,11 @@ const monthlyData = {
             if (!canvas) return;
             if (targetMovementSummaryChart) { try { targetMovementSummaryChart.destroy(); } catch (e) {} }
 
+            const overallNote = document.getElementById('targetMovementOverallNoteText');
+            if (overallNote) {
+                overallNote.innerHTML = `<strong>${tmT('Note:', '注意：')}</strong> ${tmT('MoM% shown on Feb values. Bars: Jan vs Feb comparison.', '月环比%显示在2月数值上。柱形图：1月 vs 2月对比。')}`;
+            }
+
             const labels = ['Jan', 'Feb'];
             const partnersSeries = [targetMovementTotals.partners[0], targetMovementTotals.partners[1]];
             const increaseSeries = [targetMovementTotals.increase[0], targetMovementTotals.increase[1]];
@@ -29265,10 +29273,10 @@ const monthlyData = {
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Total partners with target', data: partnersSeries, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.5)', borderWidth: 2 },
-                        { label: 'Total Increase', data: increaseSeries, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.5)', borderWidth: 2 },
-                        { label: 'Total Decrease', data: decreaseSeries, borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.5)', borderWidth: 2 },
-                        { label: 'No Change', data: noChangeSeries, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.5)', borderWidth: 2 }
+                        { label: tmT('Total partners with target', '有目标合作商总数'), data: partnersSeries, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.5)', borderWidth: 2 },
+                        { label: tmT('Total Increase', '总增加'), data: increaseSeries, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.5)', borderWidth: 2 },
+                        { label: tmT('Total Decrease', '总减少'), data: decreaseSeries, borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.5)', borderWidth: 2 },
+                        { label: tmT('No Change', '无变化'), data: noChangeSeries, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.5)', borderWidth: 2 }
                     ]
                 },
                 options: {
@@ -29305,7 +29313,7 @@ const monthlyData = {
                 const totalMom = formatMoM(targetMovementTotals.partners[0], targetMovementTotals.partners[1]);
                 const incMom = formatMoM(targetMovementTotals.increase[0], targetMovementTotals.increase[1]);
                 const decMom = formatMoM(targetMovementTotals.decrease[0], targetMovementTotals.decrease[1]);
-                insight.innerHTML = `Partners with target <strong style="color: ${momColor(totalMom)};">${totalMom}%</strong> MoM | Increases <strong style="color: ${momColor(incMom)};">${incMom}%</strong> | Decreases <strong style="color: ${momColor(decMom)};">${decMom}%</strong> (lower is better)`;
+                insight.innerHTML = `${tmT('Partners with target', '有目标合作商')} <strong style="color: ${momColor(totalMom)};">${totalMom}%</strong> ${tmT('MoM', '月环比')} | ${tmT('Increases', '增加')} <strong style="color: ${momColor(incMom)};">${incMom}%</strong> | ${tmT('Decreases', '减少')} <strong style="color: ${momColor(decMom)};">${decMom}%</strong> ${tmT('(lower is better)', '（越低越好）')}`;
             }
         }
 
@@ -29317,15 +29325,22 @@ const monthlyData = {
 
             const title = document.getElementById('targetMovementBreakdownTitle');
             if (title) {
-                const label = targetMovementBreakdownView === 'increased' ? 'Total Increased' : (targetMovementBreakdownView === 'decreased' ? 'Total Decreased' : 'No Change');
-                title.textContent = `${label} • Segment Breakdown (Jan vs Feb)`;
+                const label = targetMovementBreakdownView === 'increased' ? tmT('Total Increased', '总增加') : (targetMovementBreakdownView === 'decreased' ? tmT('Total Decreased', '总减少') : tmT('No Change', '无变化'));
+                title.textContent = `${label} • ${tmT('Segment Breakdown (Jan vs Feb)', '分段分解（1月 vs 2月）')}`;
             }
+
+            const breakdownLabels = targetMovementBreakdownLabels.map(lbl => {
+                if (lbl === 'Good') return tmT('Good', '良好');
+                if (lbl === 'Average') return tmT('Average', '平均');
+                if (lbl === 'Bad') return tmT('Bad', '差');
+                return lbl;
+            });
 
             const momPlugin = createLineMomLabelPlugin(data.dec, data.jan, 9);
             targetMovementBreakdownChart = new Chart(canvas.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: targetMovementBreakdownLabels,
+                    labels: breakdownLabels,
                     datasets: [
                         { label: 'Jan', data: data.dec, borderColor: '#93c5fd', backgroundColor: 'rgba(147, 197, 253, 0.2)', tension: 0.5, pointRadius: 5, fill: true },
                         { label: 'Feb', data: data.jan, borderColor: '#6ee7b7', backgroundColor: 'rgba(110, 231, 183, 0.2)', tension: 0.5, pointRadius: 5, fill: true }
@@ -29363,7 +29378,7 @@ const monthlyData = {
             const tableBody = document.getElementById('targetMovementBreakdownTableBody');
             if (tableBody) {
                 tableBody.innerHTML = '';
-                targetMovementBreakdownLabels.forEach((label, idx) => {
+                breakdownLabels.forEach((label, idx) => {
                     const dec = data.dec[idx];
                     const jan = data.jan[idx];
                     const mom = formatMoM(dec, jan);
