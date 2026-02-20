@@ -32247,6 +32247,101 @@ const monthlyData = {
         // ── SUCCESS METRICS TOOLTIPS / LABELS ──
         'Performance Breakdown: Toggle between Capacity Target & Avg Scale, and Next Month Target to review achievement, gaps, % by segment, and strategic planning.': '绩效分解：在产能目标与平均规模、下月目标之间切换，查看达成率、差距、细分占比及战略规划。',
 
+        // ── MONTH OVERVIEW — MISSING TRANSLATIONS (Round 4) ──
+        // Card labels (overview section)
+        'Net Manual Impact': '净人工调整影响',
+        'Largest Segment Shift': '最大细分变动',
+
+        // View tab buttons (Perf & Scale Summary section)
+        'Avg Scale & Capacity Summary': '平均规模与产能摘要',
+        'Performance & Scale Breakdown': '绩效与规模分解',
+        'Performance Target Breakdown': '绩效目标分解',
+        '🚗 Vehicle Type Breakdown': '🚗 车辆类型分解',
+
+        // Period / Perf / Scale filter buttons
+        'New <1M': '新 <1月',
+        'New <3M': '新 <3月',
+        'Old >3M': '旧 >3月',
+        'Bad': '待改善',
+        'Big': '大型',
+        'Mid': '中型',
+        'Small': '小型',
+        'Period:': '时段：',
+
+        // Riders view sub-toggle buttons
+        'Riders breakdown & Avg Scale': '骑手分解与平均规模',
+        'Riders breakdown': '骑手分解',
+
+        // PS Summary table row labels
+        'Total partners with target': '有目标合作商总数',
+        'Total capacity target': '总产能目标',
+        'Avg scale per partner': '每合作商平均规模',
+        'Delivery riders all partners': '全部合作商配送骑手',
+        'Delivery riders partners with target': '有目标合作商配送骑手',
+        'Delivery rider avg scale (Total active)': '配送骑手平均规模（全部活跃）',
+        'Delivery rider avg scale (Partners with target)': '配送骑手平均规模（有目标合作商）',
+        'Online riders all partners': '全部合作商在线骑手',
+        'Online riders partners with target': '有目标合作商在线骑手',
+        'Online riders avg scale (Total active)': '在线骑手平均规模（全部活跃）',
+        'Online riders avg scale (Partners with target)': '在线骑手平均规模（有目标合作商）',
+
+        // Chart dataset labels
+        'Capacity Target': '产能目标',
+        'Delivery Riders (with target)': '配送骑手（有目标）',
+        'Online Riders (with target)': '在线骑手（有目标）',
+        'Feb target (our rule)': '2月目标（规则）',
+        'Feb target (after manual adjustment)': '2月目标（人工调整后）',
+        'Manual variance (After - Rule)': '人工差异（调整后 - 规则）',
+
+        // Success Metrics toggle buttons
+        'Capacity Target & Avg Scale': '产能目标与平均规模',
+        '🎯 Next Month Target': '🎯 下月目标',
+        '📋 2026 OKRs Summary (Not yet ready)': '📋 2026年OKR摘要（尚未就绪）',
+
+        // Success Metrics section headers & KPI labels
+        '💡 Key Observations': '💡 关键发现',
+        'Key Observations': '关键发现',
+        '💡 Strategic Planning Insights': '💡 战略规划洞察',
+        'Strategic Planning Insights': '战略规划洞察',
+        '📊 Capacity Target': '📊 产能目标',
+        '📈 Avg Scale Target': '📈 平均规模目标',
+        'Achieved': '已达成',
+        'Achievement': '达成率',
+
+        // Success Metrics insights text (static data strings)
+        'Average segment exceeded target by +1,129 riders.': '中等细分超目标 +1,129 名骑手。',
+        'Good segment is short by -608 riders.': '优质细分短缺 -608 名骑手。',
+        'Bad segment is significantly below target with a -582 rider gap.': '待改善细分大幅低于目标，差距 -582 名骑手。',
+        'Overall avg scale is below target by -0.9.': '整体平均规模低于目标 -0.9。',
+        'Good segment is below target by -4.': '优质细分低于目标 -4。',
+        'Average and Bad segments exceeded targets.': '中等和待改善细分超过目标。',
+
+        // Dynamic insight sub-texts (overview section JS-set values)
+        '-1% vs rule target total': '-1%（vs 规则目标总量）',
+        'of 551 partners with target': '551家有目标合作商',
+        '+131 more than increases': '+131 多于增加数',
+        '+157% while Good fell 4%': '+157%，优质降4%',
+
+        // Note trailing-text fragments (after <strong> in mixed-content notes)
+        ' Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.': ' 表格按合作商对比1月 vs 2月。月环比%仅适用于总目标。总目标反映所有覆盖城市的骑手数。绩效基于最高目标城市。FR和司机卡比率按城市平均。',
+        ' Toggle between Capacity Target & Avg Scale, and Next Month Target to review achievement, gaps, % by segment, and strategic planning.': ' 在产能目标与平均规模和下月目标之间切换，查看达成率、差距、细分占比及战略规划。',
+        'Next Month Target': '下月目标',
+
+        // PS Breakdown data row labels
+        'Total partners count': '合作商总数',
+        'Total active partners count': '活跃合作商总数',
+        'Target total': '目标总量',
+        'Avg scale': '平均规模',
+        'Good partners with target': '有目标优质合作商',
+        'Good partners target': '优质合作商目标',
+        'Good partners avg scale': '优质合作商平均规模',
+        'Average partners with target': '有目标中等合作商',
+        'Average partners target': '中等合作商目标',
+        'Average partners avg scale': '中等合作商平均规模',
+        'Bad partners with target': '有目标待改善合作商',
+        'Bad partners target': '待改善合作商目标',
+        'Bad partners avg scale': '待改善合作商平均规模',
+
         // ── COMMON DYNAMIC LABELS ──
         'Loading...': '加载中...',
         'N/A': '不适用',
@@ -32379,7 +32474,9 @@ const monthlyData = {
                 var chartIds = [
                     'changesChart','ridersSlabChart','partnerMovementTrendChart','partnerMovementQualityChart',
                     'manualAdjustChart','changesChart2','performanceChart','scaleChart','ridersSlabChartIncreased',
-                    'ridersSlabChartDecreased'
+                    'ridersSlabChartDecreased',
+                    'psAvgScaleChart','psCombinedRidersChart','psCombinedAvgScaleChart','psRidersBreakdownChart',
+                    'psAvgScaleOverallChart','psTargetBarChart','psTargetNewOldChart','psVehicleChart'
                 ];
                 for (var ci = 0; ci < chartIds.length; ci++) {
                     var ctxEl = document.getElementById(chartIds[ci]);
