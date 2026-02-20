@@ -30042,27 +30042,29 @@ const monthlyData = {
 
         const formatVal = (val) => (val === null || val === undefined || val === '' || val === '-') ? '-' : val;
 
+        const _perfLabel = (p) => { var m={good:'优质',average:'中等',bad:'待改善'}; return (typeof currentLang!=='undefined'&&currentLang==='zh'&&m[p]) ? m[p] : p; };
         const getPerformanceBadge = (val) => {
             const perf = (val || '').toString().toLowerCase();
             if (perf === 'good') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + translateText('good') + '</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + _perfLabel('good') + '</span>';
             }
             if (perf === 'average') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fef3c7; color: #92400e; font-weight: 700; font-size: 11px;">' + translateText('average') + '</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fef3c7; color: #92400e; font-weight: 700; font-size: 11px;">' + _perfLabel('average') + '</span>';
             }
             if (perf === 'bad') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 11px;">' + translateText('bad') + '</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 11px;">' + _perfLabel('bad') + '</span>';
             }
             return '<span style="color: #6b7280;">-</span>';
         };
 
+        const _noLabel = (s) => { var m={new:'新',old:'旧'}; return (typeof currentLang!=='undefined'&&currentLang==='zh'&&m[s]) ? m[s] : s; };
         const getNewOldBadge = (val) => {
             const status = (val || '').toString().toLowerCase();
             if (status === 'new') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + translateText('new') + '</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + _noLabel('new') + '</span>';
             }
             if (status === 'old') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e2e8f0; color: #334155; font-weight: 700; font-size: 11px;">' + translateText('old') + '</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e2e8f0; color: #334155; font-weight: 700; font-size: 11px;">' + _noLabel('old') + '</span>';
             }
             return '<span style="color: #6b7280;">-</span>';
         };
@@ -30091,19 +30093,20 @@ const monthlyData = {
             if (!body || !thead) return;
 
             // Update table header based on view
+            const _th = (en, zh) => (typeof currentLang!=='undefined'&&currentLang==='zh') ? zh : en;
             if (view === 'ranked') {
                 table.style.minWidth = '900px';
                 thead.innerHTML = `
                     <tr style="background: #0ea5e9; color: white;">
                         <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db; min-width: 40px;">#</th>
-                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px;">${translateText('Partner')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('# of cities')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('New/Old')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Delivery riders')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Total target')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Performance')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg FR %')}</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg Driver Card %')}</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px;">${_th('Partner','合作商')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('# of cities','城市数')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('New/Old','新/旧')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('Delivery riders','配送骑手')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('Total target','总目标')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('Performance','绩效')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('Avg FR %','平均FR%')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${_th('Avg Driver Card %','平均司机卡%')}</th>
                     </tr>
                 `;
             } else {
@@ -30111,15 +30114,15 @@ const monthlyData = {
                 thead.innerHTML = `
                     <tr style="background: #0ea5e9; color: white;">
                         <th rowspan="2" style="padding: 10px; text-align: center; border: 1px solid #d1d5db; min-width: 40px; vertical-align: middle;">#</th>
-                        <th rowspan="2" style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px; vertical-align: middle;">${translateText('Partner')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('# of cities')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('New/Old')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Delivery riders')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Total target')}</th>
-                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">${translateText('MoM %')}<br>(${translateText('Total target')})</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Performance')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg FR %')}</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg Driver Card %')}</th>
+                        <th rowspan="2" style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px; vertical-align: middle;">${_th('Partner','合作商')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('# of cities','城市数')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('New/Old','新/旧')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('Delivery riders','配送骑手')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('Total target','总目标')}</th>
+                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">${_th('MoM %','月环比%')}<br>(${_th('Target','目标')})</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('Performance','绩效')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('Avg FR %','平均FR%')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${_th('Avg Driver Card %','平均司机卡%')}</th>
                     </tr>
                     <tr style="background: #0284c7; color: white;">
                         <th style="padding: 6px 8px; text-align: center; border: 1px solid #d1d5db; font-size: 11px;">Jan</th>
@@ -32793,7 +32796,6 @@ const monthlyData = {
         'Top 20 Biggest Partners': '前20大合作商',
         'Bottom 20 Smallest Partners': '后20小合作商',
         'Top 20 Ranked Partners': '前20排名合作商',
-        'Partner': '合作商',
         '# of cities': '城市数',
         'New/Old': '新/旧',
         'Delivery riders': '配送骑手',
@@ -32802,11 +32804,6 @@ const monthlyData = {
         'Avg FR %': '平均FR%',
         'Avg Driver Card %': '平均司机卡%',
         'MoM %': '月环比%',
-        'good': '优质',
-        'average': '中等',
-        'bad': '待改善',
-        'new': '新',
-        'old': '旧',
         'Note:': '注意：',
         'Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.': '按王国最高城市覆盖率排名前20的合作商（仅2月）。显示地理覆盖范围最广的合作商。绩效、FR及DC比例均为所有覆盖城市的平均值。',
         'Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.': '表格按合作商比较1月 vs 2月。仅显示总目标的月环比%。总目标反映所有覆盖城市的骑手数。绩效基于最高目标城市。FR及DC比例为城市平均值。',
