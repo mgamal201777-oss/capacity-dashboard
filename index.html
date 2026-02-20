@@ -31672,6 +31672,8 @@ const monthlyData = {
     var textNodeOriginal = new WeakMap();
     var applyLangTimer = null;
     var isApplyingLanguage = false;
+    var _autoTranslateCache = {};  // strings already requested from API
+    var _autoTranslatePending = false;
 
     var zhDict = {
         // ── TAB LABELS ──
@@ -32667,6 +32669,58 @@ const monthlyData = {
         return false;
     }
 
+    // ── Auto-translate fallback via Google Translate (unofficial free endpoint) ──
+    async function autoTranslateMissing(texts) {
+        if (!texts || !texts.length || _autoTranslatePending) return;
+        // Filter: only strings that are likely English and not already known
+        var toFetch = [];
+        var seen = {};
+        for (var i = 0; i < texts.length; i++) {
+            var t = texts[i].trim();
+            if (!t || t.length < 3) continue;
+            if (seen[t] || zhDict[t] || _autoTranslateCache[t]) continue;
+            // Skip if already contains Chinese characters
+            if (/[\u4e00-\u9fff]/.test(t)) continue;
+            // Skip if purely numeric / punctuation
+            if (!/[a-zA-Z]{2,}/.test(t)) continue;
+            seen[t] = true;
+            toFetch.push(t);
+        }
+        if (!toFetch.length) return;
+        _autoTranslatePending = true;
+        var added = 0;
+        // Batch into groups of 25 and fire in parallel
+        var batches = [];
+        for (var b = 0; b < toFetch.length; b += 25) batches.push(toFetch.slice(b, b + 25));
+        try {
+            await Promise.all(batches.map(async function(batch) {
+                await Promise.all(batch.map(async function(text) {
+                    try {
+                        var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=' + encodeURIComponent(text);
+                        var res = await fetch(url);
+                        var data = await res.json();
+                        var translated = (data[0] || []).map(function(x) { return x[0] || ''; }).join('');
+                        if (translated && translated !== text) {
+                            zhDict[text] = translated;
+                            _autoTranslateCache[text] = true;
+                            added++;
+                        } else {
+                            _autoTranslateCache[text] = true; // mark as tried even if same
+                        }
+                    } catch(e) {
+                        _autoTranslateCache[text] = true; // mark failed to avoid retry
+                    }
+                }));
+            }));
+        } finally {
+            _autoTranslatePending = false;
+        }
+        if (added > 0) {
+            _sortedKeys = null; // reset sorted key cache
+            scheduleApplyLanguage(); // re-apply with new translations
+        }
+    }
+
     function applyLanguageToDocument() {
         if (isApplyingLanguage) return;
         isApplyingLanguage = true;
@@ -32699,6 +32753,7 @@ const monthlyData = {
             var textNodes = [];
             while (walker.nextNode()) textNodes.push(walker.currentNode);
 
+            var untranslatedTexts = [];
             for (var i = 0; i < textNodes.length; i++) {
                 var node = textNodes[i];
                 if (shouldSkipTextNode(node)) continue;
@@ -32709,6 +32764,14 @@ const monthlyData = {
                 if (!base || !base.trim()) continue;
                 var translated = translateText(base);
                 if (node.nodeValue !== translated) node.nodeValue = translated;
+                // Collect strings that weren't translated (for API fallback)
+                if (currentLang === 'zh' && translated === base && /[a-zA-Z]{3,}/.test(base)) {
+                    untranslatedTexts.push(base);
+                }
+            }
+            // Fire async API fallback for anything the dict didn't cover
+            if (currentLang === 'zh' && untranslatedTexts.length > 0) {
+                autoTranslateMissing(untranslatedTexts);
             }
 
             // ── Step 3: title / placeholder attributes ──
