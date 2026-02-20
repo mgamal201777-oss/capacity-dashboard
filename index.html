@@ -14554,7 +14554,7 @@ if(ovChartDet) {
                     } else {
                         if (quality === 'all' || quality === 'good') {
                             datasets.push({
-                                label: 'Good',
+                                label: (window._i18nT ? window._i18nT('Good') : 'Good'),
                                 data: [
                                     partnerMovementData.increase.good[0] + partnerMovementData.decrease.good[0] + partnerMovementData.noChange.good[0],
                                     partnerMovementData.increase.good[1] + partnerMovementData.decrease.good[1] + partnerMovementData.noChange.good[1],
@@ -14568,7 +14568,7 @@ if(ovChartDet) {
                         }
                         if (quality === 'all' || quality === 'average') {
                             datasets.push({
-                                label: 'Average',
+                                label: (window._i18nT ? window._i18nT('Average') : 'Average'),
                                 data: [
                                     partnerMovementData.increase.average[0] + partnerMovementData.decrease.average[0] + partnerMovementData.noChange.average[0],
                                     partnerMovementData.increase.average[1] + partnerMovementData.decrease.average[1] + partnerMovementData.noChange.average[1],
@@ -14582,7 +14582,7 @@ if(ovChartDet) {
                         }
                         if (quality === 'all' || quality === 'bad') {
                             datasets.push({
-                                label: 'Bad',
+                                label: (window._i18nT ? window._i18nT('Bad') : 'Bad'),
                                 data: [
                                     partnerMovementData.increase.bad[0] + partnerMovementData.decrease.bad[0] + partnerMovementData.noChange.bad[0],
                                     partnerMovementData.increase.bad[1] + partnerMovementData.decrease.bad[1] + partnerMovementData.noChange.bad[1],
@@ -19591,9 +19591,9 @@ if(ovChartDet) {
                 data: {
                     labels: months,
                     datasets: [
-                        { label: 'Good', data: monthlyData.perf.good.slice(), stack: 'perf' },
-                        { label: 'Average', data: monthlyData.perf.average.slice(), stack: 'perf' },
-                        { label: 'Bad', data: monthlyData.perf.bad.slice(), stack: 'perf' }
+                        { label: (window._i18nT ? window._i18nT('Good') : 'Good'), data: monthlyData.perf.good.slice(), stack: 'perf' },
+                        { label: (window._i18nT ? window._i18nT('Average') : 'Average'), data: monthlyData.perf.average.slice(), stack: 'perf' },
+                        { label: (window._i18nT ? window._i18nT('Bad') : 'Bad'), data: monthlyData.perf.bad.slice(), stack: 'perf' }
                     ]
                 },
                 options: {
@@ -19609,9 +19609,9 @@ if(ovChartDet) {
                 data: {
                     labels: months,
                     datasets: [
-                        { label: 'Big', data: monthlyData.size.big.slice(), stack: 'size' },
-                        { label: 'Mid', data: monthlyData.size.mid.slice(), stack: 'size' },
-                        { label: 'Small', data: monthlyData.size.small.slice(), stack: 'size' }
+                        { label: (window._i18nT ? window._i18nT('Big') : 'Big'), data: monthlyData.size.big.slice(), stack: 'size' },
+                        { label: (window._i18nT ? window._i18nT('Mid') : 'Mid'), data: monthlyData.size.mid.slice(), stack: 'size' },
+                        { label: (window._i18nT ? window._i18nT('Small') : 'Small'), data: monthlyData.size.small.slice(), stack: 'size' }
                     ]
                 },
                 options: {
@@ -19636,7 +19636,7 @@ if(ovChartDet) {
                     labels: months,
                     datasets: [
                         { 
-                            label: 'Good', 
+                            label: (window._i18nT ? window._i18nT('Good') : 'Good'), 
                             data: ridersGood, 
                             backgroundColor: '#10b981', 
                             borderColor: '#059669',
@@ -19644,7 +19644,7 @@ if(ovChartDet) {
                             stack: 'riders'
                         },
                         { 
-                            label: 'Average', 
+                            label: (window._i18nT ? window._i18nT('Average') : 'Average'), 
                             data: ridersAverage, 
                             backgroundColor: '#fbbf24', 
                             borderColor: '#f59e0b',
@@ -19652,7 +19652,7 @@ if(ovChartDet) {
                             stack: 'riders'
                         },
                         { 
-                            label: 'Bad', 
+                            label: (window._i18nT ? window._i18nT('Bad') : 'Bad'), 
                             data: ridersBad, 
                             backgroundColor: '#ef4444', 
                             borderColor: '#dc2626',
@@ -19712,7 +19712,7 @@ if(ovChartDet) {
                     labels: months,
                     datasets: [
                         { 
-                            label: 'Big', 
+                            label: (window._i18nT ? window._i18nT('Big') : 'Big'), 
                             data: ridersBig, 
                             backgroundColor: '#3b82f6', 
                             borderColor: '#2563eb',
@@ -19720,7 +19720,7 @@ if(ovChartDet) {
                             stack: 'size'
                         },
                         { 
-                            label: 'Mid', 
+                            label: (window._i18nT ? window._i18nT('Mid') : 'Mid'), 
                             data: ridersMid, 
                             backgroundColor: '#8b5cf6', 
                             borderColor: '#7c3aed',
@@ -19728,7 +19728,7 @@ if(ovChartDet) {
                             stack: 'size'
                         },
                         { 
-                            label: 'Small', 
+                            label: (window._i18nT ? window._i18nT('Small') : 'Small'), 
                             data: ridersSmall, 
                             backgroundColor: '#06b6d4', 
                             borderColor: '#0891b2',
@@ -20507,7 +20507,7 @@ const monthlyData = {
     function makeLineDataset(s, ctx){
         const canvas = ctx ? ctx.canvas : null;
         return {
-            label: s.label,
+            label: (window._i18nT ? window._i18nT(s.label) : s.label),
             data: s.values.slice(),
             borderColor: s.border,
             backgroundColor: (function(){
@@ -21201,9 +21201,9 @@ const monthlyData = {
       data: {
         labels: months,
         datasets: [
-          { label: 'Good', data: monthlyData.perf.good.slice(), stack: 'p', backgroundColor: '#10b981', yAxisID: 'y' },
-          { label: 'Average', data: monthlyData.perf.average.slice(), stack: 'p', backgroundColor: '#f59e0b', yAxisID: 'y' },
-          { label: 'Bad', data: monthlyData.perf.bad.slice(), stack: 'p', backgroundColor: '#ef4444', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Good') : 'Good'), data: monthlyData.perf.good.slice(), stack: 'p', backgroundColor: '#10b981', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Average') : 'Average'), data: monthlyData.perf.average.slice(), stack: 'p', backgroundColor: '#f59e0b', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Bad') : 'Bad'), data: monthlyData.perf.bad.slice(), stack: 'p', backgroundColor: '#ef4444', yAxisID: 'y' },
           {
             label: 'Total Partners Trend',
             data: monthlyData.perf.good.map((v, i) => v + monthlyData.perf.average[i] + monthlyData.perf.bad[i]),
@@ -21267,9 +21267,9 @@ const monthlyData = {
       data: {
         labels: months,
         datasets: [
-          { label: 'Big', data: monthlyData.size.big.slice(), stack: 's', backgroundColor: '#3b82f6', yAxisID: 'y' },
-          { label: 'Mid', data: monthlyData.size.mid.slice(), stack: 's', backgroundColor: '#8b5cf6', yAxisID: 'y' },
-          { label: 'Small', data: monthlyData.size.small.slice(), stack: 's', backgroundColor: '#06b6d4', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Big') : 'Big'), data: monthlyData.size.big.slice(), stack: 's', backgroundColor: '#3b82f6', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Mid') : 'Mid'), data: monthlyData.size.mid.slice(), stack: 's', backgroundColor: '#8b5cf6', yAxisID: 'y' },
+          { label: (window._i18nT ? window._i18nT('Small') : 'Small'), data: monthlyData.size.small.slice(), stack: 's', backgroundColor: '#06b6d4', yAxisID: 'y' },
           {
             label: 'Total Partners Trend',
             data: monthlyData.size.big.map((v, i) => v + monthlyData.size.mid[i] + monthlyData.size.small[i]),
@@ -21343,7 +21343,7 @@ const monthlyData = {
         labels: months,
         datasets: [
           { 
-            label: 'Good', 
+            label: (window._i18nT ? window._i18nT('Good') : 'Good'), 
             data: ridersGood, 
             backgroundColor: '#10b981', 
             borderColor: '#059669',
@@ -21352,7 +21352,7 @@ const monthlyData = {
             yAxisID: 'y'
           },
           { 
-            label: 'Average', 
+            label: (window._i18nT ? window._i18nT('Average') : 'Average'), 
             data: ridersAverage, 
             backgroundColor: '#fbbf24', 
             borderColor: '#f59e0b',
@@ -21361,7 +21361,7 @@ const monthlyData = {
             yAxisID: 'y'
           },
           { 
-            label: 'Bad', 
+            label: (window._i18nT ? window._i18nT('Bad') : 'Bad'), 
             data: ridersBad, 
             backgroundColor: '#ef4444', 
             borderColor: '#dc2626',
@@ -21465,21 +21465,21 @@ const monthlyData = {
         labels: months,
         datasets: [
           {
-            label: 'Big',
+            label: (window._i18nT ? window._i18nT('Big') : 'Big'),
             data: ridersBig,
             backgroundColor: '#3b82f6',
             stack: 'size',
             yAxisID: 'y'
           },
           {
-            label: 'Mid',
+            label: (window._i18nT ? window._i18nT('Mid') : 'Mid'),
             data: ridersMid,
             backgroundColor: '#8b5cf6',
             stack: 'size',
             yAxisID: 'y'
           },
           {
-            label: 'Small',
+            label: (window._i18nT ? window._i18nT('Small') : 'Small'),
             data: ridersSmall,
             backgroundColor: '#06b6d4',
             stack: 'size',
@@ -24120,21 +24120,21 @@ const monthlyData = {
                 labels: months,
                 datasets: [
                     {
-                        label: 'Good',
+                        label: (window._i18nT ? window._i18nT('Good') : 'Good'),
                         data: [63.2, 70.2, 58.3, 55.7, 49.4, 46.2],
                         backgroundColor: '#10b981',
                         borderColor: '#059669',
                         borderWidth: 2
                     },
                     {
-                        label: 'Average',
+                        label: (window._i18nT ? window._i18nT('Average') : 'Average'),
                         data: [63.7, 62.3, 58.6, 51.5, 32.5, 30.8],
                         backgroundColor: '#f59e0b',
                         borderColor: '#d97706',
                         borderWidth: 2
                     },
                     {
-                        label: 'Bad',
+                        label: (window._i18nT ? window._i18nT('Bad') : 'Bad'),
                         data: [43.2, 40.7, 38.5, 40.3, 23.6, 21.5],
                         backgroundColor: '#ef4444',
                         borderColor: '#dc2626',
@@ -24180,21 +24180,21 @@ const monthlyData = {
                 labels: months,
                 datasets: [
                     {
-                        label: 'Big',
+                        label: (window._i18nT ? window._i18nT('Big') : 'Big'),
                         data: [101.6, 122.0, 106.8, 105.4, 77.5, 62.1],
                         backgroundColor: '#3b82f6',
                         borderColor: '#2563eb',
                         borderWidth: 2
                     },
                     {
-                        label: 'Mid',
+                        label: (window._i18nT ? window._i18nT('Mid') : 'Mid'),
                         data: [56.7, 61.0, 55.0, 50.9, 36.9, 38.8],
                         backgroundColor: '#8b5cf6',
                         borderColor: '#7c3aed',
                         borderWidth: 2
                     },
                     {
-                        label: 'Small',
+                        label: (window._i18nT ? window._i18nT('Small') : 'Small'),
                         data: [34.5, 35.3, 29.9, 28.0, 19.5, 26.0],
                         backgroundColor: '#06b6d4',
                         borderColor: '#0891b2',
