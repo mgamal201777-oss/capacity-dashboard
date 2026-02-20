@@ -7255,7 +7255,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <p data-i18n-html="desc-movement" style="color: #6b7280; font-size: 13px; margin: 0 0 15px 0; font-style: italic;">Track partner target capacity movements: partners who increased, decreased, or maintained their targets across 6 months. Segmented by quality performance (Good ≥80% FR, Average 50-80% FR, Bad &lt;50% FR).</p>
 
 <div id="partnerMovementTakeaway" style="margin-bottom: 20px; padding: 12px; background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-left: 4px solid #06b6d4; border-radius: 6px;">
-    <p style="margin: 0; font-size: 13px; color: #0e7490; font-weight: 600;">📊 Key Insight: <span id="partnerMovementInsight">Average of 195 partners increased targets monthly, while 243 decreased. December saw the sharpest decline (79 increases vs 457 decreases). February closed with 136 increases vs 284 decreases.</span></p>
+    <p data-i18n-html="desc-movement-insight" style="margin: 0; font-size: 13px; color: #0e7490; font-weight: 600;">📊 Key Insight: <span id="partnerMovementInsight">Average of 195 partners increased targets monthly, while 243 decreased. December saw the sharpest decline (79 increases vs 457 decreases). February closed with 136 increases vs 284 decreases.</span></p>
 </div>
 
 <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
@@ -7281,7 +7281,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <div style="margin-bottom: 15px; padding: 12px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 6px;">
-    <p style="margin: 0; font-size: 13px; color: #15803d; font-weight: 500;">ℹ️ <strong>Note:</strong> Table shows partners who completed assessment during each month. Partners without assessment data (new sign-ups, incomplete metrics) are excluded from these numbers.</p>
+    <p data-i18n-html="desc-movement-note" style="margin: 0; font-size: 13px; color: #15803d; font-weight: 500;">ℹ️ <strong>Note:</strong> Table shows partners who completed assessment during each month. Partners without assessment data (new sign-ups, incomplete metrics) are excluded from these numbers.</p>
 </div>
 
 <details style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px;">
@@ -15038,7 +15038,7 @@ if(ovChartDet) {
                     categoriesToShow.forEach((cat, idx) => {
                         const selectedData = monthIndices.map(i => partnerAgeData.data[cat].count[i]);
                         trendDatasets.push({
-                            label: cat,
+                            label: (window._i18nT ? window._i18nT(cat) : cat),
                             data: selectedData,
                             borderColor: colors[idx],
                             backgroundColor: colors[idx] + '20',
@@ -15090,7 +15090,7 @@ if(ovChartDet) {
                     categoriesToShow.forEach((cat, idx) => {
                         const selectedData = monthIndices.map(i => partnerAgeData.data[cat].avgScale[i]);
                         scaleDatasets.push({
-                            label: cat,
+                            label: (window._i18nT ? window._i18nT(cat) : cat),
                             data: selectedData,
                             borderColor: colors[idx],
                             backgroundColor: colors[idx] + '20',
@@ -32322,6 +32322,39 @@ const monthlyData = {
         'New <1M': '新 <1月',
         'New <3M': '新 <3月',
         'Old >3M': '旧 >3月',
+        'New <1 month': '新 <1个月',
+        'New <3 months': '新 <3个月',
+        'Old >3 months': '旧 >3个月',
+        'New <1': '新 <1',
+        'New <3': '新 <3',
+        'Old >3': '旧 >3',
+        'All Categories': '全部类别',
+        'Filter by Partner Age:': '按合作商年龄筛选：',
+        'Total Partners by Age (Trend)': '按年龄划分的合作商总数（趋势）',
+        'Avg Scale by Partner Age (Trend)': '按合作商年龄划分的平均规模（趋势）',
+        'Total/Avr': '总计/平均',
+        'MoM%': '月环比%',
+        'Total Active Partners': '活跃合作商总数',
+        'Total Partners With Target': '有目标合作商总数',
+        'Target Total': '目标总计',
+        '# of Good Partners with Target': '# 优质有目标合作商',
+        '# of Average Partners with Target': '# 中等有目标合作商',
+        '# of Bad Partners with Target': '# 待改善有目标合作商',
+        'Good Partners Target': '优质合作商目标',
+        'Average Partners Target': '中等合作商目标',
+        'Bad Partners Target': '待改善合作商目标',
+        'Good Partners Avg Scale': '优质合作商平均规模',
+        'Average Partners Avg Scale': '中等合作商平均规模',
+        'Bad Partners Avg Scale': '待改善合作商平均规模',
+        '# of Big Partners with Target': '# 大型有目标合作商',
+        '# of Mid Partners with Target': '# 中型有目标合作商',
+        '# of Small Partners with Target': '# 小型有目标合作商',
+        'Big Partners Target': '大型合作商目标',
+        'Mid Partners Target': '中型合作商目标',
+        'Small Partners Target': '小型合作商目标',
+        'Big Partners Avg Scale': '大型合作商平均规模',
+        'Mid Partners Avg Scale': '中型合作商平均规模',
+        'Small Partners Avg Scale': '小型合作商平均规模',
         'Bad': '待改善',
         'Big': '大型',
         'Mid': '中型',
@@ -32762,6 +32795,8 @@ const monthlyData = {
         'desc-partnerdist': '按目标规模划分的合作商分布。大型合作商强劲增长，中型稳定，小型下滑。需要战略性多元化布局。',
         'desc-ridersshareperf': '按绩效层级划分的总目标骑手份额分布（含占比%）。显示按质量等级的产能集中情况。',
         'desc-riderssharesize': '按合作商规模等级划分的总目标骑手份额分布（含占比%）。显示集中风险与多元化程度。',
+        'desc-movement-insight': '📊 关键洞察：<span id="partnerMovementInsight">每月平均195家合作商增加了目标，243家减少。12月降幅最大（79例增加 vs 457例减少），2月以136例增加 vs 284例减少收尾。</span>',
+        'desc-movement-note': 'ℹ️ <strong>说明：</strong>表格显示每月完成评估的合作商。没有评估数据的合作商（新注册、指标不完整）不计入此数据。',
         'desc-movement': '追踪合作商目标产能变动：过去6个月中增加、减少或维持目标的合作商。按质量绩效分层（良好≥80% FR，中等50-80% FR，待改善&lt;50% FR）。',
         'desc-tenure': '按入职时长分析合作商构成：新入职（&lt;1个月）、近期加入（&lt;3个月）和老牌合作商（&gt;3个月）。比劃6个月内的产能（目标）、参与度（活跃数量）、规模效率（平均规模）及质量分布。绿/红箭头显示月环比趋势。',
         'desc-cityanalysis': '城市级分析，展示全部6个月（9月至2月）的总目标骑手数及有目标的活跃合作商。绿/红箭头表示月环比百分比变化。筛选两个月份可对比城市绩效趋势。',
@@ -33070,7 +33105,8 @@ const monthlyData = {
                     'cityTierCityChart','cityTierBreakdownChart','cityTierBreakdownChartT1','cityTierBreakdownChartT2',
                     'cityTierPerformanceChart','cityTierPerformanceChartT1','cityTierPerformanceChartT2',
                     'cityTierScaleChart','cityTierScaleChartT1','cityTierScaleChartT2',
-                    'partnersDataChart','tierPartnersChart'
+                    'partnersDataChart','tierPartnersChart',
+                    'partnerAgeTrendChart','partnerAgeScaleChart'
                 ];
                 for (var ci = 0; ci < chartIds.length; ci++) {
                     var ctxEl = document.getElementById(chartIds[ci]);
