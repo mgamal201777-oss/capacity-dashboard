@@ -11270,6 +11270,78 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 // Data storage
 var advDataLoaded = false;
 
+function dvIsZh() {
+    return localStorage.getItem('dashboard_lang_pref_v1') === 'zh';
+}
+
+function dvT(en, zh) {
+    return dvIsZh() ? zh : en;
+}
+
+function dvPartnerInsight(cat, fallbackEn) {
+    if (!dvIsZh()) return fallbackEn;
+    var map = {
+        good: '优质合作商整体维持强表现（90%以上），W1 到 W2 略有回落。≥100%达成占比较高，低于80%的占比较低，基本面稳健但需关注轻微下行。',
+        average: '中等合作商从W1到W2呈下行，整体低于目标。达成率集中在90-95%区间，说明具备改善空间，需针对性运营干预。',
+        bad: '待改善合作商从W1到W2出现回升，动能为正。虽然分类为待改善，但部分合作商已接近或超过目标，适合精细化修复策略。',
+        inc20: '目标增幅>20%的合作商从低位明显修复，W1到W2改善显著。整体仍需持续跟踪，确保增量目标逐步可达。',
+        inc1020: '目标增幅10-20%的合作商延续回升趋势，达成率逐步改善。该组恢复节奏较好，可继续强化执行稳定性。',
+        inc110: '目标增幅1-10%的合作商表现相对稳定，W1到W2小幅提升。说明小幅增量目标总体可控，执行可靠性较高。',
+        inc0: '目标持平/下调组从W1到W2有所走弱，需关注后段日表现。尽管总体基数较大，但下行信号提示仍需运营排查。'
+    };
+    return map[cat] || fallbackEn;
+}
+
+function dvCityInsight(metric, fallbackEn) {
+    if (!dvIsZh()) return fallbackEn;
+    if (metric === 'gap') {
+        return 'GAP视角显示部分城市偏差较大，需重点关注高波动城市；多数城市在月中后逐步收敛，但个别城市仍处于高风险区间。';
+    }
+    return '达成率视角显示头部城市稳定在高位，尾部城市仍需重点提升；建议对低位城市做精细化运营与资源补齐。';
+}
+
+function applyDailySlicerTooltips() {
+    var sectionBtns = document.querySelectorAll('#advancedDataSection .adv-toggle-btn');
+    sectionBtns.forEach(function(btn) {
+        var section = btn.getAttribute('data-section');
+        if (section === 'totalOverview') btn.setAttribute('data-tooltip', dvT('Summary view of overall daily capacity performance, achievement, and GAP.', '总览每日产能表现、达成率与GAP。'));
+        if (section === 'partnersStrat') btn.setAttribute('data-tooltip', dvT('Segment partners by quality and growth bands, with daily trend and breakdown.', '按质量与增长分层查看合作商，并显示每日趋势与分解。'));
+        if (section === 'cityLevel') btn.setAttribute('data-tooltip', dvT('Compare city-level daily performance for GAP% and Achievement.', '按城市对比每日GAP%与达成率表现。'));
+    });
+
+    var partnerBtns = document.querySelectorAll('#partnersStratContent .adv-sub-btn');
+    partnerBtns.forEach(function(btn) {
+        var cat = btn.getAttribute('data-cat');
+        var tip = '';
+        if (cat === 'good') tip = dvT('View daily performance for Good partners.', '查看优质合作商每日表现。');
+        if (cat === 'average') tip = dvT('View daily performance for Average partners.', '查看中等合作商每日表现。');
+        if (cat === 'bad') tip = dvT('View daily performance for Bad partners.', '查看待改善合作商每日表现。');
+        if (cat === 'inc20') tip = dvT('Partners with target increase above 20%.', '目标增幅大于20%的合作商。');
+        if (cat === 'inc1020') tip = dvT('Partners with target increase between 10% and 20%.', '目标增幅在10%-20%的合作商。');
+        if (cat === 'inc110') tip = dvT('Partners with target increase between 1% and 10%.', '目标增幅在1%-10%的合作商。');
+        if (cat === 'inc0') tip = dvT('Partners with no increase or reduced target (<=0).', '目标未增长或下降（<=0）的合作商。');
+        if (tip) btn.setAttribute('data-tooltip', tip);
+    });
+
+    var cityBtns = document.querySelectorAll('#cityLevelContent .adv-sub-btn');
+    cityBtns.forEach(function(btn) {
+        var m = btn.getAttribute('data-city');
+        if (m === 'gap') btn.setAttribute('data-tooltip', dvT('City-level GAP% view (Delivery vs Capacity).', '城市层级GAP%视图（配送 vs 容量）。'));
+        if (m === 'ach') btn.setAttribute('data-tooltip', dvT('City-level achievement rate view.', '城市层级达成率视图。'));
+    });
+
+    var tierBtns = document.querySelectorAll('#cityMetricContent .adv-city-chip.tier-btn');
+    tierBtns.forEach(function(btn) {
+        if (btn.textContent.indexOf('T1') !== -1) btn.setAttribute('data-tooltip', dvT('Toggle all T1 cities in the chart.', '切换图表中的全部T1城市。'));
+        if (btn.textContent.indexOf('T2') !== -1) btn.setAttribute('data-tooltip', dvT('Toggle all T2 cities in the chart.', '切换图表中的全部T2城市。'));
+    });
+
+    var cityChips = document.querySelectorAll('#cityMetricContent .adv-city-chip:not(.tier-btn)');
+    cityChips.forEach(function(chip) {
+        chip.setAttribute('data-tooltip', dvT('Toggle this city line on/off.', '开关该城市趋势线显示。'));
+    });
+}
+
 function switchAdvSection(section, btn) {
   document.querySelectorAll('.adv-toggle-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -11293,6 +11365,7 @@ function switchAdvSection(section, btn) {
     var activeMetric = activeCityBtn ? activeCityBtn.getAttribute('data-city') : 'gap';
     renderCityMetric(activeMetric);
   }
+    applyDailySlicerTooltips();
 }
 
 function toggleDailyExpand(tableId) {
@@ -11309,7 +11382,7 @@ function toggleDailyExpand(tableId) {
   });
   
   var btn = table.parentElement.querySelector('.adv-expand-btn');
-  btn.textContent = isExpanded ? '📅 Expand Daily View' : '📅 Collapse Daily View';
+    btn.textContent = isExpanded ? dvT('📅 Expand Daily View', '📅 展开每日视图') : dvT('📅 Collapse Daily View', '📅 收起每日视图');
 }
 
 function switchPartnerCat(cat, btn) {
@@ -11444,7 +11517,7 @@ function initAdvCharts() {
     data: {
       labels: generateDayLabels(chartNumDays),
       datasets: [{
-        label: 'Achievement %',
+                label: dvT('Achievement %', '达成率 %'),
         data: chartData,
         borderColor: '#1976d2',
         backgroundColor: 'rgba(25,118,210,0.1)',
@@ -11454,7 +11527,7 @@ function initAdvCharts() {
         pointRadius: 4,
         pointBackgroundColor: '#1976d2'
       },{
-        label: '95% Target',
+                label: dvT('95% Target', '95%目标线'),
         data: Array(chartNumDays).fill(95),
         borderColor: '#2e7d32',
         borderWidth: 2,
@@ -11462,7 +11535,7 @@ function initAdvCharts() {
         pointRadius: 0,
         fill: false
       },{
-        label: '90% threshold',
+                label: dvT('90% threshold', '90%阈值线'),
         data: Array(chartNumDays).fill(90),
         borderColor: '#f57c00',
         borderWidth: 2,
@@ -11893,9 +11966,9 @@ function renderTotalOverviewTable() {
   
   // Render thead with dynamic day columns
   var thead = table.querySelector('thead');
-  var theadHtml = '<tr><th>Metric</th><th>MTD</th><th>W1 (Feb 1-7)</th><th>W2 (Feb 8-14)</th>';
+    var theadHtml = '<tr><th>' + dvT('Metric', '指标') + '</th><th>MTD</th><th>W1 (Feb 1-7)</th><th>W2 (Feb 8-14)</th>';
   for (var i = numDays; i >= 1; i--) {
-    theadHtml += '<th class="adv-daily-cols">Day ' + i + '</th>';
+    theadHtml += '<th class="adv-daily-cols">' + dvT('Day ', '第') + i + dvT('', '天') + '</th>';
   }
   theadHtml += '</tr>';
   thead.innerHTML = theadHtml;
@@ -11936,7 +12009,7 @@ function renderTotalOverviewTable() {
   var html = '';
   
   // Row 1: Target
-  html += '<tr><td>Target</td>';
+    html += '<tr><td>' + dvT('Target', '目标') + '</td>';
   html += '<td class="period-col">' + fmt(tov.targetMTD) + '</td>';
   html += '<td class="period-col">' + fmt(tov.targetW1) + '</td>';
   html += '<td class="period-col">' + fmt(tov.targetW2) + '</td>';
@@ -11946,7 +12019,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 2: Online Riders
-  html += '<tr><td>Online Riders</td>';
+    html += '<tr><td>' + dvT('Online Riders', '在线骑手') + '</td>';
     var onlineMTD = parseFloat(String(tov.onlineMTD).replace(/[%,]/g,''));
     var onlineW1 = parseFloat(String(tov.onlineW1).replace(/[%,]/g,''));
     var onlineW2 = parseFloat(String(tov.onlineW2).replace(/[%,]/g,''));
@@ -11961,7 +12034,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 3: Delivery Riders
-  html += '<tr><td>Delivery Riders</td>';
+    html += '<tr><td>' + dvT('Delivery Riders', '配送骑手') + '</td>';
     var deliveryMTD = parseFloat(String(tov.deliveryMTD).replace(/[%,]/g,''));
     var deliveryW1 = parseFloat(String(tov.deliveryW1).replace(/[%,]/g,''));
     var deliveryW2 = parseFloat(String(tov.deliveryW2).replace(/[%,]/g,''));
@@ -11976,7 +12049,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 4: Achievement %
-  html += '<tr><td><strong>Achievement %</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span></td>';
+    html += '<tr><td><strong>' + dvT('Achievement %', '达成率 %') + '</strong> <span class="row-info-icon">❗<span class="row-tip-text">' + dvT('Achievement %: The achievement rate from Delivery Riders ÷ Target', '达成率%：由配送骑手 ÷ 目标计算。') + '</span></span></td>';
     var mtdAch = parseFloat(String(tov.mtd).replace('%',''));
     var w1Ach = parseFloat(String(tov.w1).replace('%',''));
     var w2Ach = parseFloat(String(tov.w2).replace('%',''));
@@ -11993,7 +12066,7 @@ function renderTotalOverviewTable() {
   html += '</tr>';
   
   // Row 5: Gap
-  html += '<tr><td><strong>Gap</strong> <span class="row-info-icon">❗<span class="row-tip-text">Gap: The gap for Target − Online Riders</span></span></td>';
+    html += '<tr><td><strong>' + dvT('Gap', '差距') + '</strong> <span class="row-info-icon">❗<span class="row-tip-text">' + dvT('Gap: The gap for Target − Online Riders', '差距：目标 − 在线骑手。') + '</span></span></td>';
   html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW1) + '</td>';
   html += '<td class="period-col">' + fmt(tov.gapW2) + '</td>';
@@ -12014,7 +12087,7 @@ function renderTotalOverviewTable() {
     });
     // Update button text
     var btn = table.closest('.adv-table-wrap').parentElement.querySelector('.adv-expand-btn');
-    if (btn) btn.textContent = '📅 Collapse Daily View';
+    if (btn) btn.textContent = dvT('📅 Collapse Daily View', '📅 收起每日视图');
   }
   
   // Update summary cards from sheet data
@@ -12034,7 +12107,7 @@ function renderTotalOverviewTable() {
       if (cards[0]) {
         cards[0].className = 'adv-card ' + cardColor(mtdVal) + ' commentable-section';
         cards[0].querySelector('.card-value').textContent = mtdVal.toFixed(1) + '%';
-        cards[0].querySelector('.card-sub').textContent = 'Target: ' + targetVal;
+        cards[0].querySelector('.card-sub').textContent = dvT('Target: ', '目标：') + targetVal;
       }
       // Card 1: W1 Performance
       if (cards[1]) {
@@ -12054,6 +12127,15 @@ function renderTotalOverviewTable() {
   } catch(cardErr) {
     console.warn('⚠️ Card update failed:', cardErr);
   }
+
+    try {
+        var totalHl = document.querySelector('#totalOverviewContent .adv-highlight-box');
+        if (totalHl) {
+            totalHl.innerHTML = '<strong>📊 ' + dvT('Key Insights:', '关键洞察：') + '</strong> ' + dvT('MTD achievement remains below 100% target with persistent weekly underperformance; daily levels show volatility and still require recovery actions.', 'MTD达成率仍低于100%目标，周度表现持续偏弱；日度波动仍在，需继续推进修复动作。');
+        }
+    } catch (hlErr) {}
+
+    applyDailySlicerTooltips();
 
   console.log('✅ Total Overview table & cards rendered from sheet data (days: ' + numDays + ', expanded: ' + wasExpanded + ')');
 }
@@ -12096,6 +12178,7 @@ function refreshSheetData() {
 
 // Initialize data fetch on page load
 window.addEventListener('load', function() {
+    applyDailySlicerTooltips();
   setTimeout(function() {
     fetchSheetData(function(data) {
       if (!data) return;
@@ -12116,6 +12199,7 @@ window.addEventListener('load', function() {
           renderCityMetric(activeMetric);
         }
       }
+            applyDailySlicerTooltips();
     });
   }, 1000);
 });
@@ -12318,7 +12402,7 @@ function _renderPartnerCatInner(cat) {
           w2: sc.w2.toFixed(1) + '%',
           gap: Math.abs(sc.gapValue).toLocaleString(),
           count: sc.numPartners[0],
-          insight: d.insight,
+          insight: dvPartnerInsight(cat, d.insight),
           data: [sc.targetValues, sc.numPartners, sc.onlineRiders, sc.deliveryRiders, sc.achievementRate, sc.gapArray],
                     breakdown: hasValidBreakdown ? sheetBreakdown : fallbackBreakdown,
           daily: sc.daily
@@ -12341,17 +12425,17 @@ function _renderPartnerCatInner(cat) {
   console.log('📊 Rendering', cat, 'with data rows:', d.data ? d.data.length : 'undefined');
   
   var html = '<div class="adv-cards-row">';
-  html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">MTD Achievement</div><span class="card-tip-text">Month-to-date achievement rate. Delivery Riders ÷ Target for this partner group.</span><div class="card-value">'+d.mtd+'</div><div class="card-sub">Target: '+d.target+'</div></div>';
-  html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">W1 Performance</div><span class="card-tip-text">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week.</span><div class="card-value">'+d.w1+'</div><div class="card-sub">Feb 1-7</div></div>';
-  html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">W2 Performance</div><span class="card-tip-text">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week.</span><div class="card-value">'+d.w2+'</div><div class="card-sub">Feb 8-14</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Total GAP</div><span class="card-tip-text">The gap between Target and Online Riders. Calculated as Target − Online Riders.</span><div class="card-value">'+d.gap+'</div><div class="card-sub">Riders</div></div>';
+    html += '<div class="adv-card '+((parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'red')+'"><div class="card-label">'+dvT('MTD Achievement', '月累计达成')+'</div><span class="card-tip-text">'+dvT('Month-to-date achievement rate. Delivery Riders ÷ Target for this partner group.', '该分组月累计达成率：配送骑手 ÷ 目标。')+'</span><div class="card-value">'+d.mtd+'</div><div class="card-sub">'+dvT('Target: ', '目标：')+d.target+'</div></div>';
+    html += '<div class="adv-card '+((parseFloat(d.w1)>=95)?'green':(parseFloat(d.w1)>=90)?'amber':'red')+'"><div class="card-label">'+dvT('W1 Performance', 'W1 表现')+'</div><span class="card-tip-text">'+dvT('Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week.', '第1周（2/1-2/7）达成率：配送骑手 ÷ 目标。')+'</span><div class="card-value">'+d.w1+'</div><div class="card-sub">'+dvT('Feb 1-7', '2月1-7日')+'</div></div>';
+    html += '<div class="adv-card '+((parseFloat(d.w2)>=95)?'green':(parseFloat(d.w2)>=90)?'amber':'red')+'"><div class="card-label">'+dvT('W2 Performance', 'W2 表现')+'</div><span class="card-tip-text">'+dvT('Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week.', '第2周（2/8-2/14）达成率：配送骑手 ÷ 目标。')+'</span><div class="card-value">'+d.w2+'</div><div class="card-sub">'+dvT('Feb 8-14', '2月8-14日')+'</div></div>';
+    html += '<div class="adv-card"><div class="card-label">'+dvT('Total GAP', '总差距')+'</div><span class="card-tip-text">'+dvT('The gap between Target and Online Riders. Calculated as Target − Online Riders.', '目标与在线骑手的差距：目标 − 在线骑手。')+'</span><div class="card-value">'+d.gap+'</div><div class="card-sub">'+dvT('Riders', '骑手')+'</div></div>';
   html += '</div>';
   
-  html += '<div class="adv-legend"><strong>Color Legend:</strong>';
-  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≥95% Excellent</div>';
-  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 90-94.9% Good</div>';
-  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 85-89.9% Warning</div>';
-  html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>';
+    html += '<div class="adv-legend"><strong>'+dvT('Color Legend:', '颜色图例：')+'</strong>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> '+dvT('≥95% Excellent', '≥95% 优秀')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> '+dvT('90-94.9% Good', '90-94.9% 良好')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> '+dvT('85-89.9% Warning', '85-89.9% 预警')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> '+dvT('<85% Critical', '<85% 严重')+'</div>';
   html += '</div>';
   
   // Determine number of daily columns from data
@@ -12366,11 +12450,11 @@ function _renderPartnerCatInner(cat) {
         return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
     }
   
-    html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' Performance</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>Metric</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+        html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' '+dvT('Performance', '表现')+'</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>'+dvT('Metric', '指标')+'</th><th>MTD</th><th>W1</th><th>W2</th>';
+    for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">'+dvT('Day ', '第')+i+dvT('', '天')+'</th>';
   html += '</tr></thead><tbody>';
   
-  var rows = ['Target','Number of Partners','Online Riders','Delivery Riders','Achievement %','Gap'];
+    var rows = [dvT('Target','目标'),dvT('Number of Partners','合作商数量'),dvT('Online Riders','在线骑手'),dvT('Delivery Riders','配送骑手'),dvT('Achievement %','达成率 %'),dvT('Gap','差距')];
   var totalRows = Math.min(rows.length, d.data.length);
   for(var r=0; r<totalRows; r++) {
     var isAch = (r===4);
@@ -12380,8 +12464,8 @@ function _renderPartnerCatInner(cat) {
         var isTrendRow = isAch || isGap || isOnline || isDelivery;
     var isBold = isAch || isGap;
     var rowLabel = rows[r];
-    if(isAch) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">Achievement %: The achievement rate from Delivery Riders ÷ Target</span></span>';
-    else if(isGap) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">Gap: The gap for Target − Online Riders</span></span>';
+    if(isAch) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">'+dvT('Achievement %: The achievement rate from Delivery Riders ÷ Target','达成率%：由配送骑手 ÷ 目标计算。')+'</span></span>';
+    else if(isGap) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">'+dvT('Gap: The gap for Target − Online Riders','差距：目标 − 在线骑手。')+'</span></span>';
     html += '<tr><td>'+rowLabel+'</td>';
     var rowDailyFlags = isAch ? getDailyFlagIndexes(d.data[r].slice(3), 'low') : (isGap ? getDailyFlagIndexes(d.data[r].slice(3), 'abs-high') : {});
     for(var c=0; c<3; c++) {
@@ -12417,7 +12501,7 @@ function _renderPartnerCatInner(cat) {
   }
   
   // Achievement breakdown rows
-  var breakdownRows = ['achievement rate ≥100%','achievement rate >=95% - <100%','achievement rate >=90% - <95%','achievement rate >=80% - <90%','achievement rate <80%'];
+    var breakdownRows = [dvT('achievement rate ≥100%','达成率 ≥100%'),dvT('achievement rate >=95% - <100%','达成率 >=95% - <100%'),dvT('achievement rate >=90% - <95%','达成率 >=90% - <95%'),dvT('achievement rate >=80% - <90%','达成率 >=80% - <90%'),dvT('achievement rate <80%','达成率 <80%')];
   var totalP = d.count;
     function getBkdnColorByRow(rowIdx) {
         if (rowIdx === 0) return 'bkdn-high'; // >=100% positive
@@ -12451,12 +12535,12 @@ function _renderPartnerCatInner(cat) {
     html += '</tr>';
   }
   
-  html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'partner'+cat+'Table\')">📅 Expand Daily View</button></div>';
+    html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'partner'+cat+'Table\')">'+dvT('📅 Expand Daily View','📅 展开每日视图')+'</button></div>';
   
   var color = (parseFloat(d.mtd)>=95)?'green':(parseFloat(d.mtd)>=90)?'amber':'amber';
-  html += '<div class="adv-highlight-box '+color+'"><strong>📊 Key Insights:</strong> '+d.insight+'</div>';
+    html += '<div class="adv-highlight-box '+color+'"><strong>📊 '+dvT('Key Insights:','关键洞察：')+'</strong> '+dvPartnerInsight(cat, d.insight)+'</div>';
   
-  html += '<details class="adv-chart-details"><summary>📈 Daily Trend Chart</summary><div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="partner'+cat+'Chart"></canvas></div></div></details>';
+    html += '<details class="adv-chart-details"><summary>📈 '+dvT('Daily Trend Chart','每日趋势图')+'</summary><div class="adv-chart-wrap"><div class="adv-chart-canvas"><canvas id="partner'+cat+'Chart"></canvas></div></div></details>';
   
   document.getElementById('partnerCatContent').innerHTML = html;
   
@@ -12471,7 +12555,7 @@ function _renderPartnerCatInner(cat) {
       data: {
         labels: generateShortDayLabels(chartNumDays),
         datasets: [{
-          label: 'Achievement %',
+          label: dvT('Achievement %', '达成率 %'),
           data: chartDailyData,
           borderColor: '#1976d2',
           backgroundColor: 'rgba(25,118,210,0.1)',
@@ -12480,7 +12564,7 @@ function _renderPartnerCatInner(cat) {
           borderWidth: 3,
           pointRadius: 4
         },{
-          label: '95% Target',
+          label: dvT('95% Target', '95%目标线'),
           data: Array(chartNumDays).fill(95),
           borderColor: '#2e7d32',
           borderWidth: 2,
@@ -12488,7 +12572,7 @@ function _renderPartnerCatInner(cat) {
           pointRadius: 0,
           fill: false
         },{
-          label: '90% Threshold',
+          label: dvT('90% Threshold', '90%阈值线'),
           data: Array(chartNumDays).fill(90),
           borderColor: '#f57c00',
           borderWidth: 2,
@@ -12619,8 +12703,8 @@ function renderCityMetric(metric) {
   }
   
   var data = (metric==='gap') ? gapData : achData;
-  var title = (metric==='gap') ? '📉 City GAP % (Delivery vs Capacity)' : '📊 City Achievement Rate';
-  var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.5%), Riyadh (3.3%), and Dammam (1.8%). Negative W1/W2 values indicate delivery exceeded capacity in weekly windows. Day 1 shows extreme spikes (Yanbu -12.3%, multiple cities <-8%) suggesting initialization issues. Most cities stabilize at <-2% daily gap by Day 3. Day 16 shows consistent negative gaps across all cities (Jazan -3.8%, Riyadh/Tabuk -2.4%), indicating sustained over-delivery vs capacity.' : 'Achievement rates show strong performers: Al Kharj (100.5%), Hafar Albatin (100.0%), Abha (98.6%), Jazan (98.6%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.6% MTD with W1=W2=89.3%, indicating systemic underperformance. Yanbu lowest at 89.5% MTD. Day 16 performance: Taif leads (99.7%), Hafar Albatin (98.1%), Jazan (97.4%). Hail drops significantly to 88.4%, requiring immediate attention.';
+    var title = (metric==='gap') ? dvT('📉 City GAP % (Delivery vs Capacity)', '📉 城市GAP %（配送 vs 容量）') : dvT('📊 City Achievement Rate', '📊 城市达成率');
+    var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.5%), Riyadh (3.3%), and Dammam (1.8%). Negative W1/W2 values indicate delivery exceeded capacity in weekly windows. Day 1 shows extreme spikes (Yanbu -12.3%, multiple cities <-8%) suggesting initialization issues. Most cities stabilize at <-2% daily gap by Day 3. Day 16 shows consistent negative gaps across all cities (Jazan -3.8%, Riyadh/Tabuk -2.4%), indicating sustained over-delivery vs capacity.' : 'Achievement rates show strong performers: Al Kharj (100.5%), Hafar Albatin (100.0%), Abha (98.6%), Jazan (98.6%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.6% MTD with W1=W2=89.3%, indicating systemic underperformance. Yanbu lowest at 89.5% MTD. Day 16 performance: Taif leads (99.7%), Hafar Albatin (98.1%), Jazan (97.4%). Hail drops significantly to 88.4%, requiring immediate attention.';
   
   var bestCity = '', bestVal = (metric==='ach' ? -999 : 999), worstCity = '', worstVal = (metric==='ach' ? 999 : 0);
   for(var i=0; i<cities.length; i++) {
@@ -12636,25 +12720,25 @@ function renderCityMetric(metric) {
   }
   
   var html = '<div class="adv-cards-row">';
-  html += '<div class="adv-card green"><div class="card-label">Best City</div><span class="card-tip-text">City with the '+(metric==='gap'?'lowest GAP (closest to target)':'highest achievement rate')+' this month.</span><div class="card-value">'+bestCity+'</div><div class="card-sub">'+bestVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
-  html += '<div class="adv-card red"><div class="card-label">Worst City</div><span class="card-tip-text">City with the '+(metric==='gap'?'highest GAP (furthest from target)':'lowest achievement rate')+' requiring attention.</span><div class="card-value">'+worstCity+'</div><div class="card-sub">'+worstVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Cities Tracked</div><span class="card-tip-text">Total number of cities being tracked across Saudi Arabia.</span><div class="card-value">17</div><div class="card-sub">Across KSA</div></div>';
-  html += '<div class="adv-card"><div class="card-label">Avg '+(metric==='gap'?'GAP':'Achievement')+'</div><span class="card-tip-text">Average '+(metric==='gap'?'GAP percentage':'achievement rate')+' across all 17 cities for the month.</span><div class="card-value">'+(data.mtd.reduce((a,b)=>a+b,0)/17).toFixed(1)+(metric==='ach'?'%':'%')+'</div><div class="card-sub">MTD Average</div></div>';
+    html += '<div class="adv-card green"><div class="card-label">'+dvT('Best City', '最佳城市')+'</div><span class="card-tip-text">'+dvT('City with the '+(metric==='gap'?'lowest GAP (closest to target)':'highest achievement rate')+' this month.', metric==='gap'?'本月GAP最低（最接近目标）的城市。':'本月达成率最高的城市。')+'</span><div class="card-value">'+bestCity+'</div><div class="card-sub">'+bestVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+    html += '<div class="adv-card red"><div class="card-label">'+dvT('Worst City', '最弱城市')+'</div><span class="card-tip-text">'+dvT('City with the '+(metric==='gap'?'highest GAP (furthest from target)':'lowest achievement rate')+' requiring attention.', metric==='gap'?'本月GAP最高（偏离目标最远）且需关注的城市。':'本月达成率最低且需关注的城市。')+'</span><div class="card-value">'+worstCity+'</div><div class="card-sub">'+worstVal.toFixed(1)+(metric==='ach'?'%':'%')+'</div></div>';
+    html += '<div class="adv-card"><div class="card-label">'+dvT('Cities Tracked', '追踪城市数')+'</div><span class="card-tip-text">'+dvT('Total number of cities being tracked across Saudi Arabia.', '当前追踪的城市总数。')+'</span><div class="card-value">17</div><div class="card-sub">'+dvT('Across KSA', '覆盖沙特全境')+'</div></div>';
+    html += '<div class="adv-card"><div class="card-label">'+dvT('Avg '+(metric==='gap'?'GAP':'Achievement'), metric==='gap'?'平均GAP':'平均达成率')+'</div><span class="card-tip-text">'+dvT('Average '+(metric==='gap'?'GAP percentage':'achievement rate')+' across all 17 cities for the month.', metric==='gap'?'本月17个城市的平均GAP百分比。':'本月17个城市的平均达成率。')+'</span><div class="card-value">'+(data.mtd.reduce((a,b)=>a+b,0)/17).toFixed(1)+(metric==='ach'?'%':'%')+'</div><div class="card-sub">'+dvT('MTD Average','MTD平均')+'</div></div>';
   html += '</div>';
   
   if(metric==='ach') {
-    html += '<div class="adv-legend"><strong>Color Legend:</strong>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≥95% Excellent</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 90-94.9% Good</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 85-89.9% Warning</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> <85% Critical</div>';
+    html += '<div class="adv-legend"><strong>'+dvT('Color Legend:','颜色图例：')+'</strong>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> '+dvT('≥95% Excellent','≥95% 优秀')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> '+dvT('90-94.9% Good','90-94.9% 良好')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> '+dvT('85-89.9% Warning','85-89.9% 预警')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> '+dvT('<85% Critical','<85% 严重')+'</div>';
     html += '</div>';
   } else {
-    html += '<div class="adv-legend"><strong>Color Legend (GAP %):</strong>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> ≤1.0% Excellent</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> 1.1-2.0% Good</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> 2.1-3.0% Warning</div>';
-    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> >3.0% Critical</div>';
+    html += '<div class="adv-legend"><strong>'+dvT('Color Legend (GAP %):','颜色图例（GAP %）：')+'</strong>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-excellent"></span> '+dvT('≤1.0% Excellent','≤1.0% 优秀')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-good"></span> '+dvT('1.1-2.0% Good','1.1-2.0% 良好')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-warning"></span> '+dvT('2.1-3.0% Warning','2.1-3.0% 预警')+'</div>';
+    html += '<div class="adv-legend-item"><span class="adv-legend-dot dot-critical"></span> '+dvT('>3.0% Critical','>3.0% 严重')+'</div>';
     html += '</div>';
   }
   
@@ -12671,8 +12755,8 @@ function renderCityMetric(metric) {
         return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
     }
   
-    html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>City</th><th>MTD</th><th>W1</th><th>W2</th>';
-  for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">Day '+i+'</th>';
+        html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>'+dvT('City','城市')+'</th><th>MTD</th><th>W1</th><th>W2</th>';
+    for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">'+dvT('Day ', '第')+i+dvT('', '天')+'</th>';
   html += '</tr></thead><tbody>';
   
   for(var c=0; c<cities.length; c++) {
@@ -12702,17 +12786,17 @@ function renderCityMetric(metric) {
     html += '</tr>';
   }
   
-  html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'city'+metric+'Table\')">📅 Expand Daily View</button></div>';
+    html += '</tbody></table></div><button class="adv-expand-btn" onclick="toggleDailyExpand(\'city'+metric+'Table\')">'+dvT('📅 Expand Daily View','📅 展开每日视图')+'</button></div>';
   
-  html += '<div class="adv-highlight-box amber"><strong>📊 Key Insights:</strong> '+insight+'</div>';
+    html += '<div class="adv-highlight-box amber"><strong>📊 '+dvT('Key Insights:','关键洞察：')+'</strong> '+dvCityInsight(metric, insight)+'</div>';
   
   cityChartData[metric] = data;
   
-  html += '<details class="adv-chart-details" open><summary>📈 City Comparison Chart</summary>';
+    html += '<details class="adv-chart-details" open><summary>📈 '+dvT('City Comparison Chart','城市对比图')+'</summary>';
   html += '<div class="adv-city-slicer" id="citySlicer'+metric+'">';
-  html += '<span class="slicer-label">Filter:</span>';
-  html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T1\',\''+metric+'\')">T1 Cities</span>';
-  html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T2\',\''+metric+'\')">T2 Cities</span>';
+    html += '<span class="slicer-label">'+dvT('Filter:','筛选：')+'</span>';
+    html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T1\',\''+metric+'\')">'+dvT('T1 Cities','T1 城市')+'</span>';
+    html += '<span class="adv-city-chip tier-btn" onclick="toggleCityTier(\'T2\',\''+metric+'\')">'+dvT('T2 Cities','T2 城市')+'</span>';
   html += '<span style="width:1px;height:20px;background:#ccc;margin:0 4px;"></span>';
   var cityTiers = {0:'T1',1:'T1',2:'T2',3:'T2',4:'T1',5:'T1',6:'T2',7:'T2',8:'T1',9:'T1',10:'T2',11:'T2',12:'T2',13:'T2',14:'T1',15:'T2',16:'T2'};
   for(var ci=0; ci<cities.length; ci++) {
@@ -12727,6 +12811,8 @@ function renderCityMetric(metric) {
   setTimeout(function(){
     renderCityChart(metric, data, cities);
   }, 100);
+
+    applyDailySlicerTooltips();
 }
 
 var cityChartInstances = {};
