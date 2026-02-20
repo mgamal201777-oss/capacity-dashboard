@@ -10709,7 +10709,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
 </style>
 
 <h2 class="daily-view-title">&#128197; Capacity Target Achievement (Daily View)</h2>
-<p class="daily-view-subtitle">February 2026 MTD &nbsp;|&nbsp; Daily performance tracking across all partners with target &nbsp;|&nbsp; Delivery &amp; Online rider capacity target achievement analysis</p>
+<p class="daily-view-subtitle" data-i18n="February 2026 MTD | Daily performance tracking across all partners with target | Delivery & Online rider capacity target achievement analysis">February 2026 MTD | Daily performance tracking across all partners with target | Delivery & Online rider capacity target achievement analysis</p>
 
 <!-- Google Sheets Sync Status Banner -->
 <div id="syncBanner" style="background:linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border:2px solid #66bb6a; border-radius:10px; padding:10px 16px; margin:12px 0 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(102,187,106,0.2);">
@@ -11011,7 +11011,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-mtd" style="display:none;">0</span>
         </button>
         <div class="card-label">MTD Achievement</div>
-        <span class="card-tip-text">Month-to-date achievement rate calculated as Delivery Riders ÷ Target across all partners.</span>
+        <span class="card-tip-text" data-i18n="Month-to-date achievement rate calculated as Delivery Riders ÷ Target across all partners.">Month-to-date achievement rate calculated as Delivery Riders ÷ Target across all partners.</span>
         <div class="card-value">93.1%</div>
         <div class="card-sub">Delivery | Target: 19,430</div>
       </div>
@@ -11021,7 +11021,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w1" style="display:none;">0</span>
         </button>
         <div class="card-label">W1 Performance</div>
-        <span class="card-tip-text">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.</span>
+        <span class="card-tip-text" data-i18n="Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.</span>
         <div class="card-value">92.5%</div>
         <div class="card-sub">Feb 1-7 | Stable</div>
       </div>
@@ -11031,7 +11031,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w2" style="display:none;">0</span>
         </button>
         <div class="card-label">W2 Performance</div>
-        <span class="card-tip-text">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.</span>
+        <span class="card-tip-text" data-i18n="Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.</span>
         <div class="card-value">92.4%</div>
         <div class="card-sub">Feb 8-14 | Declining trend</div>
       </div>
@@ -11041,7 +11041,7 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-gap" style="display:none;">0</span>
         </button>
         <div class="card-label">Total GAP</div>
-        <span class="card-tip-text">The gap between Target and Online Riders. Calculated as Target − Online Riders.</span>
+        <span class="card-tip-text" data-i18n="The gap between Target and Online Riders. Calculated as Target − Online Riders.">The gap between Target and Online Riders. Calculated as Target − Online Riders.</span>
         <div class="card-value">457</div>
         <div class="card-sub">Riders | Online vs Del</div>
       </div>
@@ -31802,6 +31802,11 @@ const monthlyData = {
         'Total GAP': '总差距',
         'Riders | Online vs Del': '骑手 | 在线 vs 配送',
         'Target:': '目标：',
+        'February 2026 MTD | Daily performance tracking across all partners with target | Delivery & Online rider capacity target achievement analysis': '2026年2月MTD｜对所有有目标合作商进行每日表现追踪｜配送与在线骑手产能目标达成分析',
+        'Month-to-date achievement rate calculated as Delivery Riders ÷ Target across all partners.': '月累计达成率按所有合作商的「配送骑手 ÷ 目标」计算。',
+        'Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.': '第1周（2月1-7日）达成率：本月第一周的「配送骑手 ÷ 目标」。',
+        'Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.': '第2周（2月8-14日）达成率：本月第二周的「配送骑手 ÷ 目标」。',
+        'The gap between Target and Online Riders. Calculated as Target − Online Riders.': '目标与在线骑手的差距：按「目标 − 在线骑手」计算。',
         'Good Partners': '优质合作商',
         'Average Partners': '中等合作商',
         'Bad Partners': '待改善合作商',
