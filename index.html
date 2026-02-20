@@ -9100,7 +9100,7 @@ document.getElementById('toggleDecreasedTable').addEventListener('click', functi
 <!-- Key Insights -->
 <div class="highlight-box" style="margin-top: 30px;">
 <h3 style="color: #1f4e78; margin-bottom: 15px;">💡 Key Insights &amp; Takeaways</h3>
-<div>
+<div data-i18n-html="willingness-key-insights">
 <p style="margin-bottom: 12px; line-height: 1.6;">
 <strong>📈 Overall Trend:</strong> Partner willingness started at 37.4% in October (213 willing partners), 
                             improved in November (40.5%, 259 partners), but plummeted in December to the lowest point at 12.8% (81 willing partners). 
@@ -31682,11 +31682,14 @@ const monthlyData = {
     var isApplyingLanguage = false;
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
-    // Proper nouns (city names, partner brand names) — never translated
+    // Proper nouns (city names, partner brand names, month abbreviations) — never translated
     var _properNounSet = new Set([
         'Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj',
         'Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu',
-        'Abha','Jazan','Makkah','Najran','Taif'
+        'Abha','Jazan','Makkah','Najran','Taif',
+        // Month abbreviations kept in English
+        'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec',
+        'Jan-26','Feb-26','Mar-26','Sep-25','Oct-25','Nov-25','Dec-25','Jan-25'
     ]);
 
     var zhDict = {
@@ -32562,6 +32565,52 @@ const monthlyData = {
         'Target assigned per city to share with CH': '按城市分配目标并与CH共享',
         'Partners count shared with PMM/CH to reach avg scale target': '合作商数量与PMM/CH共享，以达到平均规模目标',
 
+        // ── MONTHLY INSIGHTS TAB — SECTION TITLES ──
+        'City-wise Target Distribution (with MoM trends) — click to expand/collapse': '城市目标分布（含月环比趋势）— 点击展开/收起',
+        'Tier City Overview (T1 vs T2) — click to expand/collapse': '城市层级概览（T1 vs T2）— 点击展开/收起',
+        'Strategic Insights & Key Findings — click to expand/collapse': '战略洞察与关键发现 — 点击展开/收起',
+        'Growth Category Breakdown (Increase Slabs)': '增长类别分解（增加档次）',
+        'Growth Category Breakdown (Decrease Slabs)': '增长类别分解（减少档次）',
+
+        // ── MONTHLY INSIGHTS TAB — DESCRIPTIONS ──
+        'City-level analysis showing total target riders and active partners (with targets) across all 6 months (Sep\u2013Feb). Green/Red arrows indicate month-over-month percentage changes. Filter by two months to compare city performance trends.': '城市级分析，展示6个月（Sep-Feb）所有城市的总目标骑手数及有目标的活跃合作商数。绿/红箭头显示月环比变化，可筛选两个月进行城市绩效趋势对比。',
+        'Track partner target capacity movements: partners who increased, decreased, or maintained their targets across 6 months. Segmented by quality performance (Good \u226580% FR, Average 50-80% FR, Bad <50% FR).': '追踪合作商目标产能变动：6个月内增加、减少或维持目标的合作商，按绩效质量细分（良好≥80% FR、中等50-80% FR、待改善<50% FR）。',
+        'Partners by % target increase (0%, 1-10%, 11-20%, 21-30%, >30%). Line shows total partners with any increase.': '按目标增幅划分的合作商（0%、1-10%、11-20%、21-30%、>30%）。折线显示有任何增加的合作商总数。',
+        'Partners by % target decrease (0%, -1 to -10%, -11 to -20%, -21 to -30%, <-30%). Line shows total partners with any decrease.': '按目标降幅划分的合作商（0%、-1至-10%、-11至-20%、-21至-30%、<-30%）。折线显示有任何减少的合作商总数。',
+        'Complete view of all cities across 6 months showing partner counts and total target capacity. MoM % change calculated from previous month.': '展示6个月所有城市的合作商数量及总目标产能完整视图，月环比%按上月计算。',
+        'Average of 195 partners increased targets monthly, while 243 decreased. December saw the sharpest decline (79 increases vs 457 decreases). February closed with 136 increases vs 284 decreases.': '每月平均195家合作商增加了目标，243家减少。12月降幅最大（79例增加 vs 457例减少），2月以136例增加 vs 284例减少收尾。',
+
+        // ── MONTHLY INSIGHTS TAB — BUTTONS & LABELS ──
+        'Reset to All Months': '重置为全部月份',
+        'Compare Months:': '对比月份：',
+        'Compare': '比较',
+        'Apply Filter': '应用筛选',
+        'Filter by City (Slicer):': '按城市筛选：',
+        'T1 Cities (Major Markets)': 'T1城市（主要市场）',
+        'T2 Cities (Secondary Markets)': 'T2城市（次要市场）',
+        '-- Month 1 --': '--月份1--',
+        '-- Month 2 --': '--月份2--',
+        'Filter by:': '筛选：',
+
+        // ── MONTHLY INSIGHTS TAB — KPI CARD TOP LABELS ──
+        'Highest Avg Scale': '最高平均规模',
+        'Lowest Avg Scale': '最低平均规模',
+        'Best MoM Improver': '最佳月环比提升',
+        'Steepest MoM Decline': '最大月环比下降',
+
+        // ── MONTHLY INSIGHTS TAB — CHART TITLES & AXIS LABELS ──
+        'Total Target by City (Trend)': '各城市总目标（趋势）',
+        'Active Partners by City (Trend)': '各城市活跃合作商（趋势）',
+        'City-wise Avg Scale Trend (Target \u00f7 Partners)': '城市平均规模趋势（目标÷合作商）',
+        'City-wise Monthly Target & Partners Overview': '城市月度目标与合作商概览',
+        'Partner Size Breakdown - Willingness by Target Size': '合作商规模分解 — 按目标规模划分的意愿',
+        'Partners (Bars)': '合作商（柱）',
+        'Total Increase (Line)': '总增量（折线）',
+        'Total Decrease (Line)': '总减量（折线）',
+
+        // ── MONTHLY INSIGHTS TAB — KEY INSIGHTS LABELS ──
+        'Key Insights & Takeaways': '关键洞察与要点',
+
         // OKR O2 CONTENT
         'Raise compliance rate from 25% to 80% in Q1': '在Q1将合规率从25%提升至80%',
         'KR: Good/strong partners carry 58-60% of capacity target; Bad partners 5%': 'KR：良好/强势合作商承担58-60%的产能目标；待改善合作商5%',
@@ -32622,6 +32671,7 @@ const monthlyData = {
         'exec-highlights-list': `<li><strong>待改善合作商↓72.6%：</strong>从73家降至20家</li><li><strong>中等合作商稳定：</strong>262家合作商，8,414名骑手（+1.0%）</li><li><strong>平均目标保持：</strong>尽管削减仍维持35.1名骑手/合作商</li><li><strong>质量提升：</strong>组合结构向合规方向转变</li>`,
         'exec-concerns-list': `<li><strong>整体下滑：</strong>总产能下降13.8%（-3,088）</li><li><strong>优质合作商下降：</strong>目标削减6.6%</li><li><strong>零目标影响：</strong>70家合作商分阶段停止分配（影响合作商体验）</li><li><strong>产能收缩：</strong>车队规模压缩压力</li>`,
         'exec-targets-list': `<li><strong>平均骑手/合作商：</strong>从约33提升至≥45</li><li><strong>稳定性：</strong>锁定3个月波段；≥70%高峰期保留率</li><li><strong>CPO影响：</strong>≥0.39沙特里亚尔/订单降低</li><li><strong>管控：</strong>SOP+制作/核查；-10%人工调整</li><li><strong>结构转变：</strong>优质58-60%；待改善5%；增加司机卡</li><li><strong>合规性：</strong>3月前FR达98-100%</li><li><strong>规模提升：</strong>≥20家合作商达到≥150名骑手</li>`,
+        'willingness-key-insights': `<p style="margin-bottom: 12px; line-height: 1.6;"><strong>📈 整体趋势：</strong>合作商意愿在10月以37.4%起步（213名意愿合作商），11月有所改善（40.5%，259名），但12月骤降至最低点12.8%（81名）。1月出现强劲反弹至32.7%（201名），但2月再次回落至24.6%（130名），显示参与度波动明显。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>🎯 最佳表现：</strong>11月意愿率最高，达40.5%，640名小计合作商中有259名愿意提高目标。10月紧随其后，意愿率37.4%（213名合作商）。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>⚠️ 12月挑战：</strong>12月降幅最大，仅12.8%的意愿（81名合作商），554家合作商（87.2%）不愿意提高目标，是所有月份中阻力最大的时期。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>🔥 1月复苏与2月下降：</strong>1月意愿显著增长20%，达32.7%（201名合作商），高于12月12.8%的低点。然而2月降至24.6%（528名小计中有130名意愿），表明合作商参与度持续波动。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>📊 合作商基础动态：</strong>合作商总数从峰值767名（11月）收缩至551名（2月），代表显著的组合整合。10月-2月平均意愿为30.0%（意愿方）vs 70.0%（不意愿方），显示持续的参与挑战。</p><p style="margin-bottom: 0; line-height: 1.6;"><strong>💼 战略建议：</strong>通过实施有针对性的保留和增长激励措施来应对2月的下降。1月复苏与2月下降之间的波动表明合作商对干预措施的反应不一致，应重点关注维持参与势头，同时解决反复下滑的根本原因。</p>`,
     };
 
     // Pre-sort keys once for performance
@@ -32666,6 +32716,15 @@ const monthlyData = {
         output = output.replace(/\bT2 change vs Jan\b/g, 'T2月环比变化（vs 1月）');
         output = output.replace(/forecasted capacity target of ([\d,]+) riders/g, '预测产能目标为$1名骑手');
         output = output.replace(/\bT([12]) • (Overview|City Level) • (.+?) \(Jan vs Feb\)/g, function(m,t,b,metric){ var bMap={'Overview':'概览','City Level':'城市级'};return 'T'+t+' • '+(bMap[b]||b)+' • '+metric+'（1月 vs 2月）'; });
+        // Protect full month names BEFORE dict loop so short keys (Oct, Jan...)
+        // cannot partially match inside longer names (October, January...)
+        var _mP = {
+            'January':'\x00M01\x00','February':'\x00M02\x00','March':'\x00M03\x00',
+            'April':'\x00M04\x00','June':'\x00M06\x00','July':'\x00M07\x00',
+            'August':'\x00M08\x00','September':'\x00M09\x00','October':'\x00M10\x00',
+            'November':'\x00M11\x00','December':'\x00M12\x00'
+        };
+        for (var _mk in _mP) { if (output.indexOf(_mk) !== -1) output = output.split(_mk).join(_mP[_mk]); }
         // Dictionary replacement (longest key first to avoid partial matches)
         var keys = getSortedKeys();
         for (var i = 0; i < keys.length; i++) {
@@ -32674,6 +32733,8 @@ const monthlyData = {
                 output = output.split(key).join(zhDict[key]);
             }
         }
+        // Restore full month names (kept in English as proper nouns)
+        for (var _mk in _mP) { var _ph = _mP[_mk]; if (output.indexOf(_ph) !== -1) output = output.split(_ph).join(_mk); }
         return output;
     }
 
