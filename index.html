@@ -31679,6 +31679,7 @@ const monthlyData = {
 <script>
 (function() {
     var LANG_STORAGE_KEY = 'dashboard_lang_pref_v1';
+    var TRANS_CACHE_KEY = 'dashboard_zh_cache_v1'; // persisted auto-translations
     var currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'en';
     var textNodeOriginal = new WeakMap();
     var applyLangTimer = null;
@@ -31687,7 +31688,25 @@ const monthlyData = {
     var _i18nPendingNodes = []; // {node, base} pairs that autoTranslateMissing should patch directly
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
-    // Proper nouns (city names, partner brand names, month abbreviations) — never translated
+    // ── Load persisted auto-translations from previous sessions ──
+    // These are merged into zhDict immediately so the API is never called again
+    (function loadPersistedTranslations() {
+        try {
+            var saved = localStorage.getItem(TRANS_CACHE_KEY);
+            if (saved) {
+                var parsed = JSON.parse(saved);
+                var keys = Object.keys(parsed);
+                for (var k = 0; k < keys.length; k++) {
+                    var key = keys[k];
+                    if (!zhDict[key]) { // don't overwrite manual dict entries
+                        zhDict[key] = parsed[key];
+                        _autoTranslateCache[key] = true; // mark as already known
+                    }
+                }
+            }
+        } catch(e) {}
+    })();
+
     var _properNounSet = new Set([
         'Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj',
         'Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu',
@@ -32904,16 +32923,34 @@ const monthlyData = {
         }
         if (added > 0) {
             _sortedKeys = null; // reset sorted key cache
-            // Directly patch only the pending nodes - NO full document re-scan
-            var pending = _i18nPendingNodes;
-            _i18nPendingNodes = [];
-            for (var pi = 0; pi < pending.length; pi++) {
-                try {
-                    var pn = pending[pi].node;
-                    var pb = pending[pi].base;
-                    var pt = translateText(pb);
-                    if (pn.nodeValue !== pt) pn.nodeValue = pt;
-                } catch(e) {}
+            // Persist all new auto-translations to localStorage for instant load on next visit
+            try {
+                var saved = {};
+                try { saved = JSON.parse(localStorage.getItem(TRANS_CACHE_KEY) || '{}'); } catch(e) {}
+                var pending = _i18nPendingNodes;
+                _i18nPendingNodes = [];
+                for (var pi = 0; pi < pending.length; pi++) {
+                    try {
+                        var pn = pending[pi].node;
+                        var pb = pending[pi].base;
+                        var pt = translateText(pb);
+                        if (pn.nodeValue !== pt) pn.nodeValue = pt;
+                        if (pt !== pb) saved[pb] = pt; // save newly translated entry
+                    } catch(e) {}
+                }
+                localStorage.setItem(TRANS_CACHE_KEY, JSON.stringify(saved));
+            } catch(e) {
+                // localStorage quota exceeded — patch nodes anyway
+                var pending2 = _i18nPendingNodes;
+                _i18nPendingNodes = [];
+                for (var pi2 = 0; pi2 < pending2.length; pi2++) {
+                    try {
+                        var pn2 = pending2[pi2].node;
+                        var pb2 = pending2[pi2].base;
+                        var pt2 = translateText(pb2);
+                        if (pn2.nodeValue !== pt2) pn2.nodeValue = pt2;
+                    } catch(e2) {}
+                }
             }
         }
     }
