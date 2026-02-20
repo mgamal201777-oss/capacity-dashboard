@@ -7237,12 +7237,6 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 });
 </script>
-<div id="monthlyHighlightsSection" class="highlight-box">
-<h3>Highlights &amp; takeaways (selected month)</h3>
-<ul id="monthlyHighlights">
-<li>—</li>
-</ul>
-</div>
 
 <!-- PARTNER MOVEMENT ANALYSIS SECTION -->
 <div id="partnerMovementSection" style="margin-top: 35px;">
@@ -20407,7 +20401,7 @@ if(ovChartDet) {
             highlightPoint(m_targetTrend);
 
             renderFactorsTable(idx);
-            renderHighlights(idx);
+            // renderHighlights(idx); // Removed - highlights section deleted
         }
 
         // Initialize monthly tab charts after existing charts are created
@@ -20813,7 +20807,7 @@ const monthlyData = {
             document.getElementById('m_inc40').textContent = fmtPct(-27.8);
             document.getElementById('m_inc40_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">vs ${prevLabel}</span>`;
             // Render highlights for Feb-26 (last month) before early return
-            renderHighlights(monthlyData.months.length - 1);
+            // renderHighlights(monthlyData.months.length - 1); // Removed - highlights section deleted
             renderFactorsTable(monthlyData.months.length - 1);
             return;
         }
@@ -20894,7 +20888,7 @@ const monthlyData = {
         syncAvgScaleSelection(month);
 
     renderFactorsTable(idx);
-    renderHighlights(idx);
+    // renderHighlights(idx); // Removed - highlights section deleted
   }
 
   function changeMonth(step){
