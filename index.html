@@ -6668,7 +6668,7 @@ startBriefingAuto();
 <div id="monthlySectionTargetTrend" class="chart-container">
 <div style="margin-bottom: 15px;">
 <h3 class="chart-title">Monthly trend: Total Target &amp; Total Partners</h3>
-<p style="color: #6b7280; font-size: 13px; margin: 5px 0 10px 0; font-style: italic;">Tracks total capacity targets and number of total partners month-over-month. Shows overall market size and partner base growth trends. Dual-axis visualization with combined insight indicator.</p>
+<p data-i18n-html="desc-totaltargettrend" style="color: #6b7280; font-size: 13px; margin: 5px 0 10px 0; font-style: italic;">Tracks total capacity targets and number of total partners month-over-month. Shows overall market size and partner base growth trends. Dual-axis visualization with combined insight indicator.</p>
 </div>
 <canvas id="monthlyTargetTrendChart"></canvas>
 <div class="chart-info-panel" id="targetTrendInfo">Hover a month to see details.</div>
@@ -6676,7 +6676,7 @@ startBriefingAuto();
 <div id="monthlySectionMoMChange" class="chart-container">
 <div style="margin-bottom: 15px;">
 <h3 class="chart-title">MoM Change in Total Target (%)</h3>
-<p style="color: #6b7280; font-size: 13px; margin: 5px 0 0 0; font-style: italic;">Shows month‑over‑month % change in Total Target based on the Monthly Insights totals. Green = increase vs previous month, Red = decrease. First month is the baseline (no MoM).</p>
+<p data-i18n-html="desc-momchange" style="color: #6b7280; font-size: 13px; margin: 5px 0 0 0; font-style: italic;">Shows month‑over‑month % change in Total Target based on the Monthly Insights totals. Green = increase vs previous month, Red = decrease. First month is the baseline (no MoM).</p>
 </div>
 <canvas id="monthlyMoMChangeChartNew"></canvas>
 </div>
@@ -6685,7 +6685,7 @@ startBriefingAuto();
 <!-- VEHICLE TYPE BREAKDOWN SECTION -->
 <div id="vehicleTypeMonthlySection" class="chart-container" style="margin-top: 25px;">
 <h3 style="margin: 0 0 15px 0; color: #1f4e78; font-size: 18px;">🚗🏍️ Monthly Target by Vehicle Type (Cars vs Bikes)</h3>
-<p style="color: #6b7280; font-size: 13px; margin: 0 0 15px 0; font-style: italic;">Shows capacity target breakdown by vehicle type across months. Cars dominate but Bikes share is growing (15.8% → 25.4%). Toggle between Monthly overview and City-level breakdown.</p>
+<p data-i18n-html="desc-vehiclebreakdown" style="color: #6b7280; font-size: 13px; margin: 0 0 15px 0; font-style: italic;">Shows capacity target breakdown by vehicle type across months. Cars dominate but Bikes share is growing (15.8% → 25.4%). Toggle between Monthly overview and City-level breakdown.</p>
 
 <!-- View Toggle -->
 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
@@ -6931,8 +6931,8 @@ startBriefingAuto();
 </div>
 <div id="monthlySectionTopBottom" data-panel="monthlyExtras" data-view="top" style="display: none;">
     <h3 class="chart-title">📊 Top Movers - Biggest &amp; Smallest Partners by Riders</h3>
-    <p style="color: #6b7280; font-size: 13px; margin: 5px 0 15px 0; font-style: italic;">
-                            Shows Top 20 partners with highest rider count and Bottom 20 with lowest rider count. 
+    <p data-i18n-html="desc-topmovers" style="color: #6b7280; font-size: 13px; margin: 5px 0 15px 0; font-style: italic;">
+                            Shows Top 20 partners with highest rider count and Bottom 20 with lowest rider count.
                             Includes actual riders and total target.
                         </p>
     <div style="margin-bottom: 15px;">
@@ -7025,7 +7025,7 @@ startBriefingAuto();
 <div id="partnersSharePerformance">
     <div style="margin-bottom: 15px;">
         <h3 class="chart-title">Partners performance mix (Good / Average / Bad)</h3>
-        <p style="color: #6b7280; font-size: 13px; margin: 5px 0 10px 0; font-style: italic;">Distribution of partners by achievement level. Good (≥80% FR), Average (50-80% FR), Bad (&lt;50% FR). Shows quality composition evolution.</p>
+        <p data-i18n-html="desc-perfmix" style="color: #6b7280; font-size: 13px; margin: 5px 0 10px 0; font-style: italic;">Distribution of partners by achievement level. Good (≥80% FR), Average (50-80% FR), Bad (&lt;50% FR). Shows quality composition evolution.</p>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: center;">
             <span style="font-size: 12px; font-weight: 600; color: #374151;">Quick Metrics:</span>
             <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Good Quality Trending</span>
@@ -32171,6 +32171,18 @@ const monthlyData = {
         'Target Movement Analysis': '目标变动分析',
         'Top & Bottom Partners Overview': '头部与尾部合作商概览',
         'Tier City Overview': '层级城市概览',
+        'Avr scale overview': '平均规模概览',
+        'Top & Bottom partners with target': '头部与尾部有目标合作商',
+        'Monthly trend: Total Target & Total Partners': '月度趋势：总目标与合作商总数',
+        'Monthly trend: Average Scale': '月度趋势：平均规模',
+        'Average Scale by Performance Level': '按绩效等级划分的平均规模',
+        'Average Scale by Size Level': '按规模等级划分的平均规模',
+        'Partners performance mix (Good / Average / Bad)': '合作商绩效构成（良好 / 中等 / 待改善）',
+        'Partners size mix (Big / Mid / Small)': '合作商规模构成（大 / 中 / 小）',
+        'Total Riders Share by Performance Level (Good / Average / Bad)': '按绩效等级划分的骑手总量份额（良好 / 中等 / 待改善）',
+        'Total Riders Share by Size Level (Big / Mid / Small)': '按规模等级划分的骑手总量份额（大 / 中 / 小）',
+        '⭐ Share by Quality': '⭐ 按质量分配',
+        'Capacity Allocation:': '产能分配：',
         'Total Increase': '总增加',
         'Total Decrease': '总减少',
         'No change': '无变化',
@@ -32747,6 +32759,11 @@ const monthlyData = {
         'desc-riderslab': '各月各骑手数量区间的合作商数量，有助于识别产能分布规律。',
         'desc-slabincr': '按骑手数量区间分类的目标增加合作商数量，显示不同规模合作商的增长势头。',
         'desc-slabdecr': '按骑手数量区间分类的目标减少合作商数量，识别需要关注和支持的领域。',
+        'desc-totaltargettrend': '追踪月度总产能目标及合作商总数变化，展示整体市场规模与合作商基础增长趋势，双轴可视化含综合洞察指标。',
+        'desc-momchange': '展示基于月度洞察总量的总目标月环比%变化。绿色=较上月增加，红色=减少。第一个月为基准（无月环比）。',
+        'desc-vehiclebreakdown': '展示各月按车辆类型划分的产能目标。汽车占主导，但摩托车份额正在增长（15.8% → 25.4%）。可在月度概览与城市级分解之间切换。',
+        'desc-perfmix': '按达成水平分布的合作商。良好（≥80% FR）、中等（50-80% FR）、待改善（&lt;50% FR）。展示质量结构演变。',
+        'desc-topmovers': '展示骑手数最多的前20家周合作商和最少的后20家，包含实际骑手数和总目标。',
 
         'willingness-key-insights': `<p style="margin-bottom: 12px; line-height: 1.6;"><strong>📈 整体趋势：</strong>合作商意愿在10月以37.4%起步（213名意愿合作商），11月有所改善（40.5%，259名），但12月骤降至最低点12.8%（81名）。1月出现强劲反弹至32.7%（201名），但2月再次回落至24.6%（130名），显示参与度波动明显。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>🎯 最佳表现：</strong>11月意愿率最高，达40.5%，640名小计合作商中有259名愿意提高目标。10月紧随其后，意愿率37.4%（213名合作商）。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>⚠️ 12月挑战：</strong>12月降幅最大，仅12.8%的意愿（81名合作商），554家合作商（87.2%）不愿意提高目标，是所有月份中阻力最大的时期。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>🔥 1月复苏与2月下降：</strong>1月意愿显著增长20%，达32.7%（201名合作商），高于12月12.8%的低点。然而2月降至24.6%（528名小计中有130名意愿），表明合作商参与度持续波动。</p><p style="margin-bottom: 12px; line-height: 1.6;"><strong>📊 合作商基础动态：</strong>合作商总数从峰值767名（11月）收缩至551名（2月），代表显著的组合整合。10月-2月平均意愿为30.0%（意愿方）vs 70.0%（不意愿方），显示持续的参与挑战。</p><p style="margin-bottom: 0; line-height: 1.6;"><strong>💼 战略建议：</strong>通过实施有针对性的保留和增长激励措施来应对2月的下降。1月复苏与2月下降之间的波动表明合作商对干预措施的反应不一致，应重点关注维持参与势头，同时解决反复下滑的根本原因。</p>`,
     };
