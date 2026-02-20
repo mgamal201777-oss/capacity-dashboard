@@ -30045,13 +30045,13 @@ const monthlyData = {
         const getPerformanceBadge = (val) => {
             const perf = (val || '').toString().toLowerCase();
             if (perf === 'good') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">good</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + translateText('good') + '</span>';
             }
             if (perf === 'average') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fef3c7; color: #92400e; font-weight: 700; font-size: 11px;">average</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fef3c7; color: #92400e; font-weight: 700; font-size: 11px;">' + translateText('average') + '</span>';
             }
             if (perf === 'bad') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 11px;">bad</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 11px;">' + translateText('bad') + '</span>';
             }
             return '<span style="color: #6b7280;">-</span>';
         };
@@ -30059,10 +30059,10 @@ const monthlyData = {
         const getNewOldBadge = (val) => {
             const status = (val || '').toString().toLowerCase();
             if (status === 'new') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">new</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 11px;">' + translateText('new') + '</span>';
             }
             if (status === 'old') {
-                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e2e8f0; color: #334155; font-weight: 700; font-size: 11px;">old</span>';
+                return '<span style="display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e2e8f0; color: #334155; font-weight: 700; font-size: 11px;">' + translateText('old') + '</span>';
             }
             return '<span style="color: #6b7280;">-</span>';
         };
@@ -30096,14 +30096,14 @@ const monthlyData = {
                 thead.innerHTML = `
                     <tr style="background: #0ea5e9; color: white;">
                         <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db; min-width: 40px;">#</th>
-                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px;">Partner</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;"># of cities</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">New/Old</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Delivery riders</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Total target</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Performance</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Avg FR %</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Avg Driver Card %</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px;">${translateText('Partner')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('# of cities')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('New/Old')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Delivery riders')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Total target')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Performance')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg FR %')}</th>
+                        <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg Driver Card %')}</th>
                     </tr>
                 `;
             } else {
@@ -30111,15 +30111,15 @@ const monthlyData = {
                 thead.innerHTML = `
                     <tr style="background: #0ea5e9; color: white;">
                         <th rowspan="2" style="padding: 10px; text-align: center; border: 1px solid #d1d5db; min-width: 40px; vertical-align: middle;">#</th>
-                        <th rowspan="2" style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px; vertical-align: middle;">Partner</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;"># of cities</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">New/Old</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">Delivery riders</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">Total target</th>
-                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">MoM %<br>(Target)</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">Performance</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">Avg FR %</th>
-                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">Avg Driver Card %</th>
+                        <th rowspan="2" style="padding: 10px; text-align: left; border: 1px solid #d1d5db; min-width: 200px; vertical-align: middle;">${translateText('Partner')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('# of cities')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('New/Old')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Delivery riders')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Total target')}</th>
+                        <th rowspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db; vertical-align: middle;">${translateText('MoM %')}<br>(${translateText('Target')})</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Performance')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg FR %')}</th>
+                        <th colspan="2" style="padding: 8px; text-align: center; border: 1px solid #d1d5db;">${translateText('Avg Driver Card %')}</th>
                     </tr>
                     <tr style="background: #0284c7; color: white;">
                         <th style="padding: 6px 8px; text-align: center; border: 1px solid #d1d5db; font-size: 11px;">Jan</th>
@@ -31992,7 +31992,9 @@ const monthlyData = {
         'Warning': '预警',
         'Critical': '严重',
         'Good': '良好',
+        'good': '良好',
         'Average': '中等',
+        'average': '中等',
         'Scale': '规模',
         'Size': '规模',
         'Trend %': '趋势 %',
@@ -32303,9 +32305,17 @@ const monthlyData = {
         'Mid Partners Avg Scale': '中型合作商平均规模',
         'Small Partners Avg Scale': '小型合作商平均规模',
         'Bad': '待改善',
+        'bad': '待改善',
         'Big': '大型',
+        'big': '大型',
         'Mid': '中型',
+        'mid': '中型',
         'Small': '小型',
+        'small': '小型',
+        'New': '新',
+        'new': '新',
+        'Old': '旧',
+        'old': '旧',
         'Period:': '时段：',
 
         // Riders view sub-toggle buttons
