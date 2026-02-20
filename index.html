@@ -30033,6 +30033,14 @@ const monthlyData = {
             { name: 'Rakb Tayba', cities: 1, status: 'Old', riders: 15, target: 10, performance: 'average', fr: '100.0%', dc: '10.0%' }
         ];
 
+        // Register all partner brand names as proper nouns (never translate)
+        if (window.dashboardAddProperNouns) {
+            var _allPartnerNames = [
+                ...topDec, ...topJan, ...bottomDec, ...bottomJan, ...rankedFeb
+            ].map(function(r) { return r.name; }).filter(Boolean);
+            window.dashboardAddProperNouns(_allPartnerNames);
+        }
+
         const normalizeName = (name) => name.trim().toLowerCase();
         const mapByName = (rows) => {
             const map = new Map();
@@ -31674,6 +31682,12 @@ const monthlyData = {
     var isApplyingLanguage = false;
     var _autoTranslateCache = {};  // strings already requested from API
     var _autoTranslatePending = false;
+    // Proper nouns (city names, partner brand names) — never translated
+    var _properNounSet = new Set([
+        'Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj',
+        'Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu',
+        'Abha','Jazan','Makkah','Najran','Taif'
+    ]);
 
     var zhDict = {
         // ── TAB LABELS ──
@@ -32621,6 +32635,8 @@ const monthlyData = {
         if (!input || currentLang === 'en') return input;
         var output = input;
         // Regex patterns for dynamic content
+        // Never translate proper nouns (city names, partner brand names)
+        if (_properNounSet.has(output.trim())) return input;
         output = output.replace(/\bDay\s*(\d+)\b/g, '第$1天');
         output = output.replace(/\bFeb\s*1-7\b/gi, '2月1-7日');
         output = output.replace(/\bFeb\s*8-14\b/gi, '2月8-14日');
@@ -32921,6 +32937,11 @@ const monthlyData = {
     window.dashboardApplyLanguage = applyLanguageToDocument;
     window.dashboardScheduleLanguage = scheduleApplyLanguage;
     window._i18nT = translateText; // exposed for chart builders
+    window.dashboardAddProperNouns = function(names) {
+        if (!names) return;
+        names.forEach(function(n) { if (n) _properNounSet.add(String(n).trim()); });
+        _sortedKeys = null; // reset cache in case any name was in dict
+    };
 })();
 </script>
 
