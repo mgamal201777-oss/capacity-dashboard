@@ -32611,6 +32611,17 @@ const monthlyData = {
         // ── MONTHLY INSIGHTS TAB — KEY INSIGHTS LABELS ──
         'Key Insights & Takeaways': '关键洞察与要点',
 
+        // ── MONTHLY INSIGHTS TAB — DESCRIPTION TEXTS ──
+        'Distribution of partners by achievement level. Good (\u226580% FR), Average (50-80% FR), Bad (<50% FR). Shows quality composition evolution.': '按达成水平分布的合作商。良好（≥80% FR）、中等（50-80% FR）、待改善（<50% FR）。展示质量结构演变。',
+        'Tracks total capacity targets and number of total partners month-over-month. Shows overall market size and partner base growth trends. Dual-axis visualization with combined insight indicator.': '追踪月度总产能目标及合作商总数变化，展示整体市场规模与合作商基础增长趋势，双轴可视化含综合洞察指标。',
+        'Shows month\u2011over\u2011month % change in Total Target based on the Monthly Insights totals. Green = increase vs previous month, Red = decrease. First month is the baseline (no MoM).': '展示基于月度洞察总量的总目标月环比%变化。绿色=较上月增加，红色=减少。第一个月为基准（无月环比）。',
+        'Shows capacity target breakdown by vehicle type across months. Cars dominate but Bikes share is growing (15.8% \u2192 25.4%). Toggle between Monthly overview and City-level breakdown.': '展示各月按车辆类型划分的产能目标。汽车占主导，但摩托车份额正在增长（15.8% → 25.4%）。可在月度概览与城市级分解之间切换。',
+
+        // ── MONTHLY INSIGHTS TAB — BADGE / QUICK INDICATOR LABELS ──
+        '\u2713 Good Quality Trending': '✓ 良好质量趋势上升',
+        '\u26a0 Watch Average Decline': '⚠ 关注中等合作商下滑',
+        'Quick Indicators:': '快速指标：',
+
         // OKR O2 CONTENT
         'Raise compliance rate from 25% to 80% in Q1': '在Q1将合规率从25%提升至80%',
         'KR: Good/strong partners carry 58-60% of capacity target; Bad partners 5%': 'KR：良好/强势合作商承担58-60%的产能目标；待改善合作商5%',
@@ -32754,7 +32765,8 @@ const monthlyData = {
         var seen = {};
         for (var i = 0; i < texts.length; i++) {
             var t = texts[i].trim();
-            if (!t || t.length < 3) continue;
+            if (!t || t.length < 20) continue;          // must be at least 20 chars
+            if (!/\s/.test(t)) continue;                // must contain a space (not a single word)
             if (seen[t] || zhDict[t] || _autoTranslateCache[t]) continue;
             // Skip if already contains Chinese characters
             if (/[\u4e00-\u9fff]/.test(t)) continue;
@@ -32886,7 +32898,21 @@ const monthlyData = {
                     'manualAdjustChart','changesChart2','performanceChart','scaleChart','ridersSlabChartIncreased',
                     'ridersSlabChartDecreased',
                     'psAvgScaleChart','psCombinedRidersChart','psCombinedAvgScaleChart','psRidersBreakdownChart',
-                    'psAvgScaleOverallChart','psTargetBarChart','psTargetNewOldChart','psVehicleChart'
+                    'psAvgScaleOverallChart','psTargetBarChart','psTargetNewOldChart','psVehicleChart',
+                    // Monthly Insights tab charts
+                    'monthlyTargetTrendChart','monthlyMoMChangeChartNew',
+                    'vehicleMonthlyChart','vehicleCityChart','vehicleMonthlyT1Chart','vehicleMonthlyT2Chart',
+                    'monthlyAvgScaleChart','monthlyPerformanceMixChart','monthlySizeMixChart',
+                    'monthlyRidersPerformanceMixChart','monthlyRidersSizeMixChart',
+                    'cityTargetTrendChart','cityPartnersChart','cityCombinedTrendChart',
+                    'willingnessTrendChart','growthCategoryChart','decreaseCategoryChart',
+                    // Month Overview tab charts
+                    'cityWiseOverviewChart','cityWiseT1OverviewChart','cityWiseT2OverviewChart',
+                    'cityWiseRangeChart','cityWiseTargetRangeChart',
+                    'cityTierCityChart','cityTierBreakdownChart','cityTierBreakdownChartT1','cityTierBreakdownChartT2',
+                    'cityTierPerformanceChart','cityTierPerformanceChartT1','cityTierPerformanceChartT2',
+                    'cityTierScaleChart','cityTierScaleChartT1','cityTierScaleChartT2',
+                    'partnersDataChart','tierPartnersChart'
                 ];
                 for (var ci = 0; ci < chartIds.length; ci++) {
                     var ctxEl = document.getElementById(chartIds[ci]);
