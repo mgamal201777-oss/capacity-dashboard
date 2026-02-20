@@ -30143,12 +30143,12 @@ const monthlyData = {
                 `;
             }
 
-            // Update note
+            // Update note (uses _th helper - safe, no dependency on translateText which is IIFE-local)
             if (noteDiv) {
                 if (view === 'ranked') {
-                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb ' + translateText('Note:') + '</strong> ' + translateText('Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.');
+                    noteDiv.querySelector('p').innerHTML = '<strong>📋 ' + _th('Note:','注意：') + '</strong> ' + _th('Top 20 partners ranked by highest city coverage across the Kingdom (Feb only). Shows partners with the widest geographic reach. Performance, FR & Driver Card rates are averaged across all covered cities.','按王国最高城市覆盖率排名前20的合作商（仅2月）。显示地理覆盖范围最广的合作商。绩效、FR及DC比例均为所有覆盖城市的平均值。');
                 } else {
-                    noteDiv.querySelector('p').innerHTML = '<strong>\ud83d\udccb ' + translateText('Note:') + '</strong> ' + translateText('Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.');
+                    noteDiv.querySelector('p').innerHTML = '<strong>📋 ' + _th('Note:','注意：') + '</strong> ' + _th('Table compares Jan vs Feb per partner. MoM% shown for Total Target only. Total target reflects riders across all covered cities. Performance is based on highest-target city. FR & Driver Card rates are averaged across cities.','表格按合作商比较1月 vs 2月。仅显示总目标的月环比%。总目标反映所有覆盖城市的骑手数。绩效基于最高目标城市。FR及DC比例为城市平均值。');
                 }
             }
 
