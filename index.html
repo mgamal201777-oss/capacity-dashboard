@@ -20812,6 +20812,9 @@ const monthlyData = {
 
             document.getElementById('m_inc40').textContent = fmtPct(-27.8);
             document.getElementById('m_inc40_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">vs ${prevLabel}</span>`;
+            // Render highlights for Feb-26 (last month) before early return
+            renderHighlights(monthlyData.months.length - 1);
+            renderFactorsTable(monthlyData.months.length - 1);
             return;
         }
     const idx = (value === 'All') ? (monthlyData.months.length - 1) : safeIdx(value);
