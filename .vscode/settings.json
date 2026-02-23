@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^powershell -NoProfile -ExecutionPolicy Bypass -File \\.vscode/publish\\.ps1 -Message \"FIX: only parse actual populated week columns, not empty W4/W5\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

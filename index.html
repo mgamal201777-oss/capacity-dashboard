@@ -11754,7 +11754,7 @@ function parseSheetData(rows) {
   
         // Parse Total Overview (rows 3-7, 0-indexed)
     console.log('📈 Parsing Total Overview...');
-    var totalDayStartCol = Math.max(detectDayStartColumn(rows, 9, 3), 10);
+    var totalDayStartCol = detectDayStartColumn(rows, 9, 3); // Don't force minimum, trust detection
     var totalRow = rows[3];
     if (!totalRow || totalRow.length < 10) {
       console.error('❌ Invalid totalRow:', totalRow);
@@ -11762,7 +11762,19 @@ function parseSheetData(rows) {
     }
     // Target row has extra "Total target" label in col[3], so MTD is col[4]
     data.totalOverview.targetMTD = totalRow[4];
-    data.totalOverview.targetWeeks = totalRow.slice(5, totalDayStartCol);
+    
+    // Extract ALL potential week columns, then filter to only non-empty ones
+    var rawTargetWeeks = totalRow.slice(5, totalDayStartCol);
+    data.totalOverview.targetWeeks = [];
+    var actualWeekCount = 0;
+    for (var tw = 0; tw < rawTargetWeeks.length; tw++) {
+        var weekVal = String(rawTargetWeeks[tw] || '').trim();
+        if (weekVal === '' || weekVal === 'null' || weekVal === 'undefined') break; // Stop at first empty
+        data.totalOverview.targetWeeks.push(rawTargetWeeks[tw]);
+        actualWeekCount++;
+    }
+    var weekEndCol = 5 + actualWeekCount; // Column where actual weeks end
+    
     data.totalOverview.weekLabels = data.totalOverview.targetWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
     data.totalOverview.targetW1 = data.totalOverview.targetWeeks[0] || '';
     data.totalOverview.targetW2 = data.totalOverview.targetWeeks[1] || '';
@@ -11773,11 +11785,11 @@ function parseSheetData(rows) {
     // Determine number of days from the first data row
     numDaysAvailable = data.totalOverview.targetDaily.length;
     data.numDays = numDaysAvailable;
-    console.log('✅ Total Overview parsed. Days available:', numDaysAvailable);
+    console.log('✅ Total Overview parsed. Weeks:', actualWeekCount, 'Days available:', numDaysAvailable);
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineMTD = achieveOnlineRow[3];
-    data.totalOverview.onlineWeeks = achieveOnlineRow.slice(4, totalDayStartCol);
+    data.totalOverview.onlineWeeks = achieveOnlineRow.slice(4, weekEndCol);
     data.totalOverview.onlineW1 = data.totalOverview.onlineWeeks[0] || '';
     data.totalOverview.onlineW2 = data.totalOverview.onlineWeeks[1] || '';
     data.totalOverview.onlineW3 = data.totalOverview.onlineWeeks[2] || '';
@@ -11786,7 +11798,7 @@ function parseSheetData(rows) {
   
   var achieveDeliveryRow = rows[5];
   data.totalOverview.deliveryMTD = achieveDeliveryRow[3];
-    data.totalOverview.deliveryWeeks = achieveDeliveryRow.slice(4, totalDayStartCol);
+    data.totalOverview.deliveryWeeks = achieveDeliveryRow.slice(4, weekEndCol);
     data.totalOverview.deliveryW1 = data.totalOverview.deliveryWeeks[0] || '';
     data.totalOverview.deliveryW2 = data.totalOverview.deliveryWeeks[1] || '';
     data.totalOverview.deliveryW3 = data.totalOverview.deliveryWeeks[2] || '';
@@ -11796,7 +11808,7 @@ function parseSheetData(rows) {
   var achievementRateRow = rows[6];
     data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, totalDayStartCol);
   data.totalOverview.mtd = achievementRateRow[3];
-    data.totalOverview.achievementWeeks = achievementRateRow.slice(4, totalDayStartCol);
+    data.totalOverview.achievementWeeks = achievementRateRow.slice(4, weekEndCol);
     data.totalOverview.w1 = data.totalOverview.achievementWeeks[0] || '';
     data.totalOverview.w2 = data.totalOverview.achievementWeeks[1] || '';
     data.totalOverview.w3 = data.totalOverview.achievementWeeks[2] || '';
@@ -11804,7 +11816,7 @@ function parseSheetData(rows) {
   
   var gapRow = rows[7];
   data.totalOverview.gapMTD = gapRow[3];
-    data.totalOverview.gapWeeks = gapRow.slice(4, totalDayStartCol);
+    data.totalOverview.gapWeeks = gapRow.slice(4, weekEndCol);
     data.totalOverview.gapW1 = data.totalOverview.gapWeeks[0] || '';
     data.totalOverview.gapW2 = data.totalOverview.gapWeeks[1] || '';
     data.totalOverview.gapW3 = data.totalOverview.gapWeeks[2] || '';
@@ -11878,14 +11890,15 @@ function parseSheetData(rows) {
 
     if (citySectionStart !== -1) {
         var cityWeekCount = (data.totalOverview.weekLabels && data.totalOverview.weekLabels.length) ? data.totalOverview.weekLabels.length : 2;
-        var cityDayStartCol = Math.max(detectDayStartColumn(rows, 8, citySectionStart), 4 + cityWeekCount);
+        var cityWeekEndCol = 4 + cityWeekCount; // Match Total Overview week count
+        var cityDayStartCol = detectDayStartColumn(rows, 8, citySectionStart);
         // GAP rows start at citySectionStart (first row already contains Al Ahsa)
         for (var c = 0; c < cityNames.length; c++) {
             var cityRow = rows[citySectionStart + c];
             if (!cityRow) continue;
             if (!data.cities.gap[cityNames[c]]) data.cities.gap[cityNames[c]] = {};
             data.cities.gap[cityNames[c]].mtd = cityRow[3];
-            data.cities.gap[cityNames[c]].weeks = cityRow.slice(4, cityDayStartCol).map(function(v) {
+            data.cities.gap[cityNames[c]].weeks = cityRow.slice(4, cityWeekEndCol).map(function(v) {
                 if (v === '' || v === null || v === undefined) return null;
                 var n = parseFloat(String(v).replace(/[%,]/g,''));
                 return isNaN(n) ? null : n;
@@ -11917,7 +11930,7 @@ function parseSheetData(rows) {
             if (!cityRowAch) continue;
             if (!data.cities.achievement[cityNames[c]]) data.cities.achievement[cityNames[c]] = {};
             data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
-            data.cities.achievement[cityNames[c]].weeks = cityRowAch.slice(4, cityDayStartCol).map(function(v) {
+            data.cities.achievement[cityNames[c]].weeks = cityRowAch.slice(4, cityWeekEndCol).map(function(v) {
                 if (v === '' || v === null || v === undefined) return null;
                 var n = parseFloat(String(v).replace(/[%,]/g,''));
                 return isNaN(n) ? null : n;
@@ -11976,8 +11989,15 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
     }
   function toNumArr(arr) { return arr.map(toNum); }
     var dayStart = dayStartCol || 9;
-    function periodValues(row) { return [row[3]].concat(row.slice(4, dayStart)); }
-    var achievementWeeks = achievementRow.slice(4, dayStart);
+    
+    // Determine actual week count from Total Overview to match across all slicers
+    var actualWeekCount = (sheetDataCache && sheetDataCache.totalOverview && sheetDataCache.totalOverview.weekLabels) 
+        ? sheetDataCache.totalOverview.weekLabels.length 
+        : 3; // Default to 3 weeks (W1, W2, W3)
+    var weekEndCol = 4 + actualWeekCount; // Column index where weeks end
+    
+    function periodValues(row) { return [row[3]].concat(row.slice(4, weekEndCol)); }
+    var achievementWeeks = achievementRow.slice(4, weekEndCol);
 
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = toNum(targetRow[3]);
