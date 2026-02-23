@@ -11725,15 +11725,6 @@ function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-function isMissingWeekValue(v) {
-    var s = String(v === undefined || v === null ? '' : v).trim();
-    return s === '' || s === '-';
-}
-
-function hasWeekDataValue(v) {
-    return !isMissingWeekValue(v);
-}
-
 // Parse the sheet rows into dashboard data structure
 function parseSheetData(rows) {
   console.log('📊 Parsing sheet data, total rows:', rows ? rows.length : 0);
@@ -11771,13 +11762,12 @@ function parseSheetData(rows) {
     }
     // Target row has extra "Total target" label in col[3], so MTD is col[4]
     data.totalOverview.targetMTD = totalRow[4];
-        var totalWeekCount = Math.max(0, totalDayStartCol - 5);
-        data.totalOverview.weekLabels = Array.from({ length: totalWeekCount }, function(_, idx) { return 'W' + (idx + 1); });
-        data.totalOverview.targetWeeks = totalRow.slice(5, 5 + totalWeekCount);
-        data.totalOverview.targetW1 = data.totalOverview.targetWeeks[0] || '';
-        data.totalOverview.targetW2 = data.totalOverview.targetWeeks[1] || data.totalOverview.targetW1;
-        data.totalOverview.targetW3 = data.totalOverview.targetWeeks[2] || data.totalOverview.targetW2;
-        data.totalOverview.targetW4 = data.totalOverview.targetWeeks[3] || data.totalOverview.targetW3;
+    data.totalOverview.targetWeeks = totalRow.slice(5, totalDayStartCol);
+    data.totalOverview.weekLabels = data.totalOverview.targetWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
+    data.totalOverview.targetW1 = data.totalOverview.targetWeeks[0] || '';
+    data.totalOverview.targetW2 = data.totalOverview.targetWeeks[1] || '';
+    data.totalOverview.targetW3 = data.totalOverview.targetWeeks[2] || '';
+    data.totalOverview.targetW4 = data.totalOverview.targetWeeks[3] || '';
         data.totalOverview.targetDaily = extractDailyValues(totalRow, totalDayStartCol);
     
     // Determine number of days from the first data row
@@ -11787,39 +11777,38 @@ function parseSheetData(rows) {
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineMTD = achieveOnlineRow[3];
-        data.totalOverview.onlineWeeks = achieveOnlineRow.slice(4, 4 + totalWeekCount);
+    data.totalOverview.onlineWeeks = achieveOnlineRow.slice(4, totalDayStartCol);
     data.totalOverview.onlineW1 = data.totalOverview.onlineWeeks[0] || '';
-    data.totalOverview.onlineW2 = data.totalOverview.onlineWeeks[1] || data.totalOverview.onlineW1;
-    data.totalOverview.onlineW3 = data.totalOverview.onlineWeeks[2] || data.totalOverview.onlineW2;
-    data.totalOverview.onlineW4 = data.totalOverview.onlineWeeks[3] || data.totalOverview.onlineW3;
+    data.totalOverview.onlineW2 = data.totalOverview.onlineWeeks[1] || '';
+    data.totalOverview.onlineW3 = data.totalOverview.onlineWeeks[2] || '';
+    data.totalOverview.onlineW4 = data.totalOverview.onlineWeeks[3] || '';
     data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, totalDayStartCol);
   
   var achieveDeliveryRow = rows[5];
   data.totalOverview.deliveryMTD = achieveDeliveryRow[3];
-        data.totalOverview.deliveryWeeks = achieveDeliveryRow.slice(4, 4 + totalWeekCount);
+    data.totalOverview.deliveryWeeks = achieveDeliveryRow.slice(4, totalDayStartCol);
     data.totalOverview.deliveryW1 = data.totalOverview.deliveryWeeks[0] || '';
-    data.totalOverview.deliveryW2 = data.totalOverview.deliveryWeeks[1] || data.totalOverview.deliveryW1;
-    data.totalOverview.deliveryW3 = data.totalOverview.deliveryWeeks[2] || data.totalOverview.deliveryW2;
-    data.totalOverview.deliveryW4 = data.totalOverview.deliveryWeeks[3] || data.totalOverview.deliveryW3;
+    data.totalOverview.deliveryW2 = data.totalOverview.deliveryWeeks[1] || '';
+    data.totalOverview.deliveryW3 = data.totalOverview.deliveryWeeks[2] || '';
+    data.totalOverview.deliveryW4 = data.totalOverview.deliveryWeeks[3] || '';
     data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, totalDayStartCol);
   
   var achievementRateRow = rows[6];
     data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, totalDayStartCol);
   data.totalOverview.mtd = achievementRateRow[3];
-        data.totalOverview.achievementWeeks = achievementRateRow.slice(4, 4 + totalWeekCount);
-        data.totalOverview.weekHasData = data.totalOverview.achievementWeeks.map(hasWeekDataValue);
+    data.totalOverview.achievementWeeks = achievementRateRow.slice(4, totalDayStartCol);
     data.totalOverview.w1 = data.totalOverview.achievementWeeks[0] || '';
-    data.totalOverview.w2 = data.totalOverview.achievementWeeks[1] || data.totalOverview.w1;
-    data.totalOverview.w3 = data.totalOverview.achievementWeeks[2] || data.totalOverview.w2;
-    data.totalOverview.w4 = data.totalOverview.achievementWeeks[3] || data.totalOverview.w3;
+    data.totalOverview.w2 = data.totalOverview.achievementWeeks[1] || '';
+    data.totalOverview.w3 = data.totalOverview.achievementWeeks[2] || '';
+    data.totalOverview.w4 = data.totalOverview.achievementWeeks[3] || '';
   
   var gapRow = rows[7];
   data.totalOverview.gapMTD = gapRow[3];
-        data.totalOverview.gapWeeks = gapRow.slice(4, 4 + totalWeekCount);
+    data.totalOverview.gapWeeks = gapRow.slice(4, totalDayStartCol);
     data.totalOverview.gapW1 = data.totalOverview.gapWeeks[0] || '';
-    data.totalOverview.gapW2 = data.totalOverview.gapWeeks[1] || data.totalOverview.gapW1;
-    data.totalOverview.gapW3 = data.totalOverview.gapWeeks[2] || data.totalOverview.gapW2;
-    data.totalOverview.gapW4 = data.totalOverview.gapWeeks[3] || data.totalOverview.gapW3;
+    data.totalOverview.gapW2 = data.totalOverview.gapWeeks[1] || '';
+    data.totalOverview.gapW3 = data.totalOverview.gapWeeks[2] || '';
+    data.totalOverview.gapW4 = data.totalOverview.gapWeeks[3] || '';
     data.totalOverview.gapDaily = extractDailyValues(gapRow, totalDayStartCol);
   
         // Parse Partners Stratification (dynamic row detection to survive sheet row inserts)
@@ -11855,13 +11844,14 @@ function parseSheetData(rows) {
             })()
         };
 
-        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners', detectDayStartColumn(rows, 9, partnerStarts.good !== -1 ? partnerStarts.good : 8));
-        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners', detectDayStartColumn(rows, 9, partnerStarts.avg !== -1 ? partnerStarts.avg : 19));
-        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners', detectDayStartColumn(rows, 9, partnerStarts.bad !== -1 ? partnerStarts.bad : 30));
-        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%', detectDayStartColumn(rows, 9, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41));
-        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%', detectDayStartColumn(rows, 9, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52));
-        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%', detectDayStartColumn(rows, 9, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63));
-        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)', detectDayStartColumn(rows, 9, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74));
+        var partnerWeekCount = (data.totalOverview.weekLabels && data.totalOverview.weekLabels.length) ? data.totalOverview.weekLabels.length : 2;
+        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.good !== -1 ? partnerStarts.good : 8), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.avg !== -1 ? partnerStarts.avg : 19), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.bad !== -1 ? partnerStarts.bad : 30), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63), 4 + partnerWeekCount));
+        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74), 4 + partnerWeekCount));
   
   console.log('🏙️ Parsing City Level Data...');
     // Parse City Level Data with dynamic section anchors
@@ -11887,7 +11877,8 @@ function parseSheetData(rows) {
     }
 
     if (citySectionStart !== -1) {
-        var cityDayStartCol = detectDayStartColumn(rows, 8, citySectionStart);
+        var cityWeekCount = (data.totalOverview.weekLabels && data.totalOverview.weekLabels.length) ? data.totalOverview.weekLabels.length : 2;
+        var cityDayStartCol = Math.max(detectDayStartColumn(rows, 8, citySectionStart), 4 + cityWeekCount);
         // GAP rows start at citySectionStart (first row already contains Al Ahsa)
         for (var c = 0; c < cityNames.length; c++) {
             var cityRow = rows[citySectionStart + c];
@@ -11974,7 +11965,6 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
     var dayStart = dayStartCol || 9;
     function periodValues(row) { return [row[3]].concat(row.slice(4, dayStart)); }
     var achievementWeeks = achievementRow.slice(4, dayStart);
-    var weekHasData = achievementWeeks.map(hasWeekDataValue);
 
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = toNum(targetRow[3]);
@@ -11984,7 +11974,6 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
     category.w3 = toNum(achievementWeeks[2]);
     category.w4 = toNum(achievementWeeks[3]);
     category.weekLabels = achievementWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
-    category.weekHasData = weekHasData;
   category.gapValue = toNum(gapRow[3]);
     category.daily = extractDailyValues(achievementRow, dayStart).map(toNum);
   
@@ -12055,14 +12044,13 @@ function renderTotalOverviewTable() {
   
   var tov = sheetDataCache.totalOverview;
   var numDays = tov.targetDaily ? tov.targetDaily.length : 16;
-    var weekLabels = (tov.weekLabels && tov.weekLabels.length) ? tov.weekLabels : ['W1', 'W2', 'W3'];
-        var weekCount = weekLabels.length;
-        var targetWeeks = (tov.targetWeeks && tov.targetWeeks.length) ? tov.targetWeeks.slice(0, weekCount) : [tov.targetW1, tov.targetW2, tov.targetW3, tov.targetW4, tov.targetW5].slice(0, weekCount);
-        var onlineWeeks = (tov.onlineWeeks && tov.onlineWeeks.length) ? tov.onlineWeeks.slice(0, weekCount) : [tov.onlineW1, tov.onlineW2, tov.onlineW3, tov.onlineW4, tov.onlineW5].slice(0, weekCount);
-        var deliveryWeeks = (tov.deliveryWeeks && tov.deliveryWeeks.length) ? tov.deliveryWeeks.slice(0, weekCount) : [tov.deliveryW1, tov.deliveryW2, tov.deliveryW3, tov.deliveryW4, tov.deliveryW5].slice(0, weekCount);
-        var achievementWeeks = (tov.achievementWeeks && tov.achievementWeeks.length) ? tov.achievementWeeks.slice(0, weekCount) : [tov.w1, tov.w2, tov.w3, tov.w4, tov.w5].slice(0, weekCount);
-        var gapWeeks = (tov.gapWeeks && tov.gapWeeks.length) ? tov.gapWeeks.slice(0, weekCount) : [tov.gapW1, tov.gapW2, tov.gapW3, tov.gapW4, tov.gapW5].slice(0, weekCount);
-        var weekHasData = (tov.weekHasData && tov.weekHasData.length) ? tov.weekHasData.slice(0, weekCount) : weekLabels.map(function(_, idx) { return hasWeekDataValue(achievementWeeks[idx]); });
+    var weekLabels = (tov.weekLabels && tov.weekLabels.length) ? tov.weekLabels : ['W1', 'W2'];
+    var weekCount = weekLabels.length;
+    var targetWeeks = (tov.targetWeeks && tov.targetWeeks.length) ? tov.targetWeeks : [tov.targetW1, tov.targetW2, tov.targetW3, tov.targetW4];
+    var onlineWeeks = (tov.onlineWeeks && tov.onlineWeeks.length) ? tov.onlineWeeks : [tov.onlineW1, tov.onlineW2, tov.onlineW3, tov.onlineW4];
+    var deliveryWeeks = (tov.deliveryWeeks && tov.deliveryWeeks.length) ? tov.deliveryWeeks : [tov.deliveryW1, tov.deliveryW2, tov.deliveryW3, tov.deliveryW4];
+    var achievementWeeks = (tov.achievementWeeks && tov.achievementWeeks.length) ? tov.achievementWeeks : [tov.w1, tov.w2, tov.w3, tov.w4];
+    var gapWeeks = (tov.gapWeeks && tov.gapWeeks.length) ? tov.gapWeeks : [tov.gapW1, tov.gapW2, tov.gapW3, tov.gapW4];
   
   // Get table and check expanded state
   var table = document.getElementById('totalOverviewTable');
@@ -12123,8 +12111,7 @@ function renderTotalOverviewTable() {
     html += '<tr><td>' + dvT('Target', '目标') + '</td>';
   html += '<td class="period-col">' + fmt(tov.targetMTD) + '</td>';
     for (var tw = 0; tw < weekCount; tw++) {
-        var targetCell = weekHasData[tw] ? fmt(targetWeeks[tw]) : '-';
-        html += '<td class="period-col">' + targetCell + '</td>';
+        html += '<td class="period-col">' + fmt(targetWeeks[tw]) + '</td>';
     }
   for (var i = 0; i < numDays; i++) {
     html += '<td class="adv-daily-cols">' + fmt(tov.targetDaily[i]) + '</td>';
@@ -12136,14 +12123,10 @@ function renderTotalOverviewTable() {
     var onlineMTD = parseFloat(String(tov.onlineMTD).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
     for (var ow = 0; ow < weekCount; ow++) {
-        if (!weekHasData[ow]) {
-            html += '<td class="period-col">-</td>';
-            continue;
-        }
         var onlineCurr = parseFloat(String(onlineWeeks[ow]).replace(/[%,]/g,''));
-        var onlinePrev = (ow > 0 && weekHasData[ow - 1]) ? parseFloat(String(onlineWeeks[ow - 1]).replace(/[%,]/g,'')) : NaN;
+        var onlinePrev = ow > 0 ? parseFloat(String(onlineWeeks[ow - 1]).replace(/[%,]/g,'')) : NaN;
         var onlineCell = fmt(onlineWeeks[ow]);
-        if (ow > 0 && weekHasData[ow - 1]) onlineCell += fmtTrendPct(onlineCurr, onlinePrev, 'WoW');
+        if (ow > 0) onlineCell += fmtTrendPct(onlineCurr, onlinePrev, 'WoW');
         html += '<td class="period-col">' + onlineCell + '</td>';
     }
   for (var i = 0; i < numDays; i++) {
@@ -12158,14 +12141,10 @@ function renderTotalOverviewTable() {
     var deliveryMTD = parseFloat(String(tov.deliveryMTD).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
     for (var dw = 0; dw < weekCount; dw++) {
-        if (!weekHasData[dw]) {
-            html += '<td class="period-col">-</td>';
-            continue;
-        }
         var deliveryCurr = parseFloat(String(deliveryWeeks[dw]).replace(/[%,]/g,''));
-        var deliveryPrev = (dw > 0 && weekHasData[dw - 1]) ? parseFloat(String(deliveryWeeks[dw - 1]).replace(/[%,]/g,'')) : NaN;
+        var deliveryPrev = dw > 0 ? parseFloat(String(deliveryWeeks[dw - 1]).replace(/[%,]/g,'')) : NaN;
         var deliveryCell = fmt(deliveryWeeks[dw]);
-        if (dw > 0 && weekHasData[dw - 1]) deliveryCell += fmtTrendPct(deliveryCurr, deliveryPrev, 'WoW');
+        if (dw > 0) deliveryCell += fmtTrendPct(deliveryCurr, deliveryPrev, 'WoW');
         html += '<td class="period-col">' + deliveryCell + '</td>';
     }
   for (var i = 0; i < numDays; i++) {
@@ -12180,14 +12159,10 @@ function renderTotalOverviewTable() {
     var mtdAch = parseFloat(String(tov.mtd).replace('%',''));
     html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
     for (var aw = 0; aw < weekCount; aw++) {
-        if (!weekHasData[aw]) {
-            html += '<td class="period-col">-</td>';
-            continue;
-        }
         var achCurr = parseFloat(String(achievementWeeks[aw]).replace('%',''));
-        var achPrev = (aw > 0 && weekHasData[aw - 1]) ? parseFloat(String(achievementWeeks[aw - 1]).replace('%','')) : NaN;
+        var achPrev = aw > 0 ? parseFloat(String(achievementWeeks[aw - 1]).replace('%','')) : NaN;
         var achCell = fmtPct(achievementWeeks[aw]);
-        if (aw > 0 && weekHasData[aw - 1]) achCell += fmtTrendPct(achCurr, achPrev, 'WoW');
+        if (aw > 0) achCell += fmtTrendPct(achCurr, achPrev, 'WoW');
         html += '<td class="period-col ' + getColorClass(achievementWeeks[aw]) + '">' + achCell + '</td>';
     }
   for (var i = 0; i < numDays; i++) {
@@ -12203,7 +12178,7 @@ function renderTotalOverviewTable() {
     html += '<tr><td><strong>' + dvT('Gap', '差距') + '</strong> <span class="row-info-icon">❗<span class="row-tip-text">' + dvT('Gap: The gap for Target − Online Riders', '差距：目标 − 在线骑手。') + '</span></span></td>';
   html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
     for (var gw = 0; gw < weekCount; gw++) {
-        html += '<td class="period-col">' + (weekHasData[gw] ? fmt(gapWeeks[gw]) : '-') + '</td>';
+        html += '<td class="period-col">' + fmt(gapWeeks[gw]) + '</td>';
     }
   for (var i = 0; i < numDays; i++) {
     var gVal = parseFloat(String(tov.gapDaily[i]).replace(/[%,]/g,''));
@@ -12211,6 +12186,7 @@ function renderTotalOverviewTable() {
     if (gapFlags[i]) cls += ' red-flag-cell ' + getGapFlagClass(gVal);
     html += '<td class="' + cls + '">' + fmt(tov.gapDaily[i]) + '</td>';
   }
+    html += '</tr>';
   
   tbody.innerHTML = html;
   
@@ -12233,13 +12209,8 @@ function renderTotalOverviewTable() {
       var mtdVal = parseFloat(String(tov.mtd).replace(/[%,]/g, ''));
       var w1Val = parseFloat(String(tov.w1).replace(/[%,]/g, ''));
       var w2Val = parseFloat(String(tov.w2).replace(/[%,]/g, ''));
-            var latestWeekIndex = -1;
-            for (var wi = weekCount - 1; wi >= 0; wi--) {
-                if (weekHasData[wi]) { latestWeekIndex = wi; break; }
-            }
-            if (latestWeekIndex < 0) latestWeekIndex = Math.min(2, weekCount - 1);
-            var latestWeekLabel = weekLabels[latestWeekIndex] || 'W3';
-            var latestWeekRaw = achievementWeeks[latestWeekIndex];
+            var latestWeekLabel = weekLabels.length ? weekLabels[weekLabels.length - 1] : 'W3';
+            var latestWeekRaw = achievementWeeks.length ? achievementWeeks[achievementWeeks.length - 1] : tov.w3;
             var latestWeekVal = parseFloat(String(latestWeekRaw).replace(/[%,]/g, ''));
       var gapVal = parseFloat(String(tov.gapMTD).replace(/[%,]/g, ''));
       var targetVal = fmt(tov.targetMTD);
@@ -12268,7 +12239,7 @@ function renderTotalOverviewTable() {
       if (cards[3]) {
                 cards[3].className = 'adv-card ' + (isNaN(latestWeekVal) ? 'amber' : cardColor(latestWeekVal)) + ' commentable-section';
                 cards[3].querySelector('.card-label').textContent = latestWeekLabel + ' Performance';
-                cards[3].querySelector('.card-value').textContent = isNaN(latestWeekVal) ? '-' : latestWeekVal.toFixed(1) + '%';
+                cards[3].querySelector('.card-value').textContent = isNaN(latestWeekVal) ? '-' : (latestWeekVal.toFixed(1) + '%');
                 cards[3].querySelector('.card-sub').textContent = latestWeekLabel;
             }
             // Card 4: Total GAP
@@ -12556,7 +12527,6 @@ function _renderPartnerCatInner(cat) {
           count: sc.numPartners[0],
           insight: dvPartnerInsight(cat, d.insight),
                     weekLabels: (sc.weekLabels && sc.weekLabels.length) ? sc.weekLabels : ['W1', 'W2'],
-                    weekHasData: (sc.weekHasData && sc.weekHasData.length) ? sc.weekHasData : ((sc.weekLabels && sc.weekLabels.length) ? sc.weekLabels.map(function(){ return true; }) : [true, true]),
           data: [sc.targetValues, sc.numPartners, sc.onlineRiders, sc.deliveryRiders, sc.achievementRate, sc.gapArray],
                     breakdown: hasValidBreakdown ? sheetBreakdown : fallbackBreakdown,
           daily: sc.daily
@@ -12595,7 +12565,6 @@ function _renderPartnerCatInner(cat) {
   // Determine number of daily columns from data
   var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
     var partnerWeekLabels = (d.weekLabels && d.weekLabels.length) ? d.weekLabels : ['W1', 'W2'];
-        var partnerWeekHasData = (d.weekHasData && d.weekHasData.length) ? d.weekHasData : partnerWeekLabels.map(function(){ return true; });
     var partnerPeriodCount = 1 + partnerWeekLabels.length;
 
     function fmtTrendPct(curr, prev, label) {
@@ -12629,11 +12598,9 @@ function _renderPartnerCatInner(cat) {
         for(var c=0; c<partnerPeriodCount; c++) {
       var val = d.data[r][c];
       var cls = 'period-col';
-            var weekIdx = c - 1;
-            var isMissingWeek = c > 0 && !partnerWeekHasData[weekIdx];
-        if(isAch && c>0 && !isMissingWeek) { cls += ' '+getColorClass(val); }
-            var displayVal = isMissingWeek ? '-' : (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
-            if (isTrendRow && c >= 2 && !isMissingWeek && partnerWeekHasData[weekIdx - 1]) displayVal += fmtTrendPct(val, d.data[r][c - 1], 'WoW');
+      if(isAch && c>0) { cls += ' '+getColorClass(val); }
+            var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
+            if (isTrendRow && c >= 2) displayVal += fmtTrendPct(val, d.data[r][c - 1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
         for(var c=partnerPeriodCount; c<d.data[r].length; c++) {
@@ -12684,11 +12651,7 @@ function _renderPartnerCatInner(cat) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
             var cls = getBkdnColorByRow(b);
-            if (!partnerWeekHasData[c - 1]) {
-                html += '<td class="period-col">-</td>';
-            } else {
-                html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
-            }
+            html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
         for(var c=partnerPeriodCount; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
@@ -12824,20 +12787,17 @@ function renderCityMetric(metric) {
   try {
     if (sheetDataCache && sheetDataCache.cities) {
       function cityToNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
-    function cityWeekHasData(v) { return hasWeekDataValue(v); }
       var sheetGap = sheetDataCache.cities.gap;
       var sheetAch = sheetDataCache.cities.achievement;
       if (sheetGap && Object.keys(sheetGap).length >= 17) {
-            var newGap = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], weekHasData: [], daily: [] };
+                var newGap = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], daily: [] };
         var valid = true;
         for (var ci = 0; ci < cities.length; ci++) {
           var cd = sheetGap[cities[ci]];
           if (!cd) { valid = false; break; }
           newGap.mtd.push(cityToNum(cd.mtd));
-                    var cityWeekRaw = (cd.weeks && cd.weeks.length) ? cd.weeks : [cd.w1, cd.w2];
-                    var cityWeeks = cityWeekRaw.map(cityToNum);
+                    var cityWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
                     newGap.weeks.push(cityWeeks);
-                    newGap.weekHasData.push(cityWeekRaw.map(cityWeekHasData));
                     newGap.w1.push(cityWeeks[0] || 0);
                     newGap.w2.push(cityWeeks[1] || 0);
                     if (ci === 0) newGap.weekLabels = (cd.weekLabels && cd.weekLabels.length) ? cd.weekLabels.slice() : cityWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
@@ -12849,7 +12809,7 @@ function renderCityMetric(metric) {
         }
       }
       if (sheetAch && Object.keys(sheetAch).length > 0) {
-                var newAch = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], weekHasData: [], daily: [] };
+                var newAch = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], daily: [] };
         var valid = true;
         for (var ci = 0; ci < cities.length; ci++) {
           var cd = sheetAch[cities[ci]];
@@ -12858,7 +12818,6 @@ function renderCityMetric(metric) {
             newAch.mtd.push(achData.mtd[ci] || 0);
                         var fbWeeks = (achData.weeks && achData.weeks[ci] && achData.weeks[ci].length) ? achData.weeks[ci] : [achData.w1[ci] || 0, achData.w2[ci] || 0];
                         newAch.weeks.push(fbWeeks);
-                        newAch.weekHasData.push(fbWeeks.map(function(){ return true; }));
                         newAch.w1.push(fbWeeks[0] || 0);
                         newAch.w2.push(fbWeeks[1] || 0);
                         if (newAch.weekLabels.length === 0) newAch.weekLabels = (achData.weekLabels && achData.weekLabels.length) ? achData.weekLabels.slice() : fbWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
@@ -12866,10 +12825,8 @@ function renderCityMetric(metric) {
             continue;
           }
           newAch.mtd.push(cityToNum(cd.mtd));
-                    var cityAchWeekRaw = (cd.weeks && cd.weeks.length) ? cd.weeks : [cd.w1, cd.w2];
-                    var cityAchWeeks = cityAchWeekRaw.map(cityToNum);
+                    var cityAchWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
                     newAch.weeks.push(cityAchWeeks);
-                    newAch.weekHasData.push(cityAchWeekRaw.map(cityWeekHasData));
                     newAch.w1.push(cityAchWeeks[0] || 0);
                     newAch.w2.push(cityAchWeeks[1] || 0);
                     if (ci === 0) newAch.weekLabels = (cd.weekLabels && cd.weekLabels.length) ? cd.weekLabels.slice() : cityAchWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
@@ -12884,15 +12841,8 @@ function renderCityMetric(metric) {
   }
   
   var data = (metric==='gap') ? gapData : achData;
-    var canonicalWeekLabels = (sheetDataCache && sheetDataCache.totalOverview && sheetDataCache.totalOverview.weekLabels && sheetDataCache.totalOverview.weekLabels.length)
-        ? sheetDataCache.totalOverview.weekLabels
-        : null;
-    var cityWeekLabels = canonicalWeekLabels || ((data.weekLabels && data.weekLabels.length) ? data.weekLabels : ['W1','W2']);
+    var cityWeekLabels = (data.weekLabels && data.weekLabels.length) ? data.weekLabels : ['W1','W2'];
     var cityWeeksMatrix = (data.weeks && data.weeks.length) ? data.weeks : cities.map(function(_, idx) { return [data.w1[idx], data.w2[idx]]; });
-    var cityWeekHasData = (data.weekHasData && data.weekHasData.length) ? data.weekHasData : cities.map(function(_, idx) {
-        var weeks = cityWeeksMatrix[idx] || [];
-        return weeks.map(function(){ return true; });
-    });
     var title = (metric==='gap') ? dvT('📉 City GAP % (Delivery vs Capacity)', '📉 城市GAP %（配送 vs 容量）') : dvT('📊 City Achievement Rate', '📊 城市达成率');
     var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.5%), Riyadh (3.3%), and Dammam (1.8%). Negative W1/W2 values indicate delivery exceeded capacity in weekly windows. Day 1 shows extreme spikes (Yanbu -12.3%, multiple cities <-8%) suggesting initialization issues. Most cities stabilize at <-2% daily gap by Day 3. Day 16 shows consistent negative gaps across all cities (Jazan -3.8%, Riyadh/Tabuk -2.4%), indicating sustained over-delivery vs capacity.' : 'Achievement rates show strong performers: Al Kharj (100.5%), Hafar Albatin (100.0%), Abha (98.6%), Jazan (98.6%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.6% MTD with W1=W2=89.3%, indicating systemic underperformance. Yanbu lowest at 89.5% MTD. Day 16 performance: Taif leads (99.7%), Hafar Albatin (98.1%), Jazan (97.4%). Hail drops significantly to 88.4%, requiring immediate attention.';
   
@@ -12957,21 +12907,17 @@ function renderCityMetric(metric) {
         var mtdCellVal = data.mtd[c].toFixed(1) + '%';
         html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+mtdCellVal+'</td>';
         var cityWeeks = cityWeeksMatrix[c] || [];
-        var cityWeekMask = cityWeekHasData[c] || [];
         for (var wk = 0; wk < cityWeekLabels.length; wk++) {
-            var weekExists = cityWeekMask[wk] !== false && !isMissingWeekValue(cityWeeks[wk]);
-            if (!weekExists) {
-                html += '<td class="period-col">-</td>';
-                continue;
+            var weekRaw = cityWeeks[wk];
+            var weekVal = parseFloat(weekRaw);
+            var hasWeekVal = !(weekRaw === '' || weekRaw === null || weekRaw === undefined || isNaN(weekVal));
+            var weekCellVal = hasWeekVal ? (weekVal.toFixed(1) + '%') : '-';
+            if ((metric === 'ach' || metric === 'gap') && wk > 0 && hasWeekVal) {
+                var prevWeekVal = parseFloat(cityWeeks[wk - 1]);
+                weekCellVal += fmtTrendPct(weekVal, prevWeekVal, 'WoW');
             }
-            var weekVal = parseFloat(cityWeeks[wk]);
-            var weekCellVal = weekVal.toFixed(1) + '%';
-            if ((metric === 'ach' || metric === 'gap') && wk > 0) {
-                var prevExists = cityWeekMask[wk - 1] !== false && !isMissingWeekValue(cityWeeks[wk - 1]);
-                var prevWeekVal = prevExists ? parseFloat(cityWeeks[wk - 1]) : NaN;
-                if (prevExists) weekCellVal += fmtTrendPct(weekVal, prevWeekVal, 'WoW');
-            }
-            html += '<td class="period-col '+(metric==='ach'?getColorClass(weekVal):getGapColorClass(weekVal))+'">'+weekCellVal+'</td>';
+            var weekCls = hasWeekVal ? (metric==='ach'?getColorClass(weekVal):getGapColorClass(weekVal)) : '';
+            html += '<td class="period-col '+weekCls+'">'+weekCellVal+'</td>';
         }
         for(var d=0; d<numDays; d++) {
             var dailyVal = cityDaily[d];
