@@ -11885,10 +11885,14 @@ function parseSheetData(rows) {
             if (!cityRow) continue;
             if (!data.cities.gap[cityNames[c]]) data.cities.gap[cityNames[c]] = {};
             data.cities.gap[cityNames[c]].mtd = cityRow[3];
-            data.cities.gap[cityNames[c]].weeks = cityRow.slice(4, cityDayStartCol);
+            data.cities.gap[cityNames[c]].weeks = cityRow.slice(4, cityDayStartCol).map(function(v) {
+                if (v === '' || v === null || v === undefined) return null;
+                var n = parseFloat(String(v).replace(/[%,]/g,''));
+                return isNaN(n) ? null : n;
+            });
             data.cities.gap[cityNames[c]].weekLabels = data.cities.gap[cityNames[c]].weeks.map(function(_, idx){ return 'W' + (idx + 1); });
-            data.cities.gap[cityNames[c]].w1 = data.cities.gap[cityNames[c]].weeks[0] || cityRow[4];
-            data.cities.gap[cityNames[c]].w2 = data.cities.gap[cityNames[c]].weeks[1] || cityRow[5];
+            data.cities.gap[cityNames[c]].w1 = data.cities.gap[cityNames[c]].weeks[0];
+            data.cities.gap[cityNames[c]].w2 = data.cities.gap[cityNames[c]].weeks[1];
             data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, cityDayStartCol);
         }
 
@@ -11913,10 +11917,14 @@ function parseSheetData(rows) {
             if (!cityRowAch) continue;
             if (!data.cities.achievement[cityNames[c]]) data.cities.achievement[cityNames[c]] = {};
             data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
-            data.cities.achievement[cityNames[c]].weeks = cityRowAch.slice(4, cityDayStartCol);
+            data.cities.achievement[cityNames[c]].weeks = cityRowAch.slice(4, cityDayStartCol).map(function(v) {
+                if (v === '' || v === null || v === undefined) return null;
+                var n = parseFloat(String(v).replace(/[%,]/g,''));
+                return isNaN(n) ? null : n;
+            });
             data.cities.achievement[cityNames[c]].weekLabels = data.cities.achievement[cityNames[c]].weeks.map(function(_, idx){ return 'W' + (idx + 1); });
-            data.cities.achievement[cityNames[c]].w1 = data.cities.achievement[cityNames[c]].weeks[0] || cityRowAch[4];
-            data.cities.achievement[cityNames[c]].w2 = data.cities.achievement[cityNames[c]].weeks[1] || cityRowAch[5];
+            data.cities.achievement[cityNames[c]].w1 = data.cities.achievement[cityNames[c]].weeks[0];
+            data.cities.achievement[cityNames[c]].w2 = data.cities.achievement[cityNames[c]].weeks[1];
             data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, cityDayStartCol);
             if (c === 0) {
                 console.log('🔍 City Achievement Daily Values for', cityNames[c], ':', data.cities.achievement[cityNames[c]].daily.length, 'days');
@@ -11974,10 +11982,10 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = toNum(targetRow[3]);
   category.mtd = toNum(achievementRow[3]);
-    category.w1 = toNum(achievementWeeks[0]);
-    category.w2 = toNum(achievementWeeks[1]);
-    category.w3 = toNum(achievementWeeks[2]);
-    category.w4 = toNum(achievementWeeks[3]);
+    category.w1 = toNumKeepBlank(achievementWeeks[0]);
+    category.w2 = toNumKeepBlank(achievementWeeks[1]);
+    category.w3 = toNumKeepBlank(achievementWeeks[2]);
+    category.w4 = toNumKeepBlank(achievementWeeks[3]);
     category.weekLabels = achievementWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
   category.gapValue = toNum(gapRow[3]);
     category.daily = extractDailyValues(achievementRow, dayStart).map(toNum);
@@ -12526,8 +12534,8 @@ function _renderPartnerCatInner(cat) {
           title: sc.title || d.title,
           target: sc.target.toLocaleString(),
           mtd: sc.mtd.toFixed(1) + '%',
-          w1: sc.w1.toFixed(1) + '%',
-          w2: sc.w2.toFixed(1) + '%',
+          w1: (sc.w1 === null || sc.w1 === undefined) ? '-' : sc.w1.toFixed(1) + '%',
+          w2: (sc.w2 === null || sc.w2 === undefined) ? '-' : sc.w2.toFixed(1) + '%',
           gap: Math.abs(sc.gapValue).toLocaleString(),
           count: sc.numPartners[0],
           insight: dvPartnerInsight(cat, d.insight),
