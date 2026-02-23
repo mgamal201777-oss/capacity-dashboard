@@ -11021,9 +11021,9 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w1" style="display:none;">0</span>
         </button>
         <div class="card-label">W1 Performance</div>
-        <span class="card-tip-text" data-i18n="Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.">Week 1 (Feb 1-7) achievement rate. Delivery Riders ÷ Target for the first week of the month.</span>
+                <span class="card-tip-text" data-i18n="Week 1 achievement rate. Delivery Riders ÷ Target for the first week of the month.">Week 1 achievement rate. Delivery Riders ÷ Target for the first week of the month.</span>
         <div class="card-value">92.5%</div>
-        <div class="card-sub">Feb 1-7 | Stable</div>
+                <div class="card-sub">W1</div>
       </div>
       <div class="adv-card amber commentable-section">
         <button class="comment-indicator" onclick="openComments('totalOverview-w2')" title="Comment on W2 Performance">
@@ -11031,9 +11031,19 @@ document.getElementById('reason-list-details').addEventListener('toggle', functi
           <span class="comment-indicator-badge" id="badge-totalOverview-w2" style="display:none;">0</span>
         </button>
         <div class="card-label">W2 Performance</div>
-        <span class="card-tip-text" data-i18n="Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.">Week 2 (Feb 8-14) achievement rate. Delivery Riders ÷ Target for the second week of the month.</span>
+                <span class="card-tip-text" data-i18n="Week 2 achievement rate. Delivery Riders ÷ Target for the second week of the month.">Week 2 achievement rate. Delivery Riders ÷ Target for the second week of the month.</span>
         <div class="card-value">92.4%</div>
-        <div class="card-sub">Feb 8-14 | Declining trend</div>
+                <div class="card-sub">W2</div>
+            </div>
+            <div class="adv-card amber commentable-section">
+                <button class="comment-indicator" onclick="openComments('totalOverview-w3')" title="Comment on W3 Performance">
+                    💬
+                    <span class="comment-indicator-badge" id="badge-totalOverview-w3" style="display:none;">0</span>
+                </button>
+                <div class="card-label">W3 Performance</div>
+                <span class="card-tip-text" data-i18n="Week 3 achievement rate. Delivery Riders ÷ Target for the third week of the month.">Week 3 achievement rate. Delivery Riders ÷ Target for the third week of the month.</span>
+                <div class="card-value">92.3%</div>
+                <div class="card-sub">W3</div>
       </div>
       <div class="adv-card commentable-section">
         <button class="comment-indicator" onclick="openComments('totalOverview-gap')" title="Comment on Total GAP">
@@ -11613,6 +11623,55 @@ function parseCSV(csvText) {
   return rows;
 }
 
+// Detect where daily columns start by scanning nearby header rows for "Day N"
+function detectDayStartColumn(rows, fallbackCol, anchorRow) {
+    var startRow = Math.max(0, (anchorRow || 0) - 6);
+    var endRow = Math.min(rows.length - 1, (anchorRow || 0) + 6);
+    var dayRegex = /^day\s*\d+$/i;
+    var weekRegex = /^w\s*\d+$/i;
+    var numericDayRegex = /^\d{1,2}$/;
+
+    // Prefer explicit week headers and take the next column after last week
+    for (var r = startRow; r <= endRow; r++) {
+        var rowW = rows[r] || [];
+        var weekCols = [];
+        for (var cw = 0; cw < rowW.length; cw++) {
+            if (weekRegex.test(String(rowW[cw] || '').trim())) weekCols.push(cw);
+        }
+        if (weekCols.length > 0) {
+            return Math.max.apply(null, weekCols) + 1;
+        }
+    }
+
+    for (var r = startRow; r <= endRow; r++) {
+        var row = rows[r] || [];
+        for (var c = 0; c < row.length; c++) {
+            if (dayRegex.test(String(row[c] || '').trim())) {
+                return c;
+            }
+        }
+    }
+
+    // Fallback for sheets using numeric day headers like 22,21,20...
+    for (var r2 = startRow; r2 <= endRow; r2++) {
+        var rowN = rows[r2] || [];
+        var seq = 0;
+        var seqStart = -1;
+        for (var cn = 0; cn < rowN.length; cn++) {
+            if (numericDayRegex.test(String(rowN[cn] || '').trim())) {
+                if (seq === 0) seqStart = cn;
+                seq++;
+                if (seq >= 3) return seqStart;
+            } else {
+                seq = 0;
+                seqStart = -1;
+            }
+        }
+    }
+
+    return fallbackCol;
+}
+
 // Helper: Extract all available daily values from row starting at column 8
 function extractDailyValues(row, startCol) {
   var values = [];
@@ -11693,8 +11752,9 @@ function parseSheetData(rows) {
     }
   };
   
-    // Parse Total Overview (rows 3-7, 0-indexed)
+        // Parse Total Overview (rows 3-7, 0-indexed)
     console.log('📈 Parsing Total Overview...');
+        var totalDayStartCol = detectDayStartColumn(rows, 9, 3);
     var totalRow = rows[3];
     if (!totalRow || totalRow.length < 10) {
       console.error('❌ Invalid totalRow:', totalRow);
@@ -11702,9 +11762,13 @@ function parseSheetData(rows) {
     }
     // Target row has extra "Total target" label in col[3], so MTD is col[4]
     data.totalOverview.targetMTD = totalRow[4];
-    data.totalOverview.targetW1 = totalRow[5];
-    data.totalOverview.targetW2 = totalRow[5]; // W2 same as W1 for target
-    data.totalOverview.targetDaily = extractDailyValues(totalRow, 9);
+        data.totalOverview.targetWeeks = totalRow.slice(5, totalDayStartCol);
+        data.totalOverview.weekLabels = data.totalOverview.targetWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
+        data.totalOverview.targetW1 = data.totalOverview.targetWeeks[0] || '';
+        data.totalOverview.targetW2 = data.totalOverview.targetWeeks[1] || data.totalOverview.targetW1;
+        data.totalOverview.targetW3 = data.totalOverview.targetWeeks[2] || data.totalOverview.targetW2;
+        data.totalOverview.targetW4 = data.totalOverview.targetWeeks[3] || data.totalOverview.targetW3;
+        data.totalOverview.targetDaily = extractDailyValues(totalRow, totalDayStartCol);
     
     // Determine number of days from the first data row
     numDaysAvailable = data.totalOverview.targetDaily.length;
@@ -11713,27 +11777,39 @@ function parseSheetData(rows) {
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineMTD = achieveOnlineRow[3];
-  data.totalOverview.onlineW1 = achieveOnlineRow[4];
-  data.totalOverview.onlineW2 = achieveOnlineRow[5];
-  data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, 9);
+    data.totalOverview.onlineWeeks = achieveOnlineRow.slice(4, totalDayStartCol);
+    data.totalOverview.onlineW1 = data.totalOverview.onlineWeeks[0] || '';
+    data.totalOverview.onlineW2 = data.totalOverview.onlineWeeks[1] || data.totalOverview.onlineW1;
+    data.totalOverview.onlineW3 = data.totalOverview.onlineWeeks[2] || data.totalOverview.onlineW2;
+    data.totalOverview.onlineW4 = data.totalOverview.onlineWeeks[3] || data.totalOverview.onlineW3;
+    data.totalOverview.onlineDaily = extractDailyValues(achieveOnlineRow, totalDayStartCol);
   
   var achieveDeliveryRow = rows[5];
   data.totalOverview.deliveryMTD = achieveDeliveryRow[3];
-  data.totalOverview.deliveryW1 = achieveDeliveryRow[4];
-  data.totalOverview.deliveryW2 = achieveDeliveryRow[5];
-  data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, 9);
+    data.totalOverview.deliveryWeeks = achieveDeliveryRow.slice(4, totalDayStartCol);
+    data.totalOverview.deliveryW1 = data.totalOverview.deliveryWeeks[0] || '';
+    data.totalOverview.deliveryW2 = data.totalOverview.deliveryWeeks[1] || data.totalOverview.deliveryW1;
+    data.totalOverview.deliveryW3 = data.totalOverview.deliveryWeeks[2] || data.totalOverview.deliveryW2;
+    data.totalOverview.deliveryW4 = data.totalOverview.deliveryWeeks[3] || data.totalOverview.deliveryW3;
+    data.totalOverview.deliveryDaily = extractDailyValues(achieveDeliveryRow, totalDayStartCol);
   
   var achievementRateRow = rows[6];
-  data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, 9);
+    data.totalOverview.achievementDaily = extractDailyValues(achievementRateRow, totalDayStartCol);
   data.totalOverview.mtd = achievementRateRow[3];
-  data.totalOverview.w1 = achievementRateRow[4];
-  data.totalOverview.w2 = achievementRateRow[5];
+    data.totalOverview.achievementWeeks = achievementRateRow.slice(4, totalDayStartCol);
+    data.totalOverview.w1 = data.totalOverview.achievementWeeks[0] || '';
+    data.totalOverview.w2 = data.totalOverview.achievementWeeks[1] || data.totalOverview.w1;
+    data.totalOverview.w3 = data.totalOverview.achievementWeeks[2] || data.totalOverview.w2;
+    data.totalOverview.w4 = data.totalOverview.achievementWeeks[3] || data.totalOverview.w3;
   
   var gapRow = rows[7];
   data.totalOverview.gapMTD = gapRow[3];
-  data.totalOverview.gapW1 = gapRow[4];
-  data.totalOverview.gapW2 = gapRow[5];
-  data.totalOverview.gapDaily = extractDailyValues(gapRow, 9);
+    data.totalOverview.gapWeeks = gapRow.slice(4, totalDayStartCol);
+    data.totalOverview.gapW1 = data.totalOverview.gapWeeks[0] || '';
+    data.totalOverview.gapW2 = data.totalOverview.gapWeeks[1] || data.totalOverview.gapW1;
+    data.totalOverview.gapW3 = data.totalOverview.gapWeeks[2] || data.totalOverview.gapW2;
+    data.totalOverview.gapW4 = data.totalOverview.gapWeeks[3] || data.totalOverview.gapW3;
+    data.totalOverview.gapDaily = extractDailyValues(gapRow, totalDayStartCol);
   
         // Parse Partners Stratification (dynamic row detection to survive sheet row inserts)
         console.log('👥 Parsing Partners Stratification...');
@@ -11768,13 +11844,13 @@ function parseSheetData(rows) {
             })()
         };
 
-        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners');
-        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners');
-        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners');
-        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%');
-        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%');
-        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%');
-        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)');
+        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners', detectDayStartColumn(rows, 9, partnerStarts.good !== -1 ? partnerStarts.good : 8));
+        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners', detectDayStartColumn(rows, 9, partnerStarts.avg !== -1 ? partnerStarts.avg : 19));
+        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners', detectDayStartColumn(rows, 9, partnerStarts.bad !== -1 ? partnerStarts.bad : 30));
+        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%', detectDayStartColumn(rows, 9, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41));
+        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%', detectDayStartColumn(rows, 9, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52));
+        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%', detectDayStartColumn(rows, 9, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63));
+        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)', detectDayStartColumn(rows, 9, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74));
   
   console.log('🏙️ Parsing City Level Data...');
     // Parse City Level Data with dynamic section anchors
@@ -11800,15 +11876,18 @@ function parseSheetData(rows) {
     }
 
     if (citySectionStart !== -1) {
+        var cityDayStartCol = detectDayStartColumn(rows, 8, citySectionStart);
         // GAP rows start at citySectionStart (first row already contains Al Ahsa)
         for (var c = 0; c < cityNames.length; c++) {
             var cityRow = rows[citySectionStart + c];
             if (!cityRow) continue;
             if (!data.cities.gap[cityNames[c]]) data.cities.gap[cityNames[c]] = {};
             data.cities.gap[cityNames[c]].mtd = cityRow[3];
-            data.cities.gap[cityNames[c]].w1 = cityRow[4];
-            data.cities.gap[cityNames[c]].w2 = cityRow[5];
-            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, 8);
+            data.cities.gap[cityNames[c]].weeks = cityRow.slice(4, cityDayStartCol);
+            data.cities.gap[cityNames[c]].weekLabels = data.cities.gap[cityNames[c]].weeks.map(function(_, idx){ return 'W' + (idx + 1); });
+            data.cities.gap[cityNames[c]].w1 = data.cities.gap[cityNames[c]].weeks[0] || cityRow[4];
+            data.cities.gap[cityNames[c]].w2 = data.cities.gap[cityNames[c]].weeks[1] || cityRow[5];
+            data.cities.gap[cityNames[c]].daily = extractDailyValues(cityRow, cityDayStartCol);
         }
 
         // Achievement block starts where col1 has achievement label and col2 matches first city
@@ -11832,9 +11911,11 @@ function parseSheetData(rows) {
             if (!cityRowAch) continue;
             if (!data.cities.achievement[cityNames[c]]) data.cities.achievement[cityNames[c]] = {};
             data.cities.achievement[cityNames[c]].mtd = cityRowAch[3];
-            data.cities.achievement[cityNames[c]].w1 = cityRowAch[4];
-            data.cities.achievement[cityNames[c]].w2 = cityRowAch[5];
-            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, 8);
+            data.cities.achievement[cityNames[c]].weeks = cityRowAch.slice(4, cityDayStartCol);
+            data.cities.achievement[cityNames[c]].weekLabels = data.cities.achievement[cityNames[c]].weeks.map(function(_, idx){ return 'W' + (idx + 1); });
+            data.cities.achievement[cityNames[c]].w1 = data.cities.achievement[cityNames[c]].weeks[0] || cityRowAch[4];
+            data.cities.achievement[cityNames[c]].w2 = data.cities.achievement[cityNames[c]].weeks[1] || cityRowAch[5];
+            data.cities.achievement[cityNames[c]].daily = extractDailyValues(cityRowAch, cityDayStartCol);
             if (c === 0) {
                 console.log('🔍 City Achievement Daily Values for', cityNames[c], ':', data.cities.achievement[cityNames[c]].daily.length, 'days');
             }
@@ -11852,7 +11933,7 @@ function parseSheetData(rows) {
 }
 
 // Helper to parse a partner category section
-function parsePartnerCategory(rows, startRow, category, titlePrefix) {
+function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol) {
   console.log('🔍 Parsing category at row', startRow, ':', titlePrefix);
   
   // Validate rows exist with all 11 rows needed
@@ -11879,31 +11960,37 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix) {
   
   function toNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
   function toNumArr(arr) { return arr.map(toNum); }
+    var dayStart = dayStartCol || 9;
+    function periodValues(row) { return [row[3]].concat(row.slice(4, dayStart)); }
+    var achievementWeeks = achievementRow.slice(4, dayStart);
 
   category.title = titlePrefix + ' (' + numPartnersRow[3] + ')';
   category.target = toNum(targetRow[3]);
   category.mtd = toNum(achievementRow[3]);
-  category.w1 = toNum(achievementRow[4]);
-  category.w2 = toNum(achievementRow[5]);
+    category.w1 = toNum(achievementWeeks[0]);
+    category.w2 = toNum(achievementWeeks[1]);
+    category.w3 = toNum(achievementWeeks[2]);
+    category.w4 = toNum(achievementWeeks[3]);
+    category.weekLabels = achievementWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
   category.gapValue = toNum(gapRow[3]);
-  category.daily = extractDailyValues(achievementRow, 9).map(toNum);
+    category.daily = extractDailyValues(achievementRow, dayStart).map(toNum);
   
   console.log('📊', titlePrefix, '- Daily values extracted:', category.daily.length);
   
-  // Breakdown arrays (19 elements: MTD, W1, W2, then daily values) — all converted to numbers
-  category.targetValues = toNumArr([targetRow[3], targetRow[4], targetRow[5]].concat(extractDailyValues(targetRow, 9)));
-  category.numPartners = toNumArr([numPartnersRow[3], numPartnersRow[4], numPartnersRow[5]].concat(extractDailyValues(numPartnersRow, 9)));
-  category.deliveryRiders = toNumArr([deliveryRow[3], deliveryRow[4], deliveryRow[5]].concat(extractDailyValues(deliveryRow, 9)));
-  category.onlineRiders = toNumArr([onlineRow[3], onlineRow[4], onlineRow[5]].concat(extractDailyValues(onlineRow, 9)));
-  category.achievementRate = toNumArr([achievementRow[3], achievementRow[4], achievementRow[5]].concat(extractDailyValues(achievementRow, 9)));
-  category.gapArray = toNumArr([gapRow[3], gapRow[4], gapRow[5]].concat(extractDailyValues(gapRow, 9)));
+    // Breakdown arrays (MTD, W1..Wn, then daily values) — all converted to numbers
+    category.targetValues = toNumArr(periodValues(targetRow).concat(extractDailyValues(targetRow, dayStart)));
+    category.numPartners = toNumArr(periodValues(numPartnersRow).concat(extractDailyValues(numPartnersRow, dayStart)));
+    category.deliveryRiders = toNumArr(periodValues(deliveryRow).concat(extractDailyValues(deliveryRow, dayStart)));
+    category.onlineRiders = toNumArr(periodValues(onlineRow).concat(extractDailyValues(onlineRow, dayStart)));
+    category.achievementRate = toNumArr(periodValues(achievementRow).concat(extractDailyValues(achievementRow, dayStart)));
+    category.gapArray = toNumArr(periodValues(gapRow).concat(extractDailyValues(gapRow, dayStart)));
   
   // Performance tiers — all converted to numbers
-  category.rate100 = toNumArr([rate100Row[3], rate100Row[4], rate100Row[5]].concat(extractDailyValues(rate100Row, 9)));
-  category.rate95 = toNumArr([rate95Row[3], rate95Row[4], rate95Row[5]].concat(extractDailyValues(rate95Row, 9)));
-  category.rate90 = toNumArr([rate90Row[3], rate90Row[4], rate90Row[5]].concat(extractDailyValues(rate90Row, 9)));
-  category.rate80 = toNumArr([rate80Row[3], rate80Row[4], rate80Row[5]].concat(extractDailyValues(rate80Row, 9)));
-  category.rateLess80 = toNumArr([rateLess80Row[3], rateLess80Row[4], rateLess80Row[5]].concat(extractDailyValues(rateLess80Row, 9)));
+    category.rate100 = toNumArr(periodValues(rate100Row).concat(extractDailyValues(rate100Row, dayStart)));
+    category.rate95 = toNumArr(periodValues(rate95Row).concat(extractDailyValues(rate95Row, dayStart)));
+    category.rate90 = toNumArr(periodValues(rate90Row).concat(extractDailyValues(rate90Row, dayStart)));
+    category.rate80 = toNumArr(periodValues(rate80Row).concat(extractDailyValues(rate80Row, dayStart)));
+    category.rateLess80 = toNumArr(periodValues(rateLess80Row).concat(extractDailyValues(rateLess80Row, dayStart)));
   
   console.log('✅', titlePrefix, 'parsed successfully');
 }
@@ -11955,6 +12042,12 @@ function renderTotalOverviewTable() {
   
   var tov = sheetDataCache.totalOverview;
   var numDays = tov.targetDaily ? tov.targetDaily.length : 16;
+    var weekLabels = (tov.weekLabels && tov.weekLabels.length) ? tov.weekLabels : ['W1', 'W2', 'W3'];
+    var targetWeeks = (tov.targetWeeks && tov.targetWeeks.length) ? tov.targetWeeks : [tov.targetW1, tov.targetW2, tov.targetW3].filter(function(v){ return v !== undefined && v !== null && String(v) !== ''; });
+    var onlineWeeks = (tov.onlineWeeks && tov.onlineWeeks.length) ? tov.onlineWeeks : [tov.onlineW1, tov.onlineW2, tov.onlineW3].filter(function(v){ return v !== undefined && v !== null && String(v) !== ''; });
+    var deliveryWeeks = (tov.deliveryWeeks && tov.deliveryWeeks.length) ? tov.deliveryWeeks : [tov.deliveryW1, tov.deliveryW2, tov.deliveryW3].filter(function(v){ return v !== undefined && v !== null && String(v) !== ''; });
+    var achievementWeeks = (tov.achievementWeeks && tov.achievementWeeks.length) ? tov.achievementWeeks : [tov.w1, tov.w2, tov.w3].filter(function(v){ return v !== undefined && v !== null && String(v) !== ''; });
+    var gapWeeks = (tov.gapWeeks && tov.gapWeeks.length) ? tov.gapWeeks : [tov.gapW1, tov.gapW2, tov.gapW3].filter(function(v){ return v !== undefined && v !== null && String(v) !== ''; });
   
   // Get table and check expanded state
   var table = document.getElementById('totalOverviewTable');
@@ -11966,7 +12059,10 @@ function renderTotalOverviewTable() {
   
   // Render thead with dynamic day columns
   var thead = table.querySelector('thead');
-    var theadHtml = '<tr><th>' + dvT('Metric', '指标') + '</th><th>MTD</th><th>W1 (Feb 1-7)</th><th>W2 (Feb 8-14)</th>';
+        var theadHtml = '<tr><th>' + dvT('Metric', '指标') + '</th><th>MTD</th>';
+    for (var w = 0; w < weekLabels.length; w++) {
+        theadHtml += '<th>' + weekLabels[w] + '</th>';
+    }
   for (var i = numDays; i >= 1; i--) {
     theadHtml += '<th class="adv-daily-cols">' + dvT('Day ', '第') + i + dvT('', '天') + '</th>';
   }
@@ -12011,8 +12107,9 @@ function renderTotalOverviewTable() {
   // Row 1: Target
     html += '<tr><td>' + dvT('Target', '目标') + '</td>';
   html += '<td class="period-col">' + fmt(tov.targetMTD) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.targetW1) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.targetW2) + '</td>';
+    for (var tw = 0; tw < targetWeeks.length; tw++) {
+        html += '<td class="period-col">' + fmt(targetWeeks[tw]) + '</td>';
+    }
   for (var i = 0; i < numDays; i++) {
     html += '<td class="adv-daily-cols">' + fmt(tov.targetDaily[i]) + '</td>';
   }
@@ -12021,11 +12118,14 @@ function renderTotalOverviewTable() {
   // Row 2: Online Riders
     html += '<tr><td>' + dvT('Online Riders', '在线骑手') + '</td>';
     var onlineMTD = parseFloat(String(tov.onlineMTD).replace(/[%,]/g,''));
-    var onlineW1 = parseFloat(String(tov.onlineW1).replace(/[%,]/g,''));
-    var onlineW2 = parseFloat(String(tov.onlineW2).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.onlineMTD) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.onlineW1) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.onlineW2) + fmtTrendPct(onlineW2, onlineW1, 'WoW') + '</td>';
+    for (var ow = 0; ow < onlineWeeks.length; ow++) {
+        var onlineCurr = parseFloat(String(onlineWeeks[ow]).replace(/[%,]/g,''));
+        var onlinePrev = ow > 0 ? parseFloat(String(onlineWeeks[ow - 1]).replace(/[%,]/g,'')) : NaN;
+        var onlineCell = fmt(onlineWeeks[ow]);
+        if (ow > 0) onlineCell += fmtTrendPct(onlineCurr, onlinePrev, 'WoW');
+        html += '<td class="period-col">' + onlineCell + '</td>';
+    }
   for (var i = 0; i < numDays; i++) {
         var onlineDailyVal = parseFloat(String(tov.onlineDaily[i]).replace(/[%,]/g,''));
         var prevOnlineDailyVal = (i < numDays - 1) ? parseFloat(String(tov.onlineDaily[i + 1]).replace(/[%,]/g,'')) : NaN;
@@ -12036,11 +12136,14 @@ function renderTotalOverviewTable() {
   // Row 3: Delivery Riders
     html += '<tr><td>' + dvT('Delivery Riders', '配送骑手') + '</td>';
     var deliveryMTD = parseFloat(String(tov.deliveryMTD).replace(/[%,]/g,''));
-    var deliveryW1 = parseFloat(String(tov.deliveryW1).replace(/[%,]/g,''));
-    var deliveryW2 = parseFloat(String(tov.deliveryW2).replace(/[%,]/g,''));
     html += '<td class="period-col">' + fmt(tov.deliveryMTD) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.deliveryW1) + '</td>';
-    html += '<td class="period-col">' + fmt(tov.deliveryW2) + fmtTrendPct(deliveryW2, deliveryW1, 'WoW') + '</td>';
+    for (var dw = 0; dw < deliveryWeeks.length; dw++) {
+        var deliveryCurr = parseFloat(String(deliveryWeeks[dw]).replace(/[%,]/g,''));
+        var deliveryPrev = dw > 0 ? parseFloat(String(deliveryWeeks[dw - 1]).replace(/[%,]/g,'')) : NaN;
+        var deliveryCell = fmt(deliveryWeeks[dw]);
+        if (dw > 0) deliveryCell += fmtTrendPct(deliveryCurr, deliveryPrev, 'WoW');
+        html += '<td class="period-col">' + deliveryCell + '</td>';
+    }
   for (var i = 0; i < numDays; i++) {
         var deliveryDailyVal = parseFloat(String(tov.deliveryDaily[i]).replace(/[%,]/g,''));
         var prevDeliveryDailyVal = (i < numDays - 1) ? parseFloat(String(tov.deliveryDaily[i + 1]).replace(/[%,]/g,'')) : NaN;
@@ -12051,11 +12154,14 @@ function renderTotalOverviewTable() {
   // Row 4: Achievement %
     html += '<tr><td><strong>' + dvT('Achievement %', '达成率 %') + '</strong> <span class="row-info-icon">❗<span class="row-tip-text">' + dvT('Achievement %: The achievement rate from Delivery Riders ÷ Target', '达成率%：由配送骑手 ÷ 目标计算。') + '</span></span></td>';
     var mtdAch = parseFloat(String(tov.mtd).replace('%',''));
-    var w1Ach = parseFloat(String(tov.w1).replace('%',''));
-    var w2Ach = parseFloat(String(tov.w2).replace('%',''));
     html += '<td class="period-col ' + getColorClass(tov.mtd) + '">' + fmtPct(tov.mtd) + '</td>';
-    html += '<td class="period-col ' + getColorClass(tov.w1) + '">' + fmtPct(tov.w1) + '</td>';
-    html += '<td class="period-col ' + getColorClass(tov.w2) + '">' + fmtPct(tov.w2) + fmtTrendPct(w2Ach, w1Ach, 'WoW') + '</td>';
+    for (var aw = 0; aw < achievementWeeks.length; aw++) {
+        var achCurr = parseFloat(String(achievementWeeks[aw]).replace('%',''));
+        var achPrev = aw > 0 ? parseFloat(String(achievementWeeks[aw - 1]).replace('%','')) : NaN;
+        var achCell = fmtPct(achievementWeeks[aw]);
+        if (aw > 0) achCell += fmtTrendPct(achCurr, achPrev, 'WoW');
+        html += '<td class="period-col ' + getColorClass(achievementWeeks[aw]) + '">' + achCell + '</td>';
+    }
   for (var i = 0; i < numDays; i++) {
     var achVal = parseFloat(String(tov.achievementDaily[i]).replace('%',''));
     var cls = 'adv-daily-cols ' + getColorClass(achVal);
@@ -12068,8 +12174,9 @@ function renderTotalOverviewTable() {
   // Row 5: Gap
     html += '<tr><td><strong>' + dvT('Gap', '差距') + '</strong> <span class="row-info-icon">❗<span class="row-tip-text">' + dvT('Gap: The gap for Target − Online Riders', '差距：目标 − 在线骑手。') + '</span></span></td>';
   html += '<td class="period-col">' + fmt(tov.gapMTD) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.gapW1) + '</td>';
-  html += '<td class="period-col">' + fmt(tov.gapW2) + '</td>';
+    for (var gw = 0; gw < gapWeeks.length; gw++) {
+        html += '<td class="period-col">' + fmt(gapWeeks[gw]) + '</td>';
+    }
   for (var i = 0; i < numDays; i++) {
     var gVal = parseFloat(String(tov.gapDaily[i]).replace(/[%,]/g,''));
     var cls = 'adv-daily-cols';
@@ -12098,6 +12205,9 @@ function renderTotalOverviewTable() {
       var mtdVal = parseFloat(String(tov.mtd).replace(/[%,]/g, ''));
       var w1Val = parseFloat(String(tov.w1).replace(/[%,]/g, ''));
       var w2Val = parseFloat(String(tov.w2).replace(/[%,]/g, ''));
+            var latestWeekLabel = weekLabels.length ? weekLabels[weekLabels.length - 1] : 'W3';
+            var latestWeekRaw = achievementWeeks.length ? achievementWeeks[achievementWeeks.length - 1] : tov.w3;
+            var latestWeekVal = parseFloat(String(latestWeekRaw).replace(/[%,]/g, ''));
       var gapVal = parseFloat(String(tov.gapMTD).replace(/[%,]/g, ''));
       var targetVal = fmt(tov.targetMTD);
 
@@ -12113,15 +12223,24 @@ function renderTotalOverviewTable() {
       if (cards[1]) {
         cards[1].className = 'adv-card ' + cardColor(w1Val) + ' commentable-section';
         cards[1].querySelector('.card-value').textContent = w1Val.toFixed(1) + '%';
+                cards[1].querySelector('.card-sub').textContent = 'W1';
       }
       // Card 2: W2 Performance
       if (cards[2]) {
         cards[2].className = 'adv-card ' + cardColor(w2Val) + ' commentable-section';
         cards[2].querySelector('.card-value').textContent = w2Val.toFixed(1) + '%';
+                cards[2].querySelector('.card-sub').textContent = 'W2';
       }
-      // Card 3: Total GAP
+            // Card 3: W3 Performance
       if (cards[3]) {
-        cards[3].querySelector('.card-value').textContent = isNaN(gapVal) ? fmt(tov.gapMTD) : Math.round(gapVal).toLocaleString();
+                cards[3].className = 'adv-card ' + cardColor(latestWeekVal) + ' commentable-section';
+                cards[3].querySelector('.card-label').textContent = latestWeekLabel + ' Performance';
+                cards[3].querySelector('.card-value').textContent = latestWeekVal.toFixed(1) + '%';
+                cards[3].querySelector('.card-sub').textContent = latestWeekLabel;
+            }
+            // Card 4: Total GAP
+            if (cards[4]) {
+                cards[4].querySelector('.card-value').textContent = isNaN(gapVal) ? fmt(tov.gapMTD) : Math.round(gapVal).toLocaleString();
       }
     }
   } catch(cardErr) {
@@ -12403,6 +12522,7 @@ function _renderPartnerCatInner(cat) {
           gap: Math.abs(sc.gapValue).toLocaleString(),
           count: sc.numPartners[0],
           insight: dvPartnerInsight(cat, d.insight),
+                    weekLabels: (sc.weekLabels && sc.weekLabels.length) ? sc.weekLabels : ['W1', 'W2'],
           data: [sc.targetValues, sc.numPartners, sc.onlineRiders, sc.deliveryRiders, sc.achievementRate, sc.gapArray],
                     breakdown: hasValidBreakdown ? sheetBreakdown : fallbackBreakdown,
           daily: sc.daily
@@ -12440,6 +12560,8 @@ function _renderPartnerCatInner(cat) {
   
   // Determine number of daily columns from data
   var numDays = (d.daily && d.daily.length > 0) ? d.daily.length : numDaysAvailable;
+    var partnerWeekLabels = (d.weekLabels && d.weekLabels.length) ? d.weekLabels : ['W1', 'W2'];
+    var partnerPeriodCount = 1 + partnerWeekLabels.length;
 
     function fmtTrendPct(curr, prev, label) {
         if (isNaN(curr) || isNaN(prev) || prev === 0) return '';
@@ -12450,7 +12572,8 @@ function _renderPartnerCatInner(cat) {
         return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
     }
   
-        html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' '+dvT('Performance', '表现')+'</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>'+dvT('Metric', '指标')+'</th><th>MTD</th><th>W1</th><th>W2</th>';
+          html += '<div class="adv-table-container"><div class="adv-table-title">'+d.title+' '+dvT('Performance', '表现')+'</div><div class="adv-table-wrap"><table class="adv-table partners-strat-table" id="partner'+cat+'Table"><thead><tr><th>'+dvT('Metric', '指标')+'</th><th>MTD</th>';
+      for (var pw = 0; pw < partnerWeekLabels.length; pw++) html += '<th>' + partnerWeekLabels[pw] + '</th>';
     for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">'+dvT('Day ', '第')+i+dvT('', '天')+'</th>';
   html += '</tr></thead><tbody>';
   
@@ -12467,23 +12590,23 @@ function _renderPartnerCatInner(cat) {
     if(isAch) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">'+dvT('Achievement %: The achievement rate from Delivery Riders ÷ Target','达成率%：由配送骑手 ÷ 目标计算。')+'</span></span>';
     else if(isGap) rowLabel = '<strong>'+rows[r]+'</strong> <span class="row-info-icon">❗<span class="row-tip-text">'+dvT('Gap: The gap for Target − Online Riders','差距：目标 − 在线骑手。')+'</span></span>';
     html += '<tr><td>'+rowLabel+'</td>';
-    var rowDailyFlags = isAch ? getDailyFlagIndexes(d.data[r].slice(3), 'low') : (isGap ? getDailyFlagIndexes(d.data[r].slice(3), 'abs-high') : {});
-    for(var c=0; c<3; c++) {
+        var rowDailyFlags = isAch ? getDailyFlagIndexes(d.data[r].slice(partnerPeriodCount), 'low') : (isGap ? getDailyFlagIndexes(d.data[r].slice(partnerPeriodCount), 'abs-high') : {});
+        for(var c=0; c<partnerPeriodCount; c++) {
       var val = d.data[r][c];
       var cls = 'period-col';
       if(isAch && c>0) { cls += ' '+getColorClass(val); }
             var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
-            if (isTrendRow && c === 2) displayVal += fmtTrendPct(val, d.data[r][1], 'WoW');
+            if (isTrendRow && c >= 2) displayVal += fmtTrendPct(val, d.data[r][c - 1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
-    for(var c=3; c<d.data[r].length; c++) {
+        for(var c=partnerPeriodCount; c<d.data[r].length; c++) {
       var val = d.data[r][c];
       var cls = 'adv-daily-cols';
       if(isAch) {
         cls += ' '+getColorClass(val);
-        if(rowDailyFlags[c-3]) cls += ' red-flag-cell ' + getAchievementFlagClass(val);
+                if(rowDailyFlags[c-partnerPeriodCount]) cls += ' red-flag-cell ' + getAchievementFlagClass(val);
       }
-      if(isGap && rowDailyFlags[c-3]) {
+            if(isGap && rowDailyFlags[c-partnerPeriodCount]) {
         cls += ' red-flag-cell ' + getGapFlagClass(val);
       }
             var dailyDisplayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
@@ -12512,25 +12635,25 @@ function _renderPartnerCatInner(cat) {
   }
   for(var b=0; b<5; b++) {
     var isNeg = (b === 4); // <80% row
-        var breakdownDailyFlags = getDailyFlagIndexes(d.breakdown[b].slice(3), isNeg ? 'high' : 'low');
+        var breakdownDailyFlags = getDailyFlagIndexes(d.breakdown[b].slice(partnerPeriodCount), isNeg ? 'high' : 'low');
     html += '<tr><td>'+breakdownRows[b]+'</td>';
     // MTD column (index 0) is a count; show count + % of total partners
     var mtdVal = d.breakdown[b][0];
     var mtdPct = (mtdVal/totalP*100);
         var mtdCls = getBkdnColorByRow(b);
         html += '<td class="period-col '+mtdCls+'">'+mtdVal+' <span style="font-size:10px;opacity:0.85">('+mtdPct.toFixed(1)+'%)</span></td>';
-    // W1 and W2 columns (index 1,2) are counts
-    for(var c=1; c<3; c++) {
+        // Weekly columns (index 1..N) are counts
+        for(var c=1; c<partnerPeriodCount; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
             var cls = getBkdnColorByRow(b);
             html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
-    for(var c=3; c<d.breakdown[b].length; c++) {
+        for(var c=partnerPeriodCount; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
       var pct = (val/totalP*100);
             var cls = getBkdnColorByRow(b);
-            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-3] ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-partnerPeriodCount] ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
     }
     html += '</tr>';
   }
@@ -12612,6 +12735,7 @@ function renderCityMetric(metric) {
     mtd: [1.1,1.8,1.2,1.8,3.3,1.6,1.4,1.6,1.9,1.7,1.6,2.5,1.7,1.8,2.1,1.6,1.8],
     w1: [-0.9,-2.2,-1.5,-2.0,-3.4,-2.0,-1.6,-1.5,-1.5,-1.7,-1.9,-3.6,-1.6,-1.3,-2.2,-1.2,-1.6],
     w2: [-1.0,-1.5,-0.8,-1.9,-2.8,-1.7,-0.6,-2.6,-1.9,-1.5,-2.0,-2.5,-2.0,-2.7,-1.8,-1.2,-1.8],
+        weekLabels: ['W1','W2'],
     daily: [[-2.9,-0.1,-0.1,-1.6,-0.4,-0.7,-0.3,-2.2,-1.4,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8],
             [-8.8,-0.4,-0.5,-2.6,-1.0,-0.5,-1.3,-2.2,-2.0,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4],
             [-8.7,-1.0,0.0,0.0,0.0,0.0,-1.0,-1.0,0.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0],
@@ -12635,6 +12759,7 @@ function renderCityMetric(metric) {
     mtd: [93.3,95.1,100.0,97.4,90.6,100.5,98.4,95.0,94.7,95.3,95.9,89.5,98.6,98.6,94.5,97.5,96.7],
     w1: [94.2,95.6,100.1,97.5,89.3,103.5,99.1,98.4,93.9,96.2,95.3,88.4,100.9,93.4,94.0,101.4,92.5],
     w2: [92.1,94.6,99.0,93.1,89.3,98.4,97.1,91.4,92.7,93.7,95.7,90.8,96.3,100.2,92.9,92.7,98.9],
+        weekLabels: ['W1','W2'],
     daily: [[93.8,93.0,94.8,93.6,95.1,94.8,94.7,90.5,91.4,92.1,92.1,92.1,92.1,92.1,92.1,92.1],
             [95.7,96.0,96.7,92.9,96.0,96.4,95.6,93.1,94.0,94.8,94.8,94.8,94.8,94.8,94.8,94.8],
             [100.0,98.1,99.0,101.9,100.0,101.0,101.0,99.0,101.0,98.1,98.1,98.1,98.1,98.1,98.1,98.1],
@@ -12661,14 +12786,17 @@ function renderCityMetric(metric) {
       var sheetGap = sheetDataCache.cities.gap;
       var sheetAch = sheetDataCache.cities.achievement;
       if (sheetGap && Object.keys(sheetGap).length >= 17) {
-        var newGap = { mtd: [], w1: [], w2: [], daily: [] };
+                var newGap = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], daily: [] };
         var valid = true;
         for (var ci = 0; ci < cities.length; ci++) {
           var cd = sheetGap[cities[ci]];
           if (!cd) { valid = false; break; }
           newGap.mtd.push(cityToNum(cd.mtd));
-          newGap.w1.push(cityToNum(cd.w1));
-          newGap.w2.push(cityToNum(cd.w2));
+                    var cityWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
+                    newGap.weeks.push(cityWeeks);
+                    newGap.w1.push(cityWeeks[0] || 0);
+                    newGap.w2.push(cityWeeks[1] || 0);
+                    if (ci === 0) newGap.weekLabels = (cd.weekLabels && cd.weekLabels.length) ? cd.weekLabels.slice() : cityWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
           newGap.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
         }
         if (valid && newGap.mtd.length === 17) {
@@ -12677,21 +12805,27 @@ function renderCityMetric(metric) {
         }
       }
       if (sheetAch && Object.keys(sheetAch).length > 0) {
-        var newAch = { mtd: [], w1: [], w2: [], daily: [] };
+                var newAch = { mtd: [], w1: [], w2: [], weekLabels: [], weeks: [], daily: [] };
         var valid = true;
         for (var ci = 0; ci < cities.length; ci++) {
           var cd = sheetAch[cities[ci]];
           if (!cd) {
             // Fallback to hardcoded for this city
             newAch.mtd.push(achData.mtd[ci] || 0);
-            newAch.w1.push(achData.w1[ci] || 0);
-            newAch.w2.push(achData.w2[ci] || 0);
+                        var fbWeeks = (achData.weeks && achData.weeks[ci] && achData.weeks[ci].length) ? achData.weeks[ci] : [achData.w1[ci] || 0, achData.w2[ci] || 0];
+                        newAch.weeks.push(fbWeeks);
+                        newAch.w1.push(fbWeeks[0] || 0);
+                        newAch.w2.push(fbWeeks[1] || 0);
+                        if (newAch.weekLabels.length === 0) newAch.weekLabels = (achData.weekLabels && achData.weekLabels.length) ? achData.weekLabels.slice() : fbWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
             newAch.daily.push(achData.daily[ci] || []);
             continue;
           }
           newAch.mtd.push(cityToNum(cd.mtd));
-          newAch.w1.push(cityToNum(cd.w1));
-          newAch.w2.push(cityToNum(cd.w2));
+                    var cityAchWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
+                    newAch.weeks.push(cityAchWeeks);
+                    newAch.w1.push(cityAchWeeks[0] || 0);
+                    newAch.w2.push(cityAchWeeks[1] || 0);
+                    if (ci === 0) newAch.weekLabels = (cd.weekLabels && cd.weekLabels.length) ? cd.weekLabels.slice() : cityAchWeeks.map(function(_, idx){ return 'W' + (idx + 1); });
           newAch.daily.push(cd.daily ? cd.daily.map(cityToNum) : []);
         }
         console.log('📊 Overriding city Achievement data with Google Sheets - cities found:', Object.keys(sheetAch).length, 'daily[0] length:', newAch.daily[0]?.length);
@@ -12703,6 +12837,8 @@ function renderCityMetric(metric) {
   }
   
   var data = (metric==='gap') ? gapData : achData;
+    var cityWeekLabels = (data.weekLabels && data.weekLabels.length) ? data.weekLabels : ['W1','W2'];
+    var cityWeeksMatrix = (data.weeks && data.weeks.length) ? data.weeks : cities.map(function(_, idx) { return [data.w1[idx], data.w2[idx]]; });
     var title = (metric==='gap') ? dvT('📉 City GAP % (Delivery vs Capacity)', '📉 城市GAP %（配送 vs 容量）') : dvT('📊 City Achievement Rate', '📊 城市达成率');
     var insight = (metric==='gap') ? 'GAP analysis shows Yanbu with highest MTD gap (2.5%), Riyadh (3.3%), and Dammam (1.8%). Negative W1/W2 values indicate delivery exceeded capacity in weekly windows. Day 1 shows extreme spikes (Yanbu -12.3%, multiple cities <-8%) suggesting initialization issues. Most cities stabilize at <-2% daily gap by Day 3. Day 16 shows consistent negative gaps across all cities (Jazan -3.8%, Riyadh/Tabuk -2.4%), indicating sustained over-delivery vs capacity.' : 'Achievement rates show strong performers: Al Kharj (100.5%), Hafar Albatin (100.0%), Abha (98.6%), Jazan (98.6%), and Buraydah (98.4%) consistently above 95%. Riyadh struggles at 90.6% MTD with W1=W2=89.3%, indicating systemic underperformance. Yanbu lowest at 89.5% MTD. Day 16 performance: Taif leads (99.7%), Hafar Albatin (98.1%), Jazan (97.4%). Hail drops significantly to 88.4%, requiring immediate attention.';
   
@@ -12755,7 +12891,8 @@ function renderCityMetric(metric) {
         return '<span class="ach-trend ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% ' + label + '</span>';
     }
   
-        html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>'+dvT('City','城市')+'</th><th>MTD</th><th>W1</th><th>W2</th>';
+          html += '<div class="adv-table-container"><div class="adv-table-title">'+title+'</div><div class="adv-table-wrap"><table class="adv-table city-level-table" id="city'+metric+'Table"><thead><tr><th>'+dvT('City','城市')+'</th><th>MTD</th>';
+      for (var wh = 0; wh < cityWeekLabels.length; wh++) html += '<th>' + cityWeekLabels[wh] + '</th>';
     for(var i=numDays; i>=1; i--) html+='<th class="adv-daily-cols">'+dvT('Day ', '第')+i+dvT('', '天')+'</th>';
   html += '</tr></thead><tbody>';
   
@@ -12764,14 +12901,18 @@ function renderCityMetric(metric) {
         var cityDailyFlags = getDailyFlagIndexes(cityDaily, metric==='gap' ? 'abs-high' : 'low');
     html += '<tr><td>'+cities[c]+'</td>';
         var mtdCellVal = data.mtd[c].toFixed(1) + '%';
-        var w1CellVal = data.w1[c].toFixed(1) + '%';
-        var w2CellVal = data.w2[c].toFixed(1) + '%';
-            if (metric === 'ach' || metric === 'gap') {
-            w2CellVal += fmtTrendPct(data.w2[c], data.w1[c], 'WoW');
-        }
         html += '<td class="period-col '+(metric==='ach'?getColorClass(data.mtd[c]):getGapColorClass(data.mtd[c]))+'">'+mtdCellVal+'</td>';
-        html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w1[c]):getGapColorClass(data.w1[c]))+'">'+w1CellVal+'</td>';
-        html += '<td class="period-col '+(metric==='ach'?getColorClass(data.w2[c]):getGapColorClass(data.w2[c]))+'">'+w2CellVal+'</td>';
+        var cityWeeks = cityWeeksMatrix[c] || [];
+        for (var wk = 0; wk < cityWeekLabels.length; wk++) {
+            var weekVal = parseFloat(cityWeeks[wk]);
+            if (isNaN(weekVal)) weekVal = 0;
+            var weekCellVal = weekVal.toFixed(1) + '%';
+            if ((metric === 'ach' || metric === 'gap') && wk > 0) {
+                var prevWeekVal = parseFloat(cityWeeks[wk - 1]);
+                weekCellVal += fmtTrendPct(weekVal, prevWeekVal, 'WoW');
+            }
+            html += '<td class="period-col '+(metric==='ach'?getColorClass(weekVal):getGapColorClass(weekVal))+'">'+weekCellVal+'</td>';
+        }
         for(var d=0; d<numDays; d++) {
             var dailyVal = cityDaily[d];
             var dailyClass = (metric==='ach'?getColorClass(dailyVal):getGapColorClass(dailyVal));
@@ -31074,6 +31215,7 @@ const monthlyData = {
           'totalOverview-mtd': '📊 MTD Achievement',
           'totalOverview-w1': '📊 W1 Performance',
           'totalOverview-w2': '📊 W2 Performance',
+                    'totalOverview-w3': '📊 W3 Performance',
           'totalOverview-gap': '📊 Total GAP',
           'totalOverview-table': '📊 Performance Summary',
           'totalOverview-chart': '📈 Daily Achievement Trend Chart',
@@ -31112,6 +31254,7 @@ const monthlyData = {
         'totalOverview-mtd': '📊 MTD Achievement',
         'totalOverview-w1': '📊 W1 Performance',
         'totalOverview-w2': '📊 W2 Performance',
+                'totalOverview-w3': '📊 W3 Performance',
         'totalOverview-gap': '📊 Total GAP',
         'totalOverview-table': '📊 Performance Summary',
         'totalOverview-chart': '📈 Daily Achievement Trend Chart',
@@ -31123,6 +31266,7 @@ const monthlyData = {
         'totalOverview-mtd': 'Commenting on the MTD Achievement Card in Total Overview section',
         'totalOverview-w1': 'Commenting on the W1 Performance Card in Total Overview section',
         'totalOverview-w2': 'Commenting on the W2 Performance Card in Total Overview section',
+                'totalOverview-w3': 'Commenting on the W3 Performance Card in Total Overview section',
         'totalOverview-gap': 'Commenting on the Total GAP Card in Total Overview section',
         'totalOverview-table': 'Commenting on the Performance Summary Table in Total Overview section',
         'totalOverview-chart': 'Commenting on the Daily Achievement Trend Chart in Total Overview section',
@@ -31270,6 +31414,7 @@ const monthlyData = {
         {id: 'totalOverview-mtd', name: '📊 MTD Achievement'},
         {id: 'totalOverview-w1', name: '📊 W1 Performance'},
         {id: 'totalOverview-w2', name: '📊 W2 Performance'},
+                {id: 'totalOverview-w3', name: '📊 W3 Performance'},
         {id: 'totalOverview-gap', name: '📊 Total GAP'},
         {id: 'totalOverview-table', name: '📊 Performance Summary'},
         {id: 'totalOverview-chart', name: '📈 Daily Achievement Trend Chart'},
@@ -31642,7 +31787,7 @@ const monthlyData = {
     
     // Load comment counts on page load for all sections
     setTimeout(function() {
-      var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-gap', 'totalOverview-table', 'totalOverview-chart', 'partnersStrat', 'cityLevel'];
+    var allSections = ['totalOverview-mtd', 'totalOverview-w1', 'totalOverview-w2', 'totalOverview-w3', 'totalOverview-gap', 'totalOverview-table', 'totalOverview-chart', 'partnersStrat', 'cityLevel'];
       var sectionCounts = {}; // Track counts per section
       
       function updateTotalBadge() {
