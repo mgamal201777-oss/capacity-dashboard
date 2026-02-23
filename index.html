@@ -11754,7 +11754,7 @@ function parseSheetData(rows) {
   
         // Parse Total Overview (rows 3-7, 0-indexed)
     console.log('📈 Parsing Total Overview...');
-        var totalDayStartCol = detectDayStartColumn(rows, 9, 3);
+    var totalDayStartCol = Math.max(detectDayStartColumn(rows, 9, 3), 10);
     var totalRow = rows[3];
     if (!totalRow || totalRow.length < 10) {
       console.error('❌ Invalid totalRow:', totalRow);
@@ -11961,6 +11961,11 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
   console.log('✅ Category rows validated, numPartners:', numPartnersRow[3]);
   
   function toNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
+    function toNumKeepBlank(v) {
+        if (v === '' || v === null || v === undefined) return null;
+        var n = parseFloat(String(v).replace(/,/g,''));
+        return isNaN(n) ? null : n;
+    }
   function toNumArr(arr) { return arr.map(toNum); }
     var dayStart = dayStartCol || 9;
     function periodValues(row) { return [row[3]].concat(row.slice(4, dayStart)); }
@@ -11980,19 +11985,19 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
   console.log('📊', titlePrefix, '- Daily values extracted:', category.daily.length);
   
     // Breakdown arrays (MTD, W1..Wn, then daily values) — all converted to numbers
-    category.targetValues = toNumArr(periodValues(targetRow).concat(extractDailyValues(targetRow, dayStart)));
-    category.numPartners = toNumArr(periodValues(numPartnersRow).concat(extractDailyValues(numPartnersRow, dayStart)));
-    category.deliveryRiders = toNumArr(periodValues(deliveryRow).concat(extractDailyValues(deliveryRow, dayStart)));
-    category.onlineRiders = toNumArr(periodValues(onlineRow).concat(extractDailyValues(onlineRow, dayStart)));
-    category.achievementRate = toNumArr(periodValues(achievementRow).concat(extractDailyValues(achievementRow, dayStart)));
-    category.gapArray = toNumArr(periodValues(gapRow).concat(extractDailyValues(gapRow, dayStart)));
+    category.targetValues = periodValues(targetRow).concat(extractDailyValues(targetRow, dayStart)).map(toNumKeepBlank);
+    category.numPartners = periodValues(numPartnersRow).concat(extractDailyValues(numPartnersRow, dayStart)).map(toNumKeepBlank);
+    category.deliveryRiders = periodValues(deliveryRow).concat(extractDailyValues(deliveryRow, dayStart)).map(toNumKeepBlank);
+    category.onlineRiders = periodValues(onlineRow).concat(extractDailyValues(onlineRow, dayStart)).map(toNumKeepBlank);
+    category.achievementRate = periodValues(achievementRow).concat(extractDailyValues(achievementRow, dayStart)).map(toNumKeepBlank);
+    category.gapArray = periodValues(gapRow).concat(extractDailyValues(gapRow, dayStart)).map(toNumKeepBlank);
   
   // Performance tiers — all converted to numbers
-    category.rate100 = toNumArr(periodValues(rate100Row).concat(extractDailyValues(rate100Row, dayStart)));
-    category.rate95 = toNumArr(periodValues(rate95Row).concat(extractDailyValues(rate95Row, dayStart)));
-    category.rate90 = toNumArr(periodValues(rate90Row).concat(extractDailyValues(rate90Row, dayStart)));
-    category.rate80 = toNumArr(periodValues(rate80Row).concat(extractDailyValues(rate80Row, dayStart)));
-    category.rateLess80 = toNumArr(periodValues(rateLess80Row).concat(extractDailyValues(rateLess80Row, dayStart)));
+    category.rate100 = periodValues(rate100Row).concat(extractDailyValues(rate100Row, dayStart)).map(toNumKeepBlank);
+    category.rate95 = periodValues(rate95Row).concat(extractDailyValues(rate95Row, dayStart)).map(toNumKeepBlank);
+    category.rate90 = periodValues(rate90Row).concat(extractDailyValues(rate90Row, dayStart)).map(toNumKeepBlank);
+    category.rate80 = periodValues(rate80Row).concat(extractDailyValues(rate80Row, dayStart)).map(toNumKeepBlank);
+    category.rateLess80 = periodValues(rateLess80Row).concat(extractDailyValues(rateLess80Row, dayStart)).map(toNumKeepBlank);
   
   console.log('✅', titlePrefix, 'parsed successfully');
 }
@@ -12075,7 +12080,7 @@ function renderTotalOverviewTable() {
   // Render tbody
   var tbody = table.querySelector('tbody');
   
-  function fmt(val) {
+    function fmt(val) {
     if (!val && val !== 0) return '-';
     var s = String(val).replace('%', '');
     if (s.match(/^\d+$/)) return parseInt(s).toLocaleString();
@@ -12599,8 +12604,10 @@ function _renderPartnerCatInner(cat) {
       var val = d.data[r][c];
       var cls = 'period-col';
       if(isAch && c>0) { cls += ' '+getColorClass(val); }
-            var displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
-            if (isTrendRow && c >= 2) displayVal += fmtTrendPct(val, d.data[r][c - 1], 'WoW');
+            var displayVal;
+            if (val === null || val === undefined || val === '') displayVal = '-';
+            else displayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
+            if (isTrendRow && c >= 2 && val !== null && val !== undefined && val !== '') displayVal += fmtTrendPct(val, d.data[r][c - 1], 'WoW');
             html += '<td class="'+cls+'">'+displayVal+'</td>';
     }
         for(var c=partnerPeriodCount; c<d.data[r].length; c++) {
@@ -12613,14 +12620,16 @@ function _renderPartnerCatInner(cat) {
             if(isGap && rowDailyFlags[c-partnerPeriodCount]) {
         cls += ' red-flag-cell ' + getGapFlagClass(val);
       }
-            var dailyDisplayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
+            var dailyDisplayVal;
+            if (val === null || val === undefined || val === '') dailyDisplayVal = '-';
+            else dailyDisplayVal = (typeof val === 'number' && isAch ? val.toFixed(1)+'%' : (typeof val === 'number' ? val.toLocaleString() : val));
             if (isAch) {
                 var prevDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
-                dailyDisplayVal += fmtTrendPct(val, prevDailyVal, 'DoD');
+                if (val !== null && val !== undefined && val !== '') dailyDisplayVal += fmtTrendPct(val, prevDailyVal, 'DoD');
             }
             if (isGap || isOnline || isDelivery) {
                 var prevGapDailyVal = (c < d.data[r].length - 1) ? d.data[r][c + 1] : NaN;
-                dailyDisplayVal += fmtTrendPct(val, prevGapDailyVal, 'DoD');
+                if (val !== null && val !== undefined && val !== '') dailyDisplayVal += fmtTrendPct(val, prevGapDailyVal, 'DoD');
             }
             html += '<td class="'+cls+'">'+dailyDisplayVal+'</td>';
     }
@@ -12643,21 +12652,21 @@ function _renderPartnerCatInner(cat) {
     html += '<tr><td>'+breakdownRows[b]+'</td>';
     // MTD column (index 0) is a count; show count + % of total partners
     var mtdVal = d.breakdown[b][0];
-    var mtdPct = (mtdVal/totalP*100);
+    var mtdPct = (typeof mtdVal === 'number' && totalP > 0) ? (mtdVal/totalP*100) : 0;
         var mtdCls = getBkdnColorByRow(b);
-        html += '<td class="period-col '+mtdCls+'">'+mtdVal+' <span style="font-size:10px;opacity:0.85">('+mtdPct.toFixed(1)+'%)</span></td>';
+        html += '<td class="period-col '+mtdCls+'">'+(mtdVal === null ? '-' : mtdVal)+' <span style="font-size:10px;opacity:0.85">('+(mtdVal === null ? '-' : mtdPct.toFixed(1)+'%')+')</span></td>';
         // Weekly columns (index 1..N) are counts
         for(var c=1; c<partnerPeriodCount; c++) {
       var val = d.breakdown[b][c];
-      var pct = (val/totalP*100);
+    var pct = (typeof val === 'number' && totalP > 0) ? (val/totalP*100) : 0;
             var cls = getBkdnColorByRow(b);
-            html += '<td class="period-col '+cls+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+        html += '<td class="period-col '+cls+'">'+(val === null ? '-' : val)+' <span style="font-size:10px;opacity:0.85">('+(val === null ? '-' : pct.toFixed(1)+'%')+')</span></td>';
     }
         for(var c=partnerPeriodCount; c<d.breakdown[b].length; c++) {
       var val = d.breakdown[b][c];
-      var pct = (val/totalP*100);
+    var pct = (typeof val === 'number' && totalP > 0) ? (val/totalP*100) : 0;
             var cls = getBkdnColorByRow(b);
-            html += '<td class="adv-daily-cols '+cls+(breakdownDailyFlags[c-partnerPeriodCount] ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+val+' <span style="font-size:10px;opacity:0.85">('+pct.toFixed(1)+'%)</span></td>';
+        html += '<td class="adv-daily-cols '+cls+((val !== null && breakdownDailyFlags[c-partnerPeriodCount]) ? ' red-flag-cell ' + getBreakdownFlagClass(pct, isNeg) : '')+'">'+(val === null ? '-' : val)+' <span style="font-size:10px;opacity:0.85">('+(val === null ? '-' : pct.toFixed(1)+'%')+')</span></td>';
     }
     html += '</tr>';
   }
@@ -12786,7 +12795,12 @@ function renderCityMetric(metric) {
   // Safe Google Sheets override for city data — falls back to hardcoded on any error
   try {
     if (sheetDataCache && sheetDataCache.cities) {
-      function cityToNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
+            function cityToNum(v) { var n = parseFloat(String(v).replace(/,/g,'')); return isNaN(n) ? 0 : n; }
+            function cityToNumOrBlank(v) {
+                if (v === '' || v === null || v === undefined) return null;
+                var n = parseFloat(String(v).replace(/,/g,''));
+                return isNaN(n) ? null : n;
+            }
       var sheetGap = sheetDataCache.cities.gap;
       var sheetAch = sheetDataCache.cities.achievement;
       if (sheetGap && Object.keys(sheetGap).length >= 17) {
@@ -12796,7 +12810,7 @@ function renderCityMetric(metric) {
           var cd = sheetGap[cities[ci]];
           if (!cd) { valid = false; break; }
           newGap.mtd.push(cityToNum(cd.mtd));
-                    var cityWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
+                    var cityWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNumOrBlank) : [cityToNumOrBlank(cd.w1), cityToNumOrBlank(cd.w2)];
                     newGap.weeks.push(cityWeeks);
                     newGap.w1.push(cityWeeks[0] || 0);
                     newGap.w2.push(cityWeeks[1] || 0);
@@ -12816,7 +12830,7 @@ function renderCityMetric(metric) {
           if (!cd) {
             // Fallback to hardcoded for this city
             newAch.mtd.push(achData.mtd[ci] || 0);
-                        var fbWeeks = (achData.weeks && achData.weeks[ci] && achData.weeks[ci].length) ? achData.weeks[ci] : [achData.w1[ci] || 0, achData.w2[ci] || 0];
+                        var fbWeeks = (achData.weeks && achData.weeks[ci] && achData.weeks[ci].length) ? achData.weeks[ci] : [achData.w1[ci], achData.w2[ci]];
                         newAch.weeks.push(fbWeeks);
                         newAch.w1.push(fbWeeks[0] || 0);
                         newAch.w2.push(fbWeeks[1] || 0);
@@ -12825,7 +12839,7 @@ function renderCityMetric(metric) {
             continue;
           }
           newAch.mtd.push(cityToNum(cd.mtd));
-                    var cityAchWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNum) : [cityToNum(cd.w1), cityToNum(cd.w2)];
+                    var cityAchWeeks = (cd.weeks && cd.weeks.length) ? cd.weeks.map(cityToNumOrBlank) : [cityToNumOrBlank(cd.w1), cityToNumOrBlank(cd.w2)];
                     newAch.weeks.push(cityAchWeeks);
                     newAch.w1.push(cityAchWeeks[0] || 0);
                     newAch.w2.push(cityAchWeeks[1] || 0);
