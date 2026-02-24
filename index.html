@@ -11859,13 +11859,16 @@ function parseSheetData(rows) {
         };
 
         var partnerWeekCount = (data.totalOverview.weekLabels && data.totalOverview.weekLabels.length) ? data.totalOverview.weekLabels.length : 2;
-        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.good !== -1 ? partnerStarts.good : 8), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.avg !== -1 ? partnerStarts.avg : 19), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners', Math.max(detectDayStartColumn(rows, 9, partnerStarts.bad !== -1 ? partnerStarts.bad : 30), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63), 4 + partnerWeekCount));
-        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)', Math.max(detectDayStartColumn(rows, 9, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74), 4 + partnerWeekCount));
+        // Use totalDayStartCol for ALL partner categories — same sheet column structure for every section.
+        // Re-detecting per-category can falsely trigger on numeric data values in those rows.
+        var partnerDayStartCol = totalDayStartCol;
+        parsePartnerCategory(rows, partnerStarts.good !== -1 ? partnerStarts.good : 8, data.partners.good, '✅ Good Partners', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.avg !== -1 ? partnerStarts.avg : 19, data.partners.avg, '⚡ Average Partners', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.bad !== -1 ? partnerStarts.bad : 30, data.partners.bad, '❌ Bad Partners', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.inc20 !== -1 ? partnerStarts.inc20 : 41, data.partners.inc20, '📈 Increase >20%', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.inc1020 !== -1 ? partnerStarts.inc1020 : 52, data.partners.inc1020, '📊 Increase 10-20%', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.inc110 !== -1 ? partnerStarts.inc110 : 63, data.partners.inc110, '📉 Increase 1-10%', partnerDayStartCol);
+        parsePartnerCategory(rows, partnerStarts.inc0 !== -1 ? partnerStarts.inc0 : 74, data.partners.inc0, '🔻 Others (≤0%)', partnerDayStartCol);
   
   console.log('🏙️ Parsing City Level Data...');
     // Parse City Level Data with dynamic section anchors
