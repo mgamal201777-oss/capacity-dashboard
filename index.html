@@ -11760,32 +11760,34 @@ function parseSheetData(rows) {
       console.error('❌ Invalid totalRow:', totalRow);
       return null;
     }
-    // Target row has extra "Total target" label in col[3], so MTD is col[4]
-    data.totalOverview.targetMTD = totalRow[4];
-    
-    // Extract ALL potential week columns, then filter to only non-empty ones
-    var rawTargetWeeks = totalRow.slice(5, totalDayStartCol);
-    data.totalOverview.targetWeeks = [];
+
+    // Use the online row (rows[4]) to count actual populated weeks — it has no column offset
+    // Sheet layout: col[3]=MTD, col[4]=W1, col[5]=W2, col[6]=W3, col[7]=W4(empty), ...
+    var onlineRowForCount = rows[4];
     var actualWeekCount = 0;
-    for (var tw = 0; tw < rawTargetWeeks.length; tw++) {
-        var weekVal = String(rawTargetWeeks[tw] || '').trim();
-        if (weekVal === '' || weekVal === 'null' || weekVal === 'undefined') break; // Stop at first empty
-        data.totalOverview.targetWeeks.push(rawTargetWeeks[tw]);
+    for (var tw = 0; tw < totalDayStartCol - 4; tw++) {
+        var wv = String(onlineRowForCount[4 + tw] || '').trim();
+        if (wv === '' || wv === 'null' || wv === 'undefined') break;
         actualWeekCount++;
     }
-    var weekEndCol = 5 + actualWeekCount; // Column where actual weeks end
-    
+    if (actualWeekCount < 1) actualWeekCount = 2; // safety floor
+    var weekEndCol = 4 + actualWeekCount; // non-offset rows: weeks are cols [4 .. weekEndCol)
+    console.log('📅 Detected', actualWeekCount, 'populated weeks, weekEndCol:', weekEndCol);
+
+    // Target row has extra "Total target" label in col[3], so MTD is col[4], W1 at col[5]
+    data.totalOverview.targetMTD = totalRow[4];
+    data.totalOverview.targetWeeks = totalRow.slice(5, weekEndCol + 1); // +1 because it is offset by 1
     data.totalOverview.weekLabels = data.totalOverview.targetWeeks.map(function(_, idx) { return 'W' + (idx + 1); });
     data.totalOverview.targetW1 = data.totalOverview.targetWeeks[0] || '';
     data.totalOverview.targetW2 = data.totalOverview.targetWeeks[1] || '';
     data.totalOverview.targetW3 = data.totalOverview.targetWeeks[2] || '';
     data.totalOverview.targetW4 = data.totalOverview.targetWeeks[3] || '';
-        data.totalOverview.targetDaily = extractDailyValues(totalRow, totalDayStartCol);
+    data.totalOverview.targetDaily = extractDailyValues(totalRow, totalDayStartCol);
     
     // Determine number of days from the first data row
     numDaysAvailable = data.totalOverview.targetDaily.length;
     data.numDays = numDaysAvailable;
-    console.log('✅ Total Overview parsed. Weeks:', actualWeekCount, 'Days available:', numDaysAvailable);
+    console.log('✅ Total Overview parsed. Weeks:', actualWeekCount, 'WeekLabels:', data.totalOverview.weekLabels, 'Days available:', numDaysAvailable);
   
   var achieveOnlineRow = rows[4];
   data.totalOverview.onlineMTD = achieveOnlineRow[3];
@@ -11990,11 +11992,15 @@ function parsePartnerCategory(rows, startRow, category, titlePrefix, dayStartCol
   function toNumArr(arr) { return arr.map(toNum); }
     var dayStart = dayStartCol || 9;
     
-    // Determine actual week count from Total Overview to match across all slicers
-    var actualWeekCount = (sheetDataCache && sheetDataCache.totalOverview && sheetDataCache.totalOverview.weekLabels) 
-        ? sheetDataCache.totalOverview.weekLabels.length 
-        : 3; // Default to 3 weeks (W1, W2, W3)
-    var weekEndCol = 4 + actualWeekCount; // Column index where weeks end
+    // Count actual populated weeks from the achievement row (col[4]=W1, col[5]=W2, ...)
+    var actualWeekCount = 0;
+    for (var tw = 0; tw < dayStart - 4; tw++) {
+        var wv = String(achievementRow[4 + tw] || '').trim();
+        if (wv === '' || wv === 'null' || wv === 'undefined') break;
+        actualWeekCount++;
+    }
+    if (actualWeekCount < 1) actualWeekCount = 2; // safety floor
+    var weekEndCol = 4 + actualWeekCount; // cols [4 .. weekEndCol) contain W1..Wn
     
     function periodValues(row) { return [row[3]].concat(row.slice(4, weekEndCol)); }
     var achievementWeeks = achievementRow.slice(4, weekEndCol);
