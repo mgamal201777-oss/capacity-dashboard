@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keeta 3PL — Partner Churn & Assessment Intelligence Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{
+  --bg:#f0f3f9;--card:#ffffff;--s2:#f7f9fc;
+  --bdr:rgba(0,0,0,0.07);--bdr2:rgba(0,0,0,0.12);
+  --t:#16213e;--sub:#3d4f6b;--mut:#8896a8;
+  --g:#0ea55e;--gL:rgba(14,165,94,.1);
+  --r:#dc3558;--rL:rgba(220,53,88,.1);
+  --b:#1d6fe8;--bL:rgba(29,111,232,.1);
+  --a:#d97706;--aL:rgba(217,119,6,.1);
+  --o:#c2510f;--oL:rgba(194,81,15,.1);
+  --p:#6d28d9;--pL:rgba(109,40,217,.1);
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--t);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:1560px;margin:0 auto;padding:24px 22px}
+.hdr{background:linear-gradient(135deg,#16213e 0%,#1d3461 100%);border-radius:16px;padding:24px 30px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(22,33,62,.25);flex-wrap:wrap;gap:16px}
+.hdr-l .eye{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7eb8ff;margin-bottom:7px}
+.hdr-l h1{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2}
+.hdr-l h1 em{color:#fbbf24;font-style:normal}
+.hdr-l .sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;font-weight:500}
+.hdr-r{display:flex;gap:12px;flex-wrap:wrap}
+.hkpi{text-align:center;padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;min-width:110px}
+.hkpi .n{font-size:24px;font-weight:800;line-height:1;color:#fff}
+.hkpi .l{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:4px}
+.hkpi .c{font-size:11px;font-weight:600;margin-top:3px}
+.sec{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.sn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.st{font-size:12px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}
+.ss{font-size:12px;font-weight:500;color:var(--mut);margin-left:auto}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px 22px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.ct{font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:15px;display:flex;align-items:center;gap:7px}
+.ct .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.mb14{margin-bottom:14px}
+.mstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.mcard{border:1px solid var(--bdr2);border-radius:12px;padding:14px 14px 12px;border-top:3px solid var(--mc,#ccc);background:var(--card);box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.mcard .mn{font-size:13px;font-weight:800;color:var(--t);margin-bottom:10px}
+.mcard .mv{font-size:22px;font-weight:800;line-height:1;letter-spacing:-.5px;margin-bottom:3px}
+.mcard .ml{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
+.msplit{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.msplit-item{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:99px}
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:2px 8px;border-radius:99px;border:1px solid}
+.tg{color:var(--g);background:var(--gL);border-color:rgba(14,165,94,.25)}
+.tr{color:var(--r);background:var(--rL);border-color:rgba(220,53,88,.25)}
+.tb{color:var(--b);background:var(--bL);border-color:rgba(29,111,232,.25)}
+.ta{color:var(--a);background:var(--aL);border-color:rgba(217,119,6,.25)}
+.ins{margin-top:12px;padding:10px 14px;background:var(--s2);border-left:3px solid;border-radius:0 8px 8px 0;font-size:12px;font-weight:500;color:var(--sub);line-height:1.55}
+.ins strong{font-weight:700;color:var(--t)}
+.defbox{margin-bottom:12px;padding:10px 14px;background:#f0f4ff;border:1px solid rgba(29,111,232,.15);border-radius:10px;font-size:11px;color:var(--sub);line-height:1.7}
+.defbox strong{color:var(--b);font-weight:700}
+.defbox .dt{font-weight:700;color:var(--t)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);padding:9px 12px;border-bottom:2px solid var(--bdr);text-align:left;white-space:nowrap;background:var(--s2)}
+tbody td{padding:9px 12px;font-size:13px;color:var(--sub);border-bottom:1px solid rgba(0,0,0,.05);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--s2)}
+.cf{font-weight:700;font-size:13.5px;color:var(--t)}
+.cm{font-family:var(--mono);font-size:12px}
+.cn{font-size:12px;color:var(--mut)}
+.kr{display:grid;gap:10px}
+.kr.k4{grid-template-columns:repeat(4,1fr)}
+.kr.k3{grid-template-columns:repeat(3,1fr)}
+.kr.k5{grid-template-columns:repeat(5,1fr)}
+.kc{background:var(--s2);border:1px solid var(--bdr);border-top:2.5px solid var(--kc,var(--a));border-radius:10px;padding:13px 14px 11px}
+.kc .l{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+.kc .n{font-size:24px;font-weight:800;line-height:1;color:var(--kc,var(--t));letter-spacing:-1px}
+.kc .s{font-size:11px;font-weight:500;color:var(--mut);margin-top:4px}
+.red-flag{background:#fef2f2;border-left:4px solid var(--r);padding:10px 14px;margin:8px 0;border-radius:0 8px 8px 0;font-size:12px;font-weight:500;color:var(--sub)}
+.collapse-btn{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:9px 14px;font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;margin-bottom:10px;width:100%;text-align:left;transition:background .15s;letter-spacing:.5px}
+.collapse-btn:hover{background:#eef2f8;border-color:var(--bdr2)}
+.collapse-btn .arrow{margin-left:auto;transition:transform .25s;font-size:10px}
+.collapse-btn.open .arrow{transform:rotate(180deg)}
+.collapse-body{display:none}
+.collapse-body.show{display:block}
+.slicer{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.slicer-btn{padding:6px 12px;border:1px solid var(--bdr2);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;background:var(--card);color:var(--sub);transition:all .15s}
+.slicer-btn:hover{background:var(--bL);border-color:var(--b)}
+.slicer-btn.active{background:var(--b);color:#fff;border-color:var(--b)}
+.lifecycle{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px}
+.lc-card{border:1px solid var(--bdr);border-radius:12px;padding:14px;border-top:3px solid var(--lc,#ccc)}
+.lc-card h4{font-size:13px;font-weight:800;margin-bottom:8px}
+.lc-card .lc-row{font-size:12px;margin:4px 0;color:var(--sub)}
+.lc-card .lc-row strong{font-weight:700}
+.lc-card .lc-row.red{color:var(--r)}
+.lc-card .lc-row.green{color:var(--g)}
+.lc-card .lc-row.blue{color:var(--b)}
+.foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;font-size:11.5px;font-weight:500;color:var(--mut);flex-wrap:wrap;gap:8px}
+.foot strong{color:var(--a)}
+.pmm-tbl{margin:10px 0}
+.pmm-tbl th{background:var(--p);color:#fff;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px}
+.pmm-tbl td{padding:8px 14px;font-size:12.5px;border-bottom:1px solid var(--bdr)}
+.pmm-tbl .pos{color:var(--g);font-weight:700}
+.pmm-tbl .neg{color:var(--r);font-weight:700}
+.pmm-tbl .neu{color:var(--mut);font-weight:600}
+.why-box{background:#fffbeb;border:1px solid rgba(217,119,6,.2);border-radius:10px;padding:14px;margin-top:12px;font-size:12px;line-height:1.7;color:var(--sub)}
+.why-box strong{color:var(--t)}
+.why-box ol{padding-left:18px;margin-top:6px}
+.bar-in-cell{height:6px;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:4px}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(max-width:900px){.g2,.g3,.g31{grid-template-columns:1fr}.mstrip{grid-template-columns:repeat(2,1fr)}.kr.k4,.kr.k5{grid-template-columns:repeat(2,1fr)}.lifecycle{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="eye">Keeta 3PL Partners · Churn & Assessment Intelligence · Dec 2025 – Apr 2026</div>
+    <h1>Partner Churn & <em>Performance Assessment</em> Dashboard</h1>
+    <div class="sub">Tier Movement · Retention Analysis · PMM Performance · City Intelligence · 10 Periods Analyzed</div>
+  </div>
+  <div class="hdr-r">
+    <div class="hkpi"><div class="n">645</div><div class="l">Active Partners</div><div class="c" style="color:#7eb8ff">Apr MTD</div></div>
+    <div class="hkpi"><div class="n" style="color:#34d399">5.6%</div><div class="l">Churn Rate</div><div class="c" style="color:#34d399">↓10.2pp</div></div>
+    <div class="hkpi"><div class="n" style="color:#fbbf24">12</div><div class="l">Good Churned</div><div class="c" style="color:#fbbf24">all periods</div></div>
+    <div class="hkpi"><div class="n" style="color:#f87171">-132</div><div class="l">vs Dec Peak</div><div class="c" style="color:#f87171">777→645</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--bL);color:var(--b)">01</div>
+  <div class="st" style="color:var(--b)">Monthly Churn & Growth Movement</div>
+  <div class="ss">Full-month comparisons · Churn trajectory · Net partner change</div>
+</div>
+<div class="defbox">
+  <strong>📌 What This Section Tells You:</strong> This section tracks the overall health of our partner ecosystem month over month — how many partners we’re losing (churn), gaining (new), and the net impact. It answers: <em>“Are we growing or shrinking, and how fast?”</em><br><br>
+  <strong>📖 Key Definitions:</strong><br>
+  • <span class="dt">Churn Rate</span> = % of previous-period active partners that became inactive<br>
+  • <span class="dt">Net Change</span> = New partners acquired minus partners churned (positive = growth)<br>
+  • <span class="dt">Good / Average / Bad</span> = Performance tier based on Delivery Completion & Fulfillment Rate<br>
+  • <span class="dt">Improved</span> = Partners that moved UP at least one tier<br><br>
+  <strong>ℹ️ Period Comparison:</strong> Jan periods vs Dec · Feb vs Jan (full) · Mar vs Feb (full) · Apr vs Mar (full)
+</div>
+<div class="mstrip">
+
+  <div class="mcard" style="--mc:var(--r)">
+    <div class="mn">Jan (full) <span class="tag tr" style="font-size:9px">Highest Churn</span></div>
+    <div class="mv">672</div>
+    <div class="ml">Active Partners</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:9px;margin-bottom:9px">
+      <span style="font-size:10px;font-weight:700;color:var(--mut)">Churn</span>
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r)">15.4%</span>
+    </div>
+    <div class="msplit">
+      <div class="msplit-item" style="background:var(--rL);color:var(--r)">-120 churned</div>
+      <div class="msplit-item" style="background:var(--gL);color:var(--g)">+15 new</div>
+      <div class="msplit-item" style="background:rgba(0,0,0,.06);color:var(--r)">Net -105</div>
+    </div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--mut);margin-top:8px">Good lost: <strong style="color:var(--r)">2</strong> · Improved: <strong style="color:var(--g)">15.7%</strong></div>
+  </div>
+  <div class="mcard" style="--mc:var(--a)">
+    <div class="mn">Feb (full) </div>
+    <div class="mv">630</div>
+    <div class="ml">Active Partners</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:9px;margin-bottom:9px">
+      <span style="font-size:10px;font-weight:700;color:var(--mut)">Churn</span>
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--a)">11.2%</span>
+    </div>
+    <div class="msplit">
+      <div class="msplit-item" style="background:var(--rL);color:var(--r)">-75 churned</div>
+      <div class="msplit-item" style="background:var(--gL);color:var(--g)">+33 new</div>
+      <div class="msplit-item" style="background:rgba(0,0,0,.06);color:var(--r)">Net -42</div>
+    </div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--mut);margin-top:8px">Good lost: <strong style="color:var(--r)">2</strong> · Improved: <strong style="color:var(--g)">18.9%</strong></div>
+  </div>
+  <div class="mcard" style="--mc:var(--g)">
+    <div class="mn">Mar (full) <span class="tag tg" style="font-size:9px">Best Growth</span></div>
+    <div class="mv">641</div>
+    <div class="ml">Active Partners</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:9px;margin-bottom:9px">
+      <span style="font-size:10px;font-weight:700;color:var(--mut)">Churn</span>
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--a)">9.5%</span>
+    </div>
+    <div class="msplit">
+      <div class="msplit-item" style="background:var(--rL);color:var(--r)">-60 churned</div>
+      <div class="msplit-item" style="background:var(--gL);color:var(--g)">+71 new</div>
+      <div class="msplit-item" style="background:rgba(0,0,0,.06);color:var(--g)">Net +11</div>
+    </div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--mut);margin-top:8px">Good lost: <strong style="color:var(--r)">0</strong> · Improved: <strong style="color:var(--g)">23.9%</strong></div>
+  </div>
+  <div class="mcard" style="--mc:#0d9488">
+    <div class="mn">Apr (1-18) </div>
+    <div class="mv">645</div>
+    <div class="ml">Active Partners</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:9px;margin-bottom:9px">
+      <span style="font-size:10px;font-weight:700;color:var(--mut)">Churn</span>
+      <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--g)">5.6%</span>
+    </div>
+    <div class="msplit">
+      <div class="msplit-item" style="background:var(--rL);color:var(--r)">-36 churned</div>
+      <div class="msplit-item" style="background:var(--gL);color:var(--g)">+40 new</div>
+      <div class="msplit-item" style="background:rgba(0,0,0,.06);color:var(--g)">Net +4</div>
+    </div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--mut);margin-top:8px">Good lost: <strong style="color:var(--r)">0</strong> · Improved: <strong style="color:var(--g)">19.5%</strong></div>
+  </div></div>
+
+<div class="g2 mb14">
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--b)"></span>Active Partners & Churn Rate Trend</div>
+    <canvas id="c1" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--b)"><strong>Recovery trajectory:</strong> Churn rate dropped 64% (15.8% → 5.6%) while partner count stabilized. Net growth turned positive in March.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--g)"></span>Tier Distribution — Good · Average · Bad</div>
+    <canvas id="c2" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--g)"><strong>Stable proportions:</strong> Good ~29%, Average ~39%, Bad ~31%. Ratios consistent despite total fluctuations.</div>
+  </div>
+</div>
+<div class="g2 mb14">
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--r)"></span>New vs Churned — Net Change Trajectory</div>
+    <canvas id="c3" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--g)"><strong>Inflection in March:</strong> First net-positive period (+11). New partner pipeline accelerated 7x. Churn dropped 70%.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--a)"></span>Order Share by Tier (%)</div>
+    <canvas id="c4" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--a)"><strong>Quality concentration:</strong> Good partners (~29% of count) command the largest order share — validating performance tier model.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--rL);color:var(--r)">02</div>
+  <div class="st" style="color:var(--r)">Red Flags & Critical Alerts</div>
+  <div class="ss">Issues requiring leadership attention</div>
+</div>
+<div class="card mb14">
+  <div class="red-flag">🚨 <strong>Al Ahsa</strong>: Declining 4+ consecutive periods</div>
+  <div class="red-flag">🚨 <strong>Hafar Albatin</strong>: Declining 4+ consecutive periods</div>
+  <div class="red-flag">🚨 <strong>Riyadh</strong>: Declining 4+ consecutive periods</div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--gL);color:var(--g)">03</div>
+  <div class="st" style="color:var(--g)">Performance Quality · Tier Movement Analysis</div>
+  <div class="ss">Improvement vs decline · Good partner retention · Transformation matrix</div>
+</div>
+<div class="defbox">
+  <strong>📌 What This Section Tells You:</strong> Measures the <em>quality trajectory</em> of our partner base — are partners improving or declining? It answers: <em>“Is our partner development working? Are we improving faster than declining?”</em><br><br>
+  <strong>📖 Key Definitions:</strong><br>
+  • <span class="dt">Improvement Rate</span> = % of prev-active partners that moved UP at least one tier<br>
+  • <span class="dt">Decline Rate</span> = % of prev-active partners that moved DOWN at least one tier<br>
+  • <span class="dt">Stable Good (Good→Good)</span> = Partners that maintained top performance<br>
+  • <span class="dt">Stuck Bad (Bad→Bad)</span> = Partners that failed to improve — intervention target<br>
+  • <span class="dt">Transformation Matrix</span> = Complete from/to movement breakdown for all partners
+</div>
+<div class="g2 mb14">
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--g)"></span>Improvement Rate vs Decline Rate</div>
+    <canvas id="c5" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--g)"><strong>Positive spread:</strong> Improvement rate exceeds decline rate in most periods — net quality improvement in the portfolio.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--r)"></span>Good Partners Churned per Period</div>
+    <canvas id="c6" style="max-height:270px"></canvas>
+    <div class="ins" style="border-color:var(--r)"><strong>Critical win:</strong> Good partner churn dropped from 24 (Dec→Jan) to just 2 (Mar→Apr). Retention program validated.</div>
+  </div>
+</div>
+
+<div class="g31 mb14">
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--p)"></span>Performance Movement Matrix — Mar → Apr (Chart)</div>
+    <canvas id="cMatrix" style="max-height:300px"></canvas>
+    <div class="ins" style="border-color:var(--p)"><strong>Reading:</strong> Green bars = improvements (tier up), Red/Yellow = declines (tier down), Blue/Gray = stable (same tier). Height = partner count.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot" style="background:var(--p)"></span>Transformation Table — Mar → Apr</div>
+    <div class="tw"><table>
+      <thead><tr><th>From \ To</th><th>Good</th><th>Average</th><th>Bad</th><th>Churned</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td class="cf">Good</td><td class="cm" style=";font-weight:700">110</td><td class="cm" style=";font-weight:700">63</td><td class="cm" style="background:var(--rL);font-weight:700">12</td><td class="cm" style="background:var(--rL);font-weight:400">0</td><td class="cm" style="color:var(--mut)">185</td></tr>
+        <tr><td class="cf">Average</td><td class="cm" style="background:var(--gL);font-weight:700">57</td><td class="cm" style=";font-weight:700">137</td><td class="cm" style="background:var(--aL);font-weight:700">54</td><td class="cm" style=";font-weight:700">6</td><td class="cm" style="color:var(--mut)">254</td></tr>
+        <tr><td class="cf">Bad</td><td class="cm" style="background:var(--gL);font-weight:700">18</td><td class="cm" style=";font-weight:700">43</td><td class="cm" style=";font-weight:700">111</td><td class="cm" style=";font-weight:700">30</td><td class="cm" style="color:var(--mut)">202</td></tr>
+        <tr><td class="cf">New (NA)</td><td class="cm" style=";font-weight:700">1</td><td class="cm" style=";font-weight:700">13</td><td class="cm" style=";font-weight:700">26</td><td class="cm" style=";font-weight:400">0</td><td class="cm" style="color:var(--mut)">40</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ins" style="border-color:var(--p)"><strong>Healthy movement:</strong> More upward transitions than downward. Only 36 churned total, majority being bad-tier.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--oL);color:var(--o)">04</div>
+  <div class="st" style="color:var(--o)">City Intelligence · 17 Cities</div>
+  <div class="ss">Tier distribution · City transformation · Net movement</div>
+</div>
+<div class="defbox">
+  <strong>📌 What This Section Tells You:</strong> City-level performance intelligence — which cities are improving, stagnating, or declining. It answers: <em>“Where should we focus? Which cities have structural issues vs temporary dips?”</em><br><br>
+  <strong>📖 Key Definitions:</strong><br>
+  • <span class="dt">Net Movement</span> = (Partners improved) minus (Partners declined) within each city<br>
+  • <span class="dt">City Level</span> = T1 (high-volume market) or T2 (developing market)<br>
+  • <span class="dt">Good/Avg/Bad Δ</span> = Change in tier count vs previous period<br>
+  • <span class="dt">Trend (3P)</span> = Net movement over last 3 periods — shows momentum
+</div>
+
+<div class="card mb14">
+  <div class="ct"><span class="dot" style="background:var(--o)"></span>City Performance — Latest Period (Mar → Apr 1-18)</div>
+  <div class="tw"><table>
+    <thead><tr><th>City</th><th>Level</th><th>Partners</th><th>Good</th><th>Avg</th><th>Bad</th><th>↑ Improved</th><th>↓ Declined</th><th>Net</th><th>Trend (3P)</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="cf">Yanbu</td><td class="cn">T2</td><td class="cm">12</td><td class="cm" style="color:var(--g)">3</td><td class="cm">5</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="font-weight:700;color:var(--g)">+2</td><td class="cn">+0 / -1 / +2</td><td><span class="tag tg">Growing</span></td></tr>
+      <tr><td class="cf">Jeddah</td><td class="cn">T1</td><td class="cm">108</td><td class="cm" style="color:var(--g)">32</td><td class="cm">43</td><td class="cm" style="color:var(--r)">33</td><td class="cm" style="color:var(--g)">21</td><td class="cm" style="color:var(--r)">20</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cn">-10 / -5 / +1</td><td><span class="tag tg">Growing</span></td></tr>
+      <tr><td class="cf">Jubail</td><td class="cn">T2</td><td class="cm">14</td><td class="cm" style="color:var(--g)">4</td><td class="cm">5</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">3</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cn">+0 / +0 / +1</td><td><span class="tag tg">Growing</span></td></tr>
+      <tr><td class="cf">Taif</td><td class="cn">T2</td><td class="cm">15</td><td class="cm" style="color:var(--g)">4</td><td class="cm">6</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cn">-1 / -1 / +1</td><td><span class="tag tg">Growing</span></td></tr>
+      <tr><td class="cf">Al Kharj</td><td class="cn">T1</td><td class="cm">11</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">+0 / +1 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Buraydah</td><td class="cn">T2</td><td class="cm">13</td><td class="cm" style="color:var(--g)">3</td><td class="cm">6</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">-1 / -1 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Dammam</td><td class="cn">T1</td><td class="cm">69</td><td class="cm" style="color:var(--g)">20</td><td class="cm">28</td><td class="cm" style="color:var(--r)">21</td><td class="cm" style="color:var(--g)">13</td><td class="cm" style="color:var(--r)">13</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">-1 / -2 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Hail</td><td class="cn">T2</td><td class="cm">7</td><td class="cm" style="color:var(--g)">2</td><td class="cm">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">+1 / +0 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Medina</td><td class="cn">T1</td><td class="cm">44</td><td class="cm" style="color:var(--g)">13</td><td class="cm">17</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="color:var(--g)">12</td><td class="cm" style="color:var(--r)">12</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">-3 / +0 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Najran</td><td class="cn">T2</td><td class="cm">5</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cn">+0 / -1 / +0</td><td><span class="tag tb">Stable</span></td></tr>
+      <tr><td class="cf">Hafar Albatin</td><td class="cn">T2</td><td class="cm">5</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cn">-1 / -1 / -1</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Jazan</td><td class="cn">T2</td><td class="cm">5</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cn">+0 / +1 / -1</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Makkah</td><td class="cn">T1</td><td class="cm">45</td><td class="cm" style="color:var(--g)">13</td><td class="cm">18</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="color:var(--g)">7</td><td class="cm" style="color:var(--r)">8</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cn">+1 / -3 / -1</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Abha</td><td class="cn">T2</td><td class="cm">17</td><td class="cm" style="color:var(--g)">5</td><td class="cm">6</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="color:var(--g)">3</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cn">+0 / +0 / -2</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Al Ahsa</td><td class="cn">T1</td><td class="cm">29</td><td class="cm" style="color:var(--g)">8</td><td class="cm">12</td><td class="cm" style="color:var(--r)">9</td><td class="cm" style="color:var(--g)">5</td><td class="cm" style="color:var(--r)">7</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cn">-2 / -2 / -2</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Tabuk</td><td class="cn">T2</td><td class="cm">11</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cn">+0 / -1 / -2</td><td><span class="tag tr">Declining</span></td></tr>
+      <tr><td class="cf">Riyadh</td><td class="cn">T1</td><td class="cm">235</td><td class="cm" style="color:var(--g)">70</td><td class="cm">94</td><td class="cm" style="color:var(--r)">71</td><td class="cm" style="color:var(--g)">41</td><td class="cm" style="color:var(--r)">48</td><td class="cm" style="font-weight:700;color:var(--r)">-7</td><td class="cn">-13 / -11 / -7</td><td><span class="tag tr">Declining</span></td></tr>
+    </tbody></table></div></div>
+
+<div class="card mb14">
+  <button class="collapse-btn" onclick="toggleCollapse('cityTierDist',this)">ð City Tier Distribution — Month over Month (Prev → Current for each period) <span class="arrow">▼</span></button>
+  <div class="collapse-body" id="cityTierDist">
+    <div class="tw"><table>
+      <thead><tr><th>City</th><th>Jan Good</th><th>Jan Avg</th><th>Jan Bad</th><th>Feb Good</th><th>Feb Avg</th><th>Feb Bad</th><th>Mar Good</th><th>Mar Avg</th><th>Mar Bad</th><th>Apr Good</th><th>Apr Avg</th><th>Apr Bad</th><th>Good Δ</th><th>Avg Δ</th><th>Bad Δ</th></tr></thead>
+      <tbody>
+        <tr><td class="cf">Abha</td><td class="cm" style="color:var(--g)">5</td><td class="cm">9</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="color:var(--g)">5</td><td class="cm">6</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="color:var(--g)">5</td><td class="cm">7</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="color:var(--g)">5</td><td class="cm">6</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--r)">-3</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Al Ahsa</td><td class="cm" style="color:var(--g)">9</td><td class="cm">14</td><td class="cm" style="color:var(--r)">10</td><td class="cm" style="color:var(--g)">9</td><td class="cm">12</td><td class="cm" style="color:var(--r)">10</td><td class="cm" style="color:var(--g)">8</td><td class="cm">13</td><td class="cm" style="color:var(--r)">9</td><td class="cm" style="color:var(--g)">8</td><td class="cm">12</td><td class="cm" style="color:var(--r)">9</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--g)">-1</td></tr>
+        <tr><td class="cf">Al Kharj</td><td class="cm" style="color:var(--g)">2</td><td class="cm">3</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">4</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--r)">+1</td></tr>
+        <tr><td class="cf">Buraydah</td><td class="cm" style="color:var(--g)">4</td><td class="cm">5</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">3</td><td class="cm">5</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">6</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--g)">-1</td></tr>
+        <tr><td class="cf">Dammam</td><td class="cm" style="color:var(--g)">22</td><td class="cm">31</td><td class="cm" style="color:var(--r)">23</td><td class="cm" style="color:var(--g)">21</td><td class="cm">28</td><td class="cm" style="color:var(--r)">22</td><td class="cm" style="color:var(--g)">20</td><td class="cm">27</td><td class="cm" style="color:var(--r)">21</td><td class="cm" style="color:var(--g)">20</td><td class="cm">28</td><td class="cm" style="color:var(--r)">21</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--r)">-3</td><td class="cm" style="font-weight:700;color:var(--g)">-2</td></tr>
+        <tr><td class="cf">Hafar Albatin</td><td class="cm" style="color:var(--g)">2</td><td class="cm">4</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">3</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--g)">-1</td></tr>
+        <tr><td class="cf">Hail</td><td class="cm" style="color:var(--g)">2</td><td class="cm">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">4</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Jazan</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">1</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">3</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Jeddah</td><td class="cm" style="color:var(--g)">32</td><td class="cm">44</td><td class="cm" style="color:var(--r)">33</td><td class="cm" style="color:var(--g)">28</td><td class="cm">38</td><td class="cm" style="color:var(--r)">29</td><td class="cm" style="color:var(--g)">30</td><td class="cm">40</td><td class="cm" style="color:var(--r)">31</td><td class="cm" style="color:var(--g)">32</td><td class="cm">43</td><td class="cm" style="color:var(--r)">33</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Jubail</td><td class="cm" style="color:var(--g)">3</td><td class="cm">5</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">4</td><td class="cm">5</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">4</td><td class="cm">5</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--r)">+1</td></tr>
+        <tr><td class="cf">Makkah</td><td class="cm" style="color:var(--g)">15</td><td class="cm">21</td><td class="cm" style="color:var(--r)">16</td><td class="cm" style="color:var(--g)">13</td><td class="cm">18</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="color:var(--g)">13</td><td class="cm">18</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="color:var(--g)">13</td><td class="cm">18</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--r)">-3</td><td class="cm" style="font-weight:700;color:var(--g)">-2</td></tr>
+        <tr><td class="cf">Medina</td><td class="cm" style="color:var(--g)">14</td><td class="cm">19</td><td class="cm" style="color:var(--r)">15</td><td class="cm" style="color:var(--g)">12</td><td class="cm">17</td><td class="cm" style="color:var(--r)">13</td><td class="cm" style="color:var(--g)">13</td><td class="cm">17</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="color:var(--g)">13</td><td class="cm">17</td><td class="cm" style="color:var(--r)">14</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--g)">-1</td></tr>
+        <tr><td class="cf">Najran</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">1</td><td class="cm">2</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Riyadh</td><td class="cm" style="color:var(--g)">69</td><td class="cm">93</td><td class="cm" style="color:var(--r)">70</td><td class="cm" style="color:var(--g)">70</td><td class="cm">94</td><td class="cm" style="color:var(--r)">71</td><td class="cm" style="color:var(--g)">71</td><td class="cm">94</td><td class="cm" style="color:var(--r)">72</td><td class="cm" style="color:var(--g)">70</td><td class="cm">94</td><td class="cm" style="color:var(--r)">71</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--r)">+1</td></tr>
+        <tr><td class="cf">Tabuk</td><td class="cm" style="color:var(--g)">3</td><td class="cm">6</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">5</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--r)">-2</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+        <tr><td class="cf">Taif</td><td class="cm" style="color:var(--g)">5</td><td class="cm">7</td><td class="cm" style="color:var(--r)">6</td><td class="cm" style="color:var(--g)">4</td><td class="cm">7</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">4</td><td class="cm">5</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="color:var(--g)">4</td><td class="cm">6</td><td class="cm" style="color:var(--r)">5</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--r)">-1</td><td class="cm" style="font-weight:700;color:var(--g)">-1</td></tr>
+        <tr><td class="cf">Yanbu</td><td class="cm" style="color:var(--g)">3</td><td class="cm">4</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="color:var(--g)">2</td><td class="cm">5</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">2</td><td class="cm">5</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="color:var(--g)">3</td><td class="cm">5</td><td class="cm" style="color:var(--r)">4</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td><td class="cm" style="font-weight:700;color:var(--g)">+1</td><td class="cm" style="font-weight:700;color:var(--mut)">+0</td></tr>
+      </tbody></table></div>
+  </div>
+</div>
+
+<div class="card mb14">
+  <button class="collapse-btn" onclick="toggleCollapse('cityTransform',this)">ð City-wise Performance Transformation Summary — Latest Period (Mar → Apr) <span class="arrow">▼</span></button>
+  <div class="collapse-body" id="cityTransform">
+    <div class="tw"><table>
+      <thead><tr><th>City</th><th>G→A</th><th>G→B</th><th>A→G</th><th>A→B</th><th>B→A</th><th>B→G</th><th>G→G</th><th>A→A</th><th>B→B</th></tr></thead>
+      <tbody>
+        <tr><td class="cf">Abha</td><td class="cm" style="">2</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="">1</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="">3</td><td class="cm" style="">3</td><td class="cm" style="">3</td></tr>
+        <tr><td class="cf">Al Ahsa</td><td class="cm" style="">3</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="color:var(--r)">3</td><td class="cm" style="">1</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="">4</td><td class="cm" style="">8</td><td class="cm" style="">5</td></tr>
+        <tr><td class="cf">Al Kharj</td><td class="cm" style="">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="">1</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">2</td><td class="cm" style="">2</td><td class="cm" style="">3</td></tr>
+        <tr><td class="cf">Buraydah</td><td class="cm" style="">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">2</td><td class="cm" style="">3</td><td class="cm" style="">2</td></tr>
+        <tr><td class="cf">Dammam</td><td class="cm" style="">4</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">3</td><td class="cm" style="color:var(--r)">7</td><td class="cm" style="">7</td><td class="cm" style="color:var(--g)">3</td><td class="cm" style="">14</td><td class="cm" style="">17</td><td class="cm" style="">9</td></tr>
+        <tr><td class="cf">Hafar Albatin</td><td class="cm" style="">2</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">0</td><td class="cm" style="">0</td><td class="cm" style="">2</td></tr>
+        <tr><td class="cf">Hail</td><td class="cm" style="">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">1</td><td class="cm" style="">1</td><td class="cm" style="">3</td></tr>
+        <tr><td class="cf">Jazan</td><td class="cm" style="">1</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">0</td><td class="cm" style="">1</td><td class="cm" style="">1</td></tr>
+        <tr><td class="cf">Jeddah</td><td class="cm" style="">11</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">12</td><td class="cm" style="color:var(--r)">7</td><td class="cm" style="">7</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="">17</td><td class="cm" style="">21</td><td class="cm" style="">20</td></tr>
+        <tr><td class="cf">Jubail</td><td class="cm" style="">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="">1</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">2</td><td class="cm" style="">3</td><td class="cm" style="">3</td></tr>
+        <tr><td class="cf">Makkah</td><td class="cm" style="">4</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">4</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="">1</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="">7</td><td class="cm" style="">11</td><td class="cm" style="">8</td></tr>
+        <tr><td class="cf">Medina</td><td class="cm" style="">3</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">4</td><td class="cm" style="color:var(--r)">7</td><td class="cm" style="">7</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="">8</td><td class="cm" style="">5</td><td class="cm" style="">4</td></tr>
+        <tr><td class="cf">Najran</td><td class="cm" style="">0</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">1</td><td class="cm" style="">2</td><td class="cm" style="">2</td></tr>
+        <tr><td class="cf">Riyadh</td><td class="cm" style="">27</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="color:var(--g)">23</td><td class="cm" style="color:var(--r)">19</td><td class="cm" style="">13</td><td class="cm" style="color:var(--g)">5</td><td class="cm" style="">42</td><td class="cm" style="">51</td><td class="cm" style="">41</td></tr>
+        <tr><td class="cf">Tabuk</td><td class="cm" style="">2</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="color:var(--r)">2</td><td class="cm" style="">0</td><td class="cm" style="color:var(--g)">2</td><td class="cm" style="">1</td><td class="cm" style="">2</td><td class="cm" style="">2</td></tr>
+        <tr><td class="cf">Taif</td><td class="cm" style="">0</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="">2</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">4</td><td class="cm" style="">4</td><td class="cm" style="">2</td></tr>
+        <tr><td class="cf">Yanbu</td><td class="cm" style="">0</td><td class="cm" style="color:var(--r)">0</td><td class="cm" style="color:var(--g)">1</td><td class="cm" style="color:var(--r)">1</td><td class="cm" style="">2</td><td class="cm" style="color:var(--g)">0</td><td class="cm" style="">2</td><td class="cm" style="">3</td><td class="cm" style="">1</td></tr>
+        <tr style="font-weight:700;background:var(--s2)"><td class="cf">TOTAL</td><td class="cm" style="font-weight:700">63</td><td class="cm" style="font-weight:700">12</td><td class="cm" style="font-weight:700">57</td><td class="cm" style="font-weight:700">54</td><td class="cm" style="font-weight:700">43</td><td class="cm" style="font-weight:700">18</td><td class="cm" style="font-weight:700">110</td><td class="cm" style="font-weight:700">137</td><td class="cm" style="font-weight:700">111</td></tr>
+      </tbody></table></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--pL);color:var(--p)">05</div>
+  <div class="st" style="color:var(--p)">PMM Performance Ranking</div>
+  <div class="ss">Score/Partner · Rating · Tier transitions per manager</div>
+</div>
+<div class="defbox">
+  <strong>📌 What This Section Tells You:</strong> PMM (Partner Manager) performance ranking — how effectively each manager develops their partners. It answers: <em>“Which PMMs are driving improvement? Who needs coaching?”</em><br><br>
+  <strong>📖 Key Definitions:</strong><br>
+  • <span class="dt">Score</span> = Weighted sum of tier movements (improvements earn, declines lose)<br>
+  • <span class="dt">Score/Partner</span> = Score ÷ total managed partners (normalized for portfolio size)<br>
+  • <span class="dt">Rating</span> = Excellent (≥0.5), Good (≥0.2), Average (≥-0.2), Needs Improvement (≥-0.5), Poor (<-0.5)<br>
+  • <span class="dt">G→G / ↑ Up / ↓ Down / B→B</span> = Key transition counts per PMM
+</div>
+<div class="card mb14">
+  <div class="ct"><span class="dot" style="background:var(--p)"></span>PMM Performance — Latest Period</div>
+  <div class="tw"><div style="overflow-x:auto;border-radius:12px;border:1px solid var(--bdr)">
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+<thead>
+<tr style="background:linear-gradient(135deg,#1e293b,#334155);color:#fff">
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">#</th>
+  <th style="padding:12px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px">PMM Name</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Partners</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Score</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Score/P</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Rating</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#a5b4fc">G→G</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6ee7b7">↑ Up</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#fca5a5">↓ Down</th>
+  <th style="padding:12px 8px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af">B→B</th>
+</tr>
+</thead>
+<tbody>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">1</td>
+  <td style="font-weight:600">asadjaved</td>
+  <td style="text-align:center">17</td>
+  <td style="text-align:center;font-weight:700">2</td>
+  <td style="text-align:center"><span style="color:#ca8a04;font-weight:700">→ 0.118</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:#059669;font-weight:700">7</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">2</td>
+  <td style="font-weight:600">faisalalghamdi</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">2</td>
+  <td style="text-align:center"><span style="color:#ca8a04;font-weight:700">→ 0.083</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">3</td>
+  <td style="text-align:center;color:#059669;font-weight:700">8</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">1</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">5</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">3</td>
+  <td style="font-weight:600">abdullahaldweik</td>
+  <td style="text-align:center">20</td>
+  <td style="text-align:center;font-weight:700">1</td>
+  <td style="text-align:center"><span style="color:#ca8a04;font-weight:700">→ 0.050</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">5</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">4</td>
+  <td style="font-weight:600">ahmadalkhatib</td>
+  <td style="text-align:center">4</td>
+  <td style="text-align:center;font-weight:700">0</td>
+  <td style="text-align:center"><span style="color:#ca8a04;font-weight:700">→ 0.000</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">5</td>
+  <td style="font-weight:600">alisaeed02</td>
+  <td style="text-align:center">2</td>
+  <td style="text-align:center;font-weight:700">0</td>
+  <td style="text-align:center"><span style="color:#ca8a04;font-weight:700">→ 0.000</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">6</td>
+  <td style="font-weight:600">shahidali</td>
+  <td style="text-align:center">33</td>
+  <td style="text-align:center;font-weight:700">-2</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.061</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">5</td>
+  <td style="text-align:center;color:#059669;font-weight:700">6</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">3</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">7</td>
+  <td style="font-weight:600">junaidmunir</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-2</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.083</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">5</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">3</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">8</td>
+  <td style="font-weight:600">mohamedsorour</td>
+  <td style="text-align:center">17</td>
+  <td style="text-align:center;font-weight:700">-2</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.118</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">5</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">9</td>
+  <td style="font-weight:600">abdulaziz</td>
+  <td style="text-align:center">18</td>
+  <td style="text-align:center;font-weight:700">-3</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.167</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">10</td>
+  <td style="font-weight:600">goharilyas</td>
+  <td style="text-align:center">17</td>
+  <td style="text-align:center;font-weight:700">-3</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.176</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">6</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">2</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">11</td>
+  <td style="font-weight:600">mostafasoliman</td>
+  <td style="text-align:center">28</td>
+  <td style="text-align:center;font-weight:700">-5</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.179</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">1</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">6</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">12</td>
+  <td style="font-weight:600">muhannadatallah</td>
+  <td style="text-align:center">21</td>
+  <td style="text-align:center;font-weight:700">-4</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.190</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:#059669;font-weight:700">6</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">3</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">13</td>
+  <td style="font-weight:600">mohammadtalha02</td>
+  <td style="text-align:center">15</td>
+  <td style="text-align:center;font-weight:700">-3</td>
+  <td style="text-align:center"><span style="color:#ea580c;font-weight:700">↓ -0.200</span></td>
+  <td style="text-align:center"><span style="background:rgba(234,179,8,.12);color:#ca8a04;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟡 Average</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">3</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">14</td>
+  <td style="font-weight:600">pengbing</td>
+  <td style="text-align:center">29</td>
+  <td style="text-align:center;font-weight:700">-6</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.207</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">6</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">5</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">15</td>
+  <td style="font-weight:600">abdallaahmed02</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-5</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.208</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">5</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">16</td>
+  <td style="font-weight:600">maliknassar</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-5</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.208</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">6</td>
+  <td style="text-align:center;color:#059669;font-weight:700">3</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">17</td>
+  <td style="font-weight:600">abdalbagialtom</td>
+  <td style="text-align:center">26</td>
+  <td style="text-align:center;font-weight:700">-6</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.231</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">6</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">18</td>
+  <td style="font-weight:600">zamaanchirag</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-6</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.250</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">1</td>
+  <td style="text-align:center;color:#059669;font-weight:700">6</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">5</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">19</td>
+  <td style="font-weight:600">lijiahao66</td>
+  <td style="text-align:center">26</td>
+  <td style="text-align:center;font-weight:700">-7</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.269</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">7</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">20</td>
+  <td style="font-weight:600">adnansiddique</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-7</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.292</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">6</td>
+  <td style="text-align:center;color:#059669;font-weight:700">3</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">21</td>
+  <td style="font-weight:600">amrkhedr</td>
+  <td style="text-align:center">17</td>
+  <td style="text-align:center;font-weight:700">-5</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.294</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">3</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">3</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">22</td>
+  <td style="font-weight:600">aamiribrahim</td>
+  <td style="text-align:center">26</td>
+  <td style="text-align:center;font-weight:700">-8</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.308</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">9</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">6</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">23</td>
+  <td style="font-weight:600">chirayathjoylijoy</td>
+  <td style="text-align:center">14</td>
+  <td style="text-align:center;font-weight:700">-5</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.357</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">1</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">24</td>
+  <td style="font-weight:600">muzammilahmed</td>
+  <td style="text-align:center">28</td>
+  <td style="text-align:center;font-weight:700">-10</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.357</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">3</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">9</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">25</td>
+  <td style="font-weight:600">anasejaz</td>
+  <td style="text-align:center">21</td>
+  <td style="text-align:center;font-weight:700">-8</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.381</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">26</td>
+  <td style="font-weight:600">adilahmedmohammad</td>
+  <td style="text-align:center">23</td>
+  <td style="text-align:center;font-weight:700">-9</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.391</span></td>
+  <td style="text-align:center"><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🟠 Needs Improvement</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">7</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">27</td>
+  <td style="font-weight:600">khubaibsagheer</td>
+  <td style="text-align:center">27</td>
+  <td style="text-align:center;font-weight:700">-11</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.407</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:#059669;font-weight:700">5</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">8</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">28</td>
+  <td style="font-weight:600">ruaaalabdulrahman</td>
+  <td style="text-align:center">24</td>
+  <td style="text-align:center;font-weight:700">-10</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.417</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">5</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">5</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">29</td>
+  <td style="font-weight:600">mohammedshoeb</td>
+  <td style="text-align:center">23</td>
+  <td style="text-align:center;font-weight:700">-10</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.435</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">3</td>
+  <td style="text-align:center;color:#059669;font-weight:700">4</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">7</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">30</td>
+  <td style="font-weight:600">hamzakhan</td>
+  <td style="text-align:center">18</td>
+  <td style="text-align:center;font-weight:700">-9</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.500</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">2</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">6</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">4</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">31</td>
+  <td style="font-weight:600">saifradwan</td>
+  <td style="text-align:center">6</td>
+  <td style="text-align:center;font-weight:700">-3</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.500</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">1</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">1</td>
+</tr>
+<tr style="background:var(--s2)">
+  <td style="color:var(--sub);font-size:11px;text-align:center">32</td>
+  <td style="font-weight:600">aliibrahim</td>
+  <td style="text-align:center">23</td>
+  <td style="text-align:center;font-weight:700">-12</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.522</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:#059669;font-weight:700">2</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">8</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+<tr style="">
+  <td style="color:var(--sub);font-size:11px;text-align:center">33</td>
+  <td style="font-weight:600">mohammedabdulfateh</td>
+  <td style="text-align:center">14</td>
+  <td style="text-align:center;font-weight:700">-9</td>
+  <td style="text-align:center"><span style="color:#dc2626;font-weight:700">↓ -0.643</span></td>
+  <td style="text-align:center"><span style="background:rgba(220,53,88,.12);color:#dc2626;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap">🔴 Poor</span></td>
+  <td style="text-align:center;color:#6366f1;font-weight:700">4</td>
+  <td style="text-align:center;color:var(--sub)">0</td>
+  <td style="text-align:center;color:#dc2626;font-weight:700">4</td>
+  <td style="text-align:center;color:#9ca3af;font-weight:700">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details style="margin-top:16px;border:1px solid var(--bdr);border-radius:10px;overflow:hidden">
+<summary style="padding:12px 16px;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(99,102,241,.02));cursor:pointer;font-weight:700;font-size:13px;color:var(--tx)">
+📐 PMM Scoring Logic & Movement Framework <span style="font-weight:400;color:var(--sub);font-size:11px;margin-left:8px">— Click to expand methodology</span>
+</summary>
+<div style="padding:16px 20px;font-size:12px;line-height:1.7">
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px">
+<div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px">
+  <div style="font-weight:700;color:#059669;margin-bottom:6px">✅ Positive Movements</div>
+  <div>Good → Good: <strong>+1</strong></div>
+  <div>Average → Good: <strong>+1</strong></div>
+  <div>Bad → Average: <strong>+1</strong></div>
+  <div>Bad → Good: <strong>+2</strong></div>
+</div>
+<div style="background:rgba(220,53,88,.06);border:1px solid rgba(220,53,88,.2);border-radius:8px;padding:12px">
+  <div style="font-weight:700;color:#dc2626;margin-bottom:6px">❌ Negative Movements</div>
+  <div>Good → Average: <strong>-1</strong></div>
+  <div>Good → Bad: <strong>-2</strong></div>
+  <div>Average → Bad: <strong>-2</strong></div>
+  <div>Bad → Bad: <strong>-1</strong></div>
+</div>
+<div style="background:rgba(156,163,175,.06);border:1px solid rgba(156,163,175,.2);border-radius:8px;padding:12px">
+  <div style="font-weight:700;color:#6b7280;margin-bottom:6px">⚪ Neutral</div>
+  <div>Average → Average: <strong>0</strong></div>
+  <div>New (NA → any): <strong>0</strong></div>
+</div>
+</div>
+
+<div style="background:var(--s2);border-radius:8px;padding:12px;margin-bottom:12px">
+<strong>Rating Thresholds (Score/Partner):</strong><br>
+⭐ Excellent: ≥ 0.50 · 🟢 Good: ≥ 0.20 · 🟡 Average: ≥ -0.20 · 🟠 Needs Improvement: ≥ -0.50 · 🔴 Poor: < -0.50
+</div>
+
+<div style="background:rgba(99,102,241,.05);border-radius:8px;padding:12px;border-left:3px solid #6366f1">
+<strong>💡 Why Score/Partner?</strong> Raw score favors PMMs with more partners. Score/Partner normalizes for portfolio size, enabling fair comparison between a PMM managing 50 partners vs one managing 10.
+</div>
+
+</div>
+</details></div></div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--bL);color:var(--b)">06</div>
+  <div class="st" style="color:var(--b)">Period Comparison & Interactive Analysis</div>
+  <div class="ss">Select period to explore · Tier shifts · Movement flow · Lifecycle</div>
+</div>
+<div class="defbox">
+  <strong>📌 What This Section Tells You:</strong> Interactive deep-dive into any specific period — select a period to explore its complete story. It answers: <em>“What exactly happened in this period? How did partners flow between tiers?”</em><br><br>
+  <strong>📖 Key Definitions:</strong><br>
+  • <span class="dt">Tier Distribution Comparison</span> = Previous vs current partner counts by tier<br>
+  • <span class="dt">Movement Flow</span> = Partners by category: Improved / Declined / Stable<br>
+  • <span class="dt">Churn by Tier</span> = How many left from each tier + their churn rates<br>
+  • <span class="dt">New Partner Distribution</span> = Starting tier of newly onboarded partners<br>
+  • <span class="dt">Lifecycle Analysis</span> = Complete per-tier story: stayed, left, joined, gained/lost
+</div>
+<div class="card mb14">
+  <div class="ct"><span class="dot" style="background:var(--b)"></span>Select Period for Deep-Dive Analysis</div>
+  <div style="font-size:11px;color:var(--sub);margin-bottom:10px;padding:8px 12px;background:var(--s2);border-radius:8px;border-left:3px solid var(--b)"><strong>ℹ️ Comparison Logic:</strong> Jan periods compare vs Dec · Feb periods compare vs Jan (1-31) · Mar periods compare vs Feb (1-28) · Apr compares vs Mar (1-31). Each period shows the cumulative assessment at that date vs the full previous month.</div>
+  <div class="slicer" id="periodSlicer">
+    <button class="slicer-btn" onclick="selectPeriod(0)">Jan(1-10)</button>
+    <button class="slicer-btn" onclick="selectPeriod(1)">Jan(1-19)</button>
+    <button class="slicer-btn" onclick="selectPeriod(2)">Jan(1-31)</button>
+    <button class="slicer-btn" onclick="selectPeriod(3)">Feb(1-10)</button>
+    <button class="slicer-btn" onclick="selectPeriod(4)">Feb(1-18)</button>
+    <button class="slicer-btn" onclick="selectPeriod(5)">Feb(1-28)</button>
+    <button class="slicer-btn" onclick="selectPeriod(6)">Mar(1-10)</button>
+    <button class="slicer-btn" onclick="selectPeriod(7)">Mar(1-18)</button>
+    <button class="slicer-btn" onclick="selectPeriod(8)">Mar(1-31)</button>
+    <button class="slicer-btn active" onclick="selectPeriod(9)">Apr(1-18)</button>
+  </div>
+  <div class="g2 mb14">
+    <div><div class="ct"><span class="dot" style="background:var(--b)"></span>Tier Distribution Comparison (Prev vs Current)</div><canvas id="cComp1" style="max-height:260px"></canvas></div>
+    <div><div class="ct"><span class="dot" style="background:var(--g)"></span>Movement Flow Summary</div><canvas id="cComp2" style="max-height:260px"></canvas></div>
+  </div>
+  <div class="g2 mb14">
+    <div><div class="ct"><span class="dot" style="background:var(--r)"></span>Churn Analysis by Tier</div><canvas id="cComp3" style="max-height:260px"></canvas></div>
+    <div><div class="ct"><span class="dot" style="background:var(--a)"></span>New Partner Distribution</div><canvas id="cComp4" style="max-height:260px"></canvas></div>
+  </div>
+  <div class="lifecycle" id="lifecycleCards"></div>
+</div>
+
+<div class="sec">
+  <div class="sn" style="background:var(--aL);color:var(--a)">07</div>
+  <div class="st" style="color:var(--a)">Complete Period-by-Period Summary</div>
+  <div class="ss">All 10 periods · Key metrics side by side</div>
+</div>
+<div class="defbox">
+  <strong>ð What This Section Tells You:</strong> Complete side-by-side comparison of all 10 assessment periods — the master reference table. It answers: <em>"How do all periods compare? What’s the trajectory across every metric?"</em> Each row shows one assessment period with its comparison baseline in the "Compare To" column.
+</div>
+<div class="card mb14">
+  <div class="ct"><span class="dot" style="background:var(--a)"></span>All Periods Comparison</div>
+  <div class="tw"><table>
+    <thead><tr><th>Period</th><th>Compare To</th><th>Active</th><th>Churned</th><th>New</th><th>Net</th><th>Churn%</th><th>Good</th><th>Avg</th><th>Bad</th><th>Good Lost</th><th>Improv%</th><th>Decline%</th><th>Good Ord%</th></tr></thead>
+    <tbody>
+      <tr style=""><td class="cf">Jan(1-10)</td><td class="cn">Dec (full)</td><td class="cm">664</td><td class="cm" style="color:var(--r)">123</td><td class="cm" style="color:var(--g)">10</td><td class="cm" style="font-weight:700;color:var(--r)">-113</td><td class="cm">15.8%</td><td class="cm">190</td><td class="cm">267</td><td class="cm">207</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">14.8%</td><td class="cm">29.2%</td><td class="cm">38.6%</td></tr>
+      <tr style=""><td class="cf">Jan(1-19)</td><td class="cn">Dec (full)</td><td class="cm">666</td><td class="cm" style="color:var(--r)">123</td><td class="cm" style="color:var(--g)">12</td><td class="cm" style="font-weight:700;color:var(--r)">-111</td><td class="cm">15.8%</td><td class="cm">191</td><td class="cm">267</td><td class="cm">208</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">15.4%</td><td class="cm">30.9%</td><td class="cm">38.2%</td></tr>
+      <tr style=""><td class="cf">Jan(1-31)</td><td class="cn">Dec (full)</td><td class="cm">672</td><td class="cm" style="color:var(--r)">120</td><td class="cm" style="color:var(--g)">15</td><td class="cm" style="font-weight:700;color:var(--r)">-105</td><td class="cm">15.4%</td><td class="cm">192</td><td class="cm">271</td><td class="cm">209</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">15.7%</td><td class="cm">30.4%</td><td class="cm">42.3%</td></tr>
+      <tr style=""><td class="cf">Feb(1-10)</td><td class="cn">Jan (1-31)</td><td class="cm">612</td><td class="cm" style="color:var(--r)">79</td><td class="cm" style="color:var(--g)">19</td><td class="cm" style="font-weight:700;color:var(--r)">-60</td><td class="cm">11.8%</td><td class="cm">175</td><td class="cm">245</td><td class="cm">192</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">19.4%</td><td class="cm">29.5%</td><td class="cm">38.5%</td></tr>
+      <tr style=""><td class="cf">Feb(1-18)</td><td class="cn">Jan (1-31)</td><td class="cm">626</td><td class="cm" style="color:var(--r)">75</td><td class="cm" style="color:var(--g)">29</td><td class="cm" style="font-weight:700;color:var(--r)">-46</td><td class="cm">11.2%</td><td class="cm">179</td><td class="cm">251</td><td class="cm">196</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">18.4%</td><td class="cm">27.5%</td><td class="cm">40.4%</td></tr>
+      <tr style=""><td class="cf">Feb(1-28)</td><td class="cn">Jan (1-31)</td><td class="cm">630</td><td class="cm" style="color:var(--r)">75</td><td class="cm" style="color:var(--g)">33</td><td class="cm" style="font-weight:700;color:var(--r)">-42</td><td class="cm">11.2%</td><td class="cm">181</td><td class="cm">251</td><td class="cm">198</td><td class="cm" style="color:var(--sub)">2</td><td class="cm">18.9%</td><td class="cm">26.3%</td><td class="cm">42.2%</td></tr>
+      <tr style=""><td class="cf">Mar(1-10)</td><td class="cn">Feb (1-28)</td><td class="cm">596</td><td class="cm" style="color:var(--r)">70</td><td class="cm" style="color:var(--g)">36</td><td class="cm" style="font-weight:700;color:var(--r)">-34</td><td class="cm">11.1%</td><td class="cm">170</td><td class="cm">239</td><td class="cm">187</td><td class="cm" style="color:var(--sub)">0</td><td class="cm">19.5%</td><td class="cm">28.4%</td><td class="cm">38.7%</td></tr>
+      <tr style=""><td class="cf">Mar(1-18)</td><td class="cn">Feb (1-28)</td><td class="cm">624</td><td class="cm" style="color:var(--r)">63</td><td class="cm" style="color:var(--g)">57</td><td class="cm" style="font-weight:700;color:var(--r)">-6</td><td class="cm">10.0%</td><td class="cm">179</td><td class="cm">249</td><td class="cm">196</td><td class="cm" style="color:var(--sub)">0</td><td class="cm">21.2%</td><td class="cm">26.5%</td><td class="cm">39.9%</td></tr>
+      <tr style="background:var(--gL)"><td class="cf">Mar(1-31)</td><td class="cn">Feb (1-28)</td><td class="cm">641</td><td class="cm" style="color:var(--r)">60</td><td class="cm" style="color:var(--g)">71</td><td class="cm" style="font-weight:700;color:var(--g)">+11</td><td class="cm">9.5%</td><td class="cm">185</td><td class="cm">254</td><td class="cm">202</td><td class="cm" style="color:var(--sub)">0</td><td class="cm">23.9%</td><td class="cm">28.6%</td><td class="cm">36.6%</td></tr>
+      <tr style="background:var(--gL)"><td class="cf">Apr(1-18)</td><td class="cn">Mar (1-31)</td><td class="cm">645</td><td class="cm" style="color:var(--r)">36</td><td class="cm" style="color:var(--g)">40</td><td class="cm" style="font-weight:700;color:var(--g)">+4</td><td class="cm">5.6%</td><td class="cm">186</td><td class="cm">256</td><td class="cm">203</td><td class="cm" style="color:var(--sub)">0</td><td class="cm">19.5%</td><td class="cm">21.3%</td><td class="cm">36.5%</td></tr>
+    </tbody></table></div></div>
+
+<div class="kr k5 mb14">
+  <div class="kc" style="--kc:var(--g)"><div class="l">Improvement Rate</div><div class="n">19.5%</div><div class="s">Partners moving up tiers</div></div>
+  <div class="kc" style="--kc:var(--r)"><div class="l">Decline Rate</div><div class="n">21.3%</div><div class="s">Partners moving down</div></div>
+  <div class="kc" style="--kc:var(--b)"><div class="l">Stable Good</div><div class="n">110</div><div class="s">Good→Good retained</div></div>
+  <div class="kc" style="--kc:var(--a)"><div class="l">Stuck Bad</div><div class="n">111</div><div class="s">17.2% of active</div></div>
+  <div class="kc" style="--kc:var(--p)"><div class="l">Excellent PMMs</div><div class="n">0</div><div class="s">Score/Partner ≥ 0.5</div></div>
+</div>
+
+<div class="foot">
+  <div><strong>Keeta 3PL Partners</strong> · Churn & Assessment Intelligence Dashboard · Dec 2025 - Apr 2026 · Confidential</div>
+  <div>Generated May 3, 2026 · 10 periods · 17 cities · 645 active partners</div>
+</div>
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family="'Plus Jakarta Sans',sans-serif";
+
+const T={"labels": ["Jan(1-10)", "Jan(1-19)", "Jan(1-31)", "Feb(1-10)", "Feb(1-18)", "Feb(1-28)", "Mar(1-10)", "Mar(1-18)", "Mar(1-31)", "Apr(1-18)"], "total": [664, 666, 672, 612, 626, 630, 596, 624, 641, 645], "churn_rate": [15.8, 15.8, 15.4, 11.8, 11.2, 11.2, 11.1, 10.0, 9.5, 5.6], "net": [-113, -111, -105, -60, -46, -42, -34, -6, 11, 4], "good": [190, 191, 192, 175, 179, 181, 170, 179, 185, 186], "avg": [267, 267, 271, 245, 251, 251, 239, 249, 254, 256], "bad": [207, 208, 209, 192, 196, 198, 187, 196, 202, 203], "good_churned": [2, 2, 2, 2, 2, 2, 0, 0, 0, 0], "imp_rate": [14.8, 15.4, 15.7, 19.4, 18.4, 18.9, 19.5, 21.2, 23.9, 19.5], "dec_rate": [29.2, 30.9, 30.4, 29.5, 27.5, 26.3, 28.4, 26.5, 28.6, 21.3], "new_c": [10, 12, 15, 19, 29, 33, 36, 57, 71, 40], "churned_c": [123, 123, 120, 79, 75, 75, 70, 63, 60, 36], "good_os": [38.6, 38.2, 42.3, 38.5, 40.4, 42.2, 38.7, 39.9, 36.6, 36.5], "avg_os": [45.8, 46.7, 43.5, 45.8, 45.1, 44.0, 40.9, 41.1, 43.8, 41.9], "bad_os": [15.6, 15.0, 14.2, 15.6, 14.5, 13.8, 20.5, 19.0, 19.7, 21.6]};
+const L=T.labels;
+const PD=[{"label": "Jan(1-10)", "prev_dist": {"bad": 241, "average": 312, "good": 224}, "curr_dist": {"bad": 207, "average": 267, "good": 190}, "improved": 97, "declined": 191, "stable_good": 121, "stable_avg": 154, "stuck_bad": 91, "tier_churn": {"good": {"churned": 2, "churn_rate": 0.9}, "average": {"churned": 7, "churn_rate": 2.2}, "bad": {"churned": 114, "churn_rate": 47.3}}, "new_by_tier": {"good": 2, "average": 3, "bad": 5}, "summary": {"total_prev": 777, "total_curr": 664, "total_churned": 123, "total_new": 10, "net_change": -113, "churn_rate": 15.8, "new_rate": 1.5, "net_growth": -14.5}, "transitions": {"good \u2192 good": 121, "average \u2192 good": 61, "average \u2192 average": 154, "good \u2192 average": 80, "bad \u2192 NA": 114, "average \u2192 bad": 90, "bad \u2192 bad": 91, "NA \u2192 average": 3, "bad \u2192 average": 30, "good \u2192 bad": 21, "average \u2192 NA": 7, "bad \u2192 good": 6, "good \u2192 NA": 2, "NA \u2192 bad": 5, "NA \u2192 good": 2}}, {"label": "Jan(1-19)", "prev_dist": {"bad": 241, "average": 312, "good": 224}, "curr_dist": {"bad": 208, "average": 267, "good": 191}, "improved": 101, "declined": 202, "stable_good": 115, "stable_avg": 150, "stuck_bad": 86, "tier_churn": {"good": {"churned": 2, "churn_rate": 0.9}, "average": {"churned": 7, "churn_rate": 2.2}, "bad": {"churned": 114, "churn_rate": 47.3}}, "new_by_tier": {"good": 4, "average": 2, "bad": 6}, "summary": {"total_prev": 777, "total_curr": 666, "total_churned": 123, "total_new": 12, "net_change": -111, "churn_rate": 15.8, "new_rate": 1.8, "net_growth": -14.3}, "transitions": {"good \u2192 average": 86, "average \u2192 good": 60, "average \u2192 bad": 95, "good \u2192 good": 115, "bad \u2192 NA": 114, "average \u2192 average": 150, "bad \u2192 bad": 86, "NA \u2192 good": 4, "bad \u2192 average": 29, "good \u2192 bad": 21, "average \u2192 NA": 7, "bad \u2192 good": 12, "good \u2192 NA": 2, "NA \u2192 bad": 6, "NA \u2192 average": 2}}, {"label": "Jan(1-31)", "prev_dist": {"bad": 241, "average": 312, "good": 224}, "curr_dist": {"bad": 209, "average": 271, "good": 192}, "improved": 103, "declined": 200, "stable_good": 115, "stable_avg": 149, "stuck_bad": 90, "tier_churn": {"good": {"churned": 2, "churn_rate": 0.9}, "average": {"churned": 6, "churn_rate": 1.9}, "bad": {"churned": 112, "churn_rate": 46.5}}, "new_by_tier": {"good": 2, "average": 5, "bad": 8}, "summary": {"total_prev": 777, "total_curr": 672, "total_churned": 120, "total_new": 15, "net_change": -105, "churn_rate": 15.4, "new_rate": 2.2, "net_growth": -13.5}, "transitions": {"good \u2192 average": 89, "average \u2192 good": 64, "average \u2192 bad": 93, "good \u2192 good": 115, "bad \u2192 NA": 112, "average \u2192 average": 149, "bad \u2192 bad": 90, "bad \u2192 average": 28, "good \u2192 bad": 18, "NA \u2192 good": 2, "bad \u2192 good": 11, "average \u2192 NA": 6, "NA \u2192 average": 5, "good \u2192 NA": 2, "NA \u2192 bad": 8}}, {"label": "Feb(1-10)", "prev_dist": {"bad": 209, "average": 271, "good": 192}, "curr_dist": {"bad": 192, "average": 245, "good": 175}, "improved": 115, "declined": 175, "stable_good": 95, "stable_avg": 121, "stuck_bad": 87, "tier_churn": {"good": {"churned": 2, "churn_rate": 1.0}, "average": {"churned": 7, "churn_rate": 2.6}, "bad": {"churned": 70, "churn_rate": 33.5}}, "new_by_tier": {"good": 4, "average": 5, "bad": 10}, "summary": {"total_prev": 672, "total_curr": 612, "total_churned": 79, "total_new": 19, "net_change": -60, "churn_rate": 11.8, "new_rate": 3.1, "net_growth": -8.9}, "transitions": {"average \u2192 bad": 80, "good \u2192 good": 95, "bad \u2192 bad": 87, "good \u2192 average": 80, "average \u2192 average": 121, "average \u2192 good": 63, "bad \u2192 NA": 70, "bad \u2192 good": 13, "good \u2192 bad": 15, "bad \u2192 average": 39, "average \u2192 NA": 7, "NA \u2192 bad": 10, "NA \u2192 average": 5, "NA \u2192 good": 4, "good \u2192 NA": 2}}, {"label": "Feb(1-18)", "prev_dist": {"bad": 209, "average": 271, "good": 192}, "curr_dist": {"bad": 196, "average": 251, "good": 179}, "improved": 110, "declined": 164, "stable_good": 98, "stable_avg": 132, "stuck_bad": 93, "tier_churn": {"good": {"churned": 2, "churn_rate": 1.0}, "average": {"churned": 7, "churn_rate": 2.6}, "bad": {"churned": 66, "churn_rate": 31.6}}, "new_by_tier": {"good": 8, "average": 4, "bad": 17}, "summary": {"total_prev": 672, "total_curr": 626, "total_churned": 75, "total_new": 29, "net_change": -46, "churn_rate": 11.2, "new_rate": 4.6, "net_growth": -6.8}, "transitions": {"average \u2192 bad": 72, "good \u2192 good": 98, "bad \u2192 bad": 93, "good \u2192 average": 78, "average \u2192 average": 132, "average \u2192 good": 60, "bad \u2192 NA": 66, "bad \u2192 good": 13, "good \u2192 bad": 14, "bad \u2192 average": 37, "average \u2192 NA": 7, "NA \u2192 bad": 17, "NA \u2192 average": 4, "NA \u2192 good": 8, "good \u2192 NA": 2}}, {"label": "Feb(1-28)", "prev_dist": {"bad": 209, "average": 271, "good": 192}, "curr_dist": {"bad": 198, "good": 181, "average": 251}, "improved": 113, "declined": 157, "stable_good": 100, "stable_avg": 130, "stuck_bad": 97, "tier_churn": {"good": {"churned": 2, "churn_rate": 1.0}, "average": {"churned": 8, "churn_rate": 3.0}, "bad": {"churned": 65, "churn_rate": 31.1}}, "new_by_tier": {"good": 5, "average": 7, "bad": 21}, "summary": {"total_prev": 672, "total_curr": 630, "total_churned": 75, "total_new": 33, "net_change": -42, "churn_rate": 11.2, "new_rate": 5.2, "net_growth": -6.2}, "transitions": {"average \u2192 bad": 67, "good \u2192 good": 100, "bad \u2192 average": 37, "good \u2192 average": 77, "average \u2192 average": 130, "average \u2192 good": 66, "bad \u2192 bad": 97, "bad \u2192 NA": 65, "good \u2192 bad": 13, "average \u2192 NA": 8, "bad \u2192 good": 10, "NA \u2192 bad": 21, "NA \u2192 good": 5, "good \u2192 NA": 2, "NA \u2192 average": 7}}, {"label": "Mar(1-10)", "prev_dist": {"bad": 198, "good": 181, "average": 251}, "curr_dist": {"bad": 187, "good": 170, "average": 239}, "improved": 109, "declined": 159, "stable_good": 90, "stable_avg": 122, "stuck_bad": 80, "tier_churn": {"good": {"churned": 0, "churn_rate": 0.0}, "average": {"churned": 2, "churn_rate": 0.8}, "bad": {"churned": 68, "churn_rate": 34.3}}, "new_by_tier": {"good": 6, "average": 14, "bad": 16}, "summary": {"total_prev": 630, "total_curr": 596, "total_churned": 70, "total_new": 36, "net_change": -34, "churn_rate": 11.1, "new_rate": 6.0, "net_growth": -5.4}, "transitions": {"bad \u2192 bad": 80, "good \u2192 good": 90, "average \u2192 bad": 68, "average \u2192 average": 122, "good \u2192 average": 68, "good \u2192 bad": 23, "average \u2192 good": 59, "bad \u2192 average": 35, "bad \u2192 NA": 68, "NA \u2192 bad": 16, "NA \u2192 average": 14, "bad \u2192 good": 15, "NA \u2192 good": 6, "average \u2192 NA": 2}}, {"label": "Mar(1-18)", "prev_dist": {"bad": 198, "good": 181, "average": 251}, "curr_dist": {"bad": 196, "average": 249, "good": 179}, "improved": 120, "declined": 150, "stable_good": 90, "stable_avg": 125, "stuck_bad": 82, "tier_churn": {"good": {"churned": 0, "churn_rate": 0.0}, "average": {"churned": 1, "churn_rate": 0.4}, "bad": {"churned": 62, "churn_rate": 31.3}}, "new_by_tier": {"good": 6, "average": 20, "bad": 31}, "summary": {"total_prev": 630, "total_curr": 624, "total_churned": 63, "total_new": 57, "net_change": -6, "churn_rate": 10.0, "new_rate": 9.1, "net_growth": -1.0}, "transitions": {"bad \u2192 bad": 82, "good \u2192 good": 90, "average \u2192 bad": 59, "average \u2192 average": 125, "good \u2192 average": 67, "average \u2192 good": 66, "good \u2192 bad": 24, "bad \u2192 average": 37, "bad \u2192 NA": 62, "NA \u2192 bad": 31, "bad \u2192 good": 17, "NA \u2192 average": 20, "NA \u2192 good": 6, "average \u2192 NA": 1}}, {"label": "Mar(1-31)", "prev_dist": {"bad": 198, "good": 181, "average": 251}, "curr_dist": {"bad": 202, "good": 185, "average": 254}, "improved": 136, "declined": 163, "stable_good": 77, "stable_avg": 118, "stuck_bad": 76, "tier_churn": {"good": {"churned": 0, "churn_rate": 0.0}, "average": {"churned": 1, "churn_rate": 0.4}, "bad": {"churned": 59, "churn_rate": 29.8}}, "new_by_tier": {"good": 13, "average": 23, "bad": 35}, "summary": {"total_prev": 630, "total_curr": 641, "total_churned": 60, "total_new": 71, "net_change": 11, "churn_rate": 9.5, "new_rate": 11.1, "net_growth": 1.7}, "transitions": {"bad \u2192 average": 41, "good \u2192 good": 77, "average \u2192 bad": 59, "bad \u2192 bad": 76, "average \u2192 average": 118, "good \u2192 average": 72, "average \u2192 good": 73, "good \u2192 bad": 32, "bad \u2192 good": 22, "bad \u2192 NA": 59, "NA \u2192 bad": 35, "NA \u2192 average": 23, "NA \u2192 good": 13, "average \u2192 NA": 1}}, {"label": "Apr(1-18)", "prev_dist": {"bad": 202, "good": 185, "average": 254}, "curr_dist": {"bad": 203, "good": 186, "average": 256}, "improved": 118, "declined": 129, "stable_good": 110, "stable_avg": 137, "stuck_bad": 111, "tier_churn": {"good": {"churned": 0, "churn_rate": 0.0}, "average": {"churned": 6, "churn_rate": 2.4}, "bad": {"churned": 30, "churn_rate": 14.9}}, "new_by_tier": {"good": 1, "average": 13, "bad": 26}, "summary": {"total_prev": 641, "total_curr": 645, "total_churned": 36, "total_new": 40, "net_change": 4, "churn_rate": 5.6, "new_rate": 6.2, "net_growth": 0.6}, "transitions": {"average \u2192 average": 137, "good \u2192 average": 63, "bad \u2192 average": 43, "bad \u2192 bad": 111, "average \u2192 good": 57, "average \u2192 bad": 54, "good \u2192 good": 110, "bad \u2192 good": 18, "bad \u2192 NA": 30, "average \u2192 NA": 6, "NA \u2192 bad": 26, "good \u2192 bad": 12, "NA \u2192 average": 13, "NA \u2192 good": 1}}];
+const MATRIX_L=["Good\u2192Avg", "Good\u2192Bad", "Avg\u2192Good", "Avg\u2192Bad", "Bad\u2192Avg", "Bad\u2192Good", "Good\u2192Good", "Avg\u2192Avg", "Bad\u2192Bad"];
+const MATRIX_V=[63, 12, 57, 54, 43, 18, 110, 137, 111];
+const MATRIX_C=["#f59e0b", "#dc3558", "#10b981", "#ef4444", "#34d399", "#059669", "#6366f1", "#a5b4fc", "#9ca3af"];
+
+const TIP={backgroundColor:'#1e293b',titleColor:'#f1f5f9',bodyColor:'#94a3b8',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10,titleFont:{weight:'700',size:13},bodyFont:{size:12}};
+const SC={x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#8896a8',font:{size:10,weight:'600'}}},y:{grid:{color:'rgba(0,0,0,0.06)'},ticks:{color:'#8896a8',font:{size:10}}}};
+const LEG={labels:{color:'#3d4f6b',font:{size:11,weight:'600'},boxWidth:10,padding:14}};
+const DL_TOP={display:true,anchor:'end',align:'top',font:{size:9,weight:'700'},color:'#3d4f6b',offset:2};
+const DL_CENTER={display:true,anchor:'center',align:'center',font:{size:9,weight:'700'},color:'#fff'};
+
+// C1: Partners + Churn Rate
+new Chart(document.getElementById('c1'),{
+  type:'bar',
+  data:{labels:L,datasets:[
+    {label:'Active Partners',data:T.total,backgroundColor:'rgba(29,111,232,.7)',borderRadius:5,borderSkipped:false,yAxisID:'y',datalabels:{display:true,anchor:'end',align:'top',font:{size:9,weight:'700'},color:'#1d6fe8',offset:2,formatter:v=>v}},
+    {label:'Churn Rate %',data:T.churn_rate,type:'line',borderColor:'#dc3558',backgroundColor:'rgba(220,53,88,.08)',yAxisID:'y1',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:'#dc3558',borderWidth:2.5,datalabels:{display:true,align:'bottom',offset:14,font:{size:9,weight:'700'},color:'#dc3558',backgroundColor:'rgba(255,255,255,.92)',borderRadius:3,padding:{top:1,bottom:1,left:3,right:3},formatter:v=>v+'%'}}
+  ]},
+  options:{responsive:true,plugins:{legend:LEG,tooltip:TIP},scales:{y:{...SC.y,position:'left',title:{display:true,text:'Partners',font:{size:10}}},y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Churn %',font:{size:10}},ticks:{color:'#dc3558'}},x:SC.x}}
+});
+
+// C2: Tier stacked
+new Chart(document.getElementById('c2'),{
+  type:'bar',
+  data:{labels:L,datasets:[
+    {label:'Good',data:T.good,backgroundColor:'rgba(14,165,94,.8)',borderRadius:4,borderSkipped:false},
+    {label:'Average',data:T.avg,backgroundColor:'rgba(217,119,6,.7)',borderRadius:4,borderSkipped:false},
+    {label:'Bad',data:T.bad,backgroundColor:'rgba(220,53,88,.7)',borderRadius:4,borderSkipped:false}
+  ]},
+  options:{responsive:true,plugins:{legend:LEG,tooltip:TIP,datalabels:{display:true,color:'#fff',font:{size:9,weight:'700'},anchor:'center',align:'center',formatter:v=>v>=40?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}
+});
+
+// C3: New vs Churned
+new Chart(document.getElementById('c3'),{
+  type:'bar',
+  data:{labels:L,datasets:[
+    {label:'New Partners',data:T.new_c,backgroundColor:'rgba(14,165,94,.75)',borderRadius:5,borderSkipped:false,datalabels:{...DL_CENTER,formatter:v=>v>=10?v:''}},
+    {label:'Churned',data:T.churned_c,backgroundColor:'rgba(220,53,88,.75)',borderRadius:5,borderSkipped:false,datalabels:{...DL_CENTER,formatter:v=>v>=10?v:''}},
+    {label:'Net Change',data:T.net,type:'line',borderColor:'#1d6fe8',borderWidth:3,tension:.3,pointRadius:5,pointBackgroundColor:'#1d6fe8',fill:false,datalabels:{display:true,anchor:'end',align:'bottom',offset:10,font:{size:11,weight:'800'},color:'#1d6fe8',backgroundColor:'rgba(255,255,255,.92)',borderRadius:4,padding:{top:1,bottom:1,left:4,right:4},formatter:v=>(v>=0?'+':'')+v}}
+  ]},
+  options:{responsive:true,plugins:{legend:LEG,tooltip:TIP},scales:{x:SC.x,y:SC.y}}
+});
+
+// C4: Order Share stacked 100%
+new Chart(document.getElementById('c4'),{
+  type:'bar',
+  data:{labels:L,datasets:[
+    {label:'Good %',data:T.good_os,backgroundColor:'rgba(14,165,94,.8)',borderRadius:4,borderSkipped:false},
+    {label:'Average %',data:T.avg_os,backgroundColor:'rgba(217,119,6,.7)',borderRadius:4,borderSkipped:false},
+    {label:'Bad %',data:T.bad_os,backgroundColor:'rgba(220,53,88,.7)',borderRadius:4,borderSkipped:false}
+  ]},
+  options:{responsive:true,plugins:{legend:LEG,tooltip:TIP,datalabels:{display:true,color:'#fff',font:{size:9,weight:'700'},anchor:'center',align:'center',formatter:v=>v>=8?v.toFixed(1)+'%':''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true,max:100,ticks:{callback:v=>v+'%'}}}}
+});
+
+// C5: Improvement vs Decline
+new Chart(document.getElementById('c5'),{
+  type:'line',
+  data:{labels:L,datasets:[
+    {label:'Improvement %',data:T.imp_rate,borderColor:'#0ea55e',backgroundColor:'rgba(14,165,94,.08)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#0ea55e',borderWidth:2.5,datalabels:{display:true,align:'top',offset:4,font:{size:9,weight:'700'},color:'#0ea55e',formatter:v=>v+'%'}},
+    {label:'Decline %',data:T.dec_rate,borderColor:'#dc3558',backgroundColor:'rgba(220,53,88,.08)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#dc3558',borderWidth:2.5,datalabels:{display:true,align:'bottom',offset:4,font:{size:9,weight:'700'},color:'#dc3558',formatter:v=>v+'%'}}
+  ]},
+  options:{responsive:true,plugins:{legend:LEG,tooltip:TIP},scales:SC}
+});
+
+// C6: Good Churned
+new Chart(document.getElementById('c6'),{
+  type:'bar',
+  data:{labels:L,datasets:[
+    {label:'Good Churned',data:T.good_churned,backgroundColor:T.good_churned.map(v=>v>=5?'rgba(220,53,88,.85)':v>=3?'rgba(217,119,6,.75)':'rgba(29,111,232,.6)'),borderRadius:5,borderSkipped:false}
+  ]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP,datalabels:{display:true,anchor:'end',align:'top',font:{size:12,weight:'800'},color:ctx=>T.good_churned[ctx.dataIndex]>=5?'#dc3558':'#3d4f6b',formatter:(v,ctx)=>{const tot=T.total[ctx.dataIndex]||1;return v+' ('+(v/tot*100).toFixed(1)+'%)'}}},scales:{x:SC.x,y:{...SC.y,beginAtZero:true,ticks:{stepSize:1},grace:'20%'}}}
+});
+
+// Matrix Chart (horizontal bar)
+new Chart(document.getElementById('cMatrix'),{
+  type:'bar',
+  data:{labels:MATRIX_L,datasets:[{data:MATRIX_V,backgroundColor:MATRIX_C,borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,indexAxis:'y',layout:{padding:{right:80}},plugins:{legend:{display:false},tooltip:TIP,datalabels:{display:true,anchor:'end',align:'end',font:{size:11,weight:'700'},color:'#16213e',formatter:v=>v+' partners'}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},grace:'10%'},y:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}}}}
+});
+
+// ===== SLICER INTERACTION =====
+let compCharts=[null,null,null,null];
+function selectPeriod(idx){
+  document.querySelectorAll('#periodSlicer .slicer-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const d=PD[idx];
+  compCharts.forEach(c=>{if(c)c.destroy()});
+  
+  // Tier Distribution Comparison
+  compCharts[0]=new Chart(document.getElementById('cComp1'),{
+    type:'bar',
+    data:{labels:['Good','Average','Bad'],datasets:[
+      {label:'Previous',data:[d.prev_dist.good||0,d.prev_dist.average||0,d.prev_dist.bad||0],backgroundColor:'rgba(99,102,241,.6)',borderRadius:5,borderSkipped:false},
+      {label:'Current',data:[d.curr_dist.good||0,d.curr_dist.average||0,d.curr_dist.bad||0],backgroundColor:'rgba(14,165,94,.7)',borderRadius:5,borderSkipped:false}
+    ]},
+    options:{responsive:true,plugins:{legend:LEG,tooltip:TIP,datalabels:{display:true,anchor:'end',align:'top',font:{size:10,weight:'700'},color:'#3d4f6b',offset:2,formatter:(v,ctx)=>{const tot=ctx.datasetIndex===0?(d.summary.total_prev||1):(d.summary.total_curr||1);return v+' ('+(v/tot*100).toFixed(0)+'%)'}}},scales:SC}
+  });
+  
+  // Movement Flow
+  compCharts[1]=new Chart(document.getElementById('cComp2'),{
+    type:'bar',
+    data:{labels:['Improved','Declined','Stable Good','Stable Avg','Stuck Bad'],datasets:[
+      {data:[d.improved,d.declined,d.stable_good,d.stable_avg,d.stuck_bad],
+       backgroundColor:['#10b981','#ef4444','#6366f1','#a5b4fc','#9ca3af'],borderRadius:6,borderSkipped:false}
+    ]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP,datalabels:{display:true,anchor:'center',align:'center',font:{size:11,weight:'800'},color:'#fff',formatter:(v,ctx)=>{const tot=d.summary.total_prev||1;return v+' ('+(v/tot*100).toFixed(1)+'%)'}}},scales:{...SC,y:{...SC.y,grace:'15%'}}}
+  });
+  
+  // Churn by Tier
+  compCharts[2]=new Chart(document.getElementById('cComp3'),{
+    type:'bar',
+    data:{labels:['Good','Average','Bad'],datasets:[
+      {label:'Churned',data:[d.tier_churn.good.churned,d.tier_churn.average.churned,d.tier_churn.bad.churned],backgroundColor:['rgba(220,53,88,.8)','rgba(217,119,6,.7)','rgba(156,163,175,.7)'],borderRadius:5,borderSkipped:false,yAxisID:'y',datalabels:{display:true,anchor:'end',align:'top',offset:4,font:{size:11,weight:'800'},color:'#16213e',formatter:(v,ctx)=>{const tot=d.summary.total_prev||1;return v+' ('+(v/tot*100).toFixed(1)+'%)'}}},
+      {label:'Churn Rate %',data:[d.tier_churn.good.churn_rate,d.tier_churn.average.churn_rate,d.tier_churn.bad.churn_rate],type:'line',borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.1)',yAxisID:'y1',tension:.4,pointRadius:6,pointBackgroundColor:'#d97706',borderWidth:3,fill:true,datalabels:{display:true,align:'top',offset:12,font:{size:10,weight:'700'},color:'#d97706',backgroundColor:'rgba(255,255,255,.95)',borderRadius:4,padding:{top:2,bottom:2,left:4,right:4},formatter:v=>v+'%'}}
+    ]},
+    options:{responsive:true,plugins:{legend:LEG,tooltip:TIP},scales:{y:{...SC.y,position:'left',title:{display:true,text:'Partners'}},y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Churn %'},ticks:{color:'#d97706'}},x:SC.x}}
+  });
+  
+  // New Partner Donut
+  const newG=d.new_by_tier.good,newA=d.new_by_tier.average,newB=d.new_by_tier.bad;
+  const newT=newG+newA+newB;
+  compCharts[3]=new Chart(document.getElementById('cComp4'),{
+    type:'doughnut',
+    data:{labels:['Started Good','Started Average','Started Bad'],datasets:[{
+      data:[newG,newA,newB],backgroundColor:['#10b981','#f59e0b','#ef4444'],borderWidth:3,borderColor:'#fff'
+    }]},
+    options:{responsive:true,cutout:'55%',plugins:{legend:LEG,tooltip:TIP,datalabels:{display:true,font:{size:12,weight:'800'},color:'#fff',formatter:(v)=>newT?v+' ('+(v/newT*100).toFixed(0)+'%)':v}}}
+  });
+  
+  // Lifecycle cards
+  const lc=document.getElementById('lifecycleCards');
+  const tr=d.transitions;
+  const gLost=(tr['good \u2192 average']||0)+(tr['good \u2192 bad']||0);
+  const gGained=(tr['average \u2192 good']||0)+(tr['bad \u2192 good']||0);
+  const gNew=tr['NA \u2192 good']||0;
+  const gStable=tr['good \u2192 good']||0;
+  const aLost=(tr['average \u2192 bad']||0)+(tr['average \u2192 good']||0);
+  const aGained=(tr['good \u2192 average']||0)+(tr['bad \u2192 average']||0);
+  const aNew=tr['NA \u2192 average']||0;
+  const aStable=tr['average \u2192 average']||0;
+  const bLost=(tr['bad \u2192 average']||0)+(tr['bad \u2192 good']||0);
+  const bGained=(tr['good \u2192 bad']||0)+(tr['average \u2192 bad']||0);
+  const bNew=tr['NA \u2192 bad']||0;
+  const bStable=tr['bad \u2192 bad']||0;
+  
+  lc.innerHTML=`
+    <div class="lc-card" style="--lc:var(--g)">
+      <h4 style="color:var(--g)">\u2b50 Good Tier Dynamics</h4>
+      <div class="lc-row blue"><strong>Current:</strong> ${d.curr_dist.good||0} partners</div>
+      <div class="lc-row red"><strong>Lost:</strong> ${gLost} declined</div>
+      <div class="lc-row green"><strong>Gained:</strong> ${gGained} improved</div>
+      <div class="lc-row blue"><strong>New:</strong> ${gNew} entered as good</div>
+      <div class="lc-row"><strong>Stable:</strong> ${gStable} remained good (${d.prev_dist.good?(gStable/(d.prev_dist.good||1)*100).toFixed(0):0}%)</div>
+    </div>
+    <div class="lc-card" style="--lc:var(--a)">
+      <h4 style="color:var(--a)">\u26a1 Average Tier Dynamics</h4>
+      <div class="lc-row blue"><strong>Current:</strong> ${d.curr_dist.average||0} partners</div>
+      <div class="lc-row red"><strong>Lost:</strong> ${aLost} moved out</div>
+      <div class="lc-row green"><strong>Gained:</strong> ${aGained} entered from other tiers</div>
+      <div class="lc-row blue"><strong>New:</strong> ${aNew} entered as average</div>
+      <div class="lc-row"><strong>Stable:</strong> ${aStable} remained (${d.prev_dist.average?(aStable/(d.prev_dist.average||1)*100).toFixed(0):0}%)</div>
+    </div>
+    <div class="lc-card" style="--lc:var(--r)">
+      <h4 style="color:var(--r)">\u26a0\ufe0f Bad Tier Dynamics</h4>
+      <div class="lc-row blue"><strong>Current:</strong> ${d.curr_dist.bad||0} partners</div>
+      <div class="lc-row green"><strong>Improved:</strong> ${bLost} moved up!</div>
+      <div class="lc-row red"><strong>Declined in:</strong> ${bGained} from good/avg</div>
+      <div class="lc-row blue"><strong>New:</strong> ${bNew} entered as bad</div>
+      <div class="lc-row"><strong>Stuck:</strong> ${bStable} remained bad (${d.prev_dist.bad?(bStable/(d.prev_dist.bad||1)*100).toFixed(0):0}%)</div>
+    </div>`;
+}
+
+selectPeriod(PD.length-1);
+function toggleCollapse(id,btn){const el=document.getElementById(id);el.classList.toggle('show');btn.classList.toggle('open')}
+</script>
+</body>
+</html>
