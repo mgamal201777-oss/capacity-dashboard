@@ -127,7 +127,10 @@ tbody tr:hover{background:rgba(29,111,232,.03)}
     <h1>Partner Churn & <em>Performance Assessment</em> Dashboard</h1>
     <div class="sub">Tier Movement · Retention Analysis · PMM Performance · City Intelligence · 10 Periods Analyzed</div>
   </div>
-  <div class="hdr-r">
+  <div class="hdr-r"><div style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px">
+<button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.95);color:#16213e">EN</button>
+<button onclick="setLang('zh')" id="btn-zh" style="padding:4px 10px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.7)">中文</button>
+</div>
     <div class="hkpi"><div class="n">645</div><div class="l">Active Partners</div><div class="c" style="color:#7eb8ff">Apr MTD</div></div>
     <div class="hkpi"><div class="n" style="color:#34d399">5.6%</div><div class="l">Churn Rate</div><div class="c" style="color:#34d399">↓10.2pp</div></div>
     <div class="hkpi"><div class="n" style="color:#fbbf24">12</div><div class="l">Good Churned</div><div class="c" style="color:#fbbf24">all periods</div></div>
@@ -1276,6 +1279,180 @@ function selectPeriod(idx){
 
 selectPeriod(PD.length-1);
 function toggleCollapse(id,btn){const el=document.getElementById(id);el.classList.toggle('show');btn.classList.toggle('open')}
+
+
+const TRANSLATIONS = {
+  // Header
+  "KEETA 3PL MANAGEMENT": "KEETA 3PL 管理",
+  "Keeta 3PL Partners <em>Churn & Assessment Change</em> Dashboard": "Keeta 3PL 合作商 <em>流失与评估变动</em> 看板",
+  "Comprehensive analysis of partner movements, tier transitions, and performance evolution across all assessment periods": "全面分析各评估周期内合作商动态、层级变迁及绩效演变",
+  "ACTIVE": "活跃",
+  "CHURNED": "流失",
+  "NET CHANGE": "净变化",
+  "CHURN RATE": "流失率",
+  
+  // Data Source Banner
+  "Data Source Notice": "数据来源说明",
+  "This report is based on the <strong>Weekly & MTD Partners Stratification Report</strong> shared with frontline teams. Assessment tiers (Good / Average / Bad) are determined by Delivery Completion Rate & Fulfillment Rate as per the standard stratification methodology.": "本报告基于与一线团队共享的<strong>每周及月度累计合作商分层报告</strong>。评估层级（好/中/差）由配送完成率和履约率按标准分层方法确定。",
+  
+  // Section titles
+  "Monthly Partner Movement & Churn Trend": "月度合作商变动与流失趋势",
+  "Red Flags & Critical Alerts": "红色预警与关键警报",
+  "Performance Quality & Tier Transitions": "绩效质量与层级变迁",
+  "City Intelligence & Geographic Distribution": "城市情报与地域分布",
+  "PMM Performance Ranking": "PMM 绩效排名",
+  "Select Period for Deep-Dive Analysis": "选择周期进行深度分析",
+  "All Periods Comparison": "全周期对比",
+  
+  // Definition boxes - "What This Section Tells You"
+  "What This Section Tells You:": "本节说明：",
+  "Key Definitions:": "关键定义：",
+  "Period Comparison:": "周期对比：",
+  "Period Comparison Logic:": "周期对比逻辑：",
+  "Comparison Logic:": "对比逻辑：",
+  
+  // Chart titles and labels
+  "Active Partners & Churn Rate Trend": "活跃合作商与流失率趋势",
+  "New vs Churned Partners": "新增 vs 流失合作商",
+  "Tier Distribution Evolution": "层级分布演变",
+  "Good Partners Churned (High-Value Loss)": "优质合作商流失（高价值损失）",
+  "Improvement vs Decline Rate": "改善率 vs 下降率",
+  "Transformation Matrix (Latest Period)": "变迁矩阵（最新周期）",
+  
+  // Table headers
+  "PERIOD": "周期",
+  "COMPARE TO": "对比基准",
+  "ACTIVE": "活跃",
+  "CHURNED": "流失",
+  "NEW": "新增",
+  "NET": "净值",
+  "CHURN%": "流失%",
+  "GOOD": "好",
+  "AVG": "中",
+  "BAD": "差",
+  "GOOD LOST": "优质流失",
+  "IMPROV%": "改善%",
+  "DECLINE%": "下降%",
+  "GOOD ORD%": "优质占比%",
+  
+  // PMM Table
+  "PMM Name": "PMM 姓名",
+  "Partners": "合作商数",
+  "Score": "得分",
+  "Score/P": "人均得分",
+  "Rating": "评级",
+  
+  // Ratings
+  "Excellent": "优秀",
+  "Good": "良好",
+  "Average": "一般",
+  "Needs Improvement": "待改进",
+  "Poor": "较差",
+  
+  // Slicer section
+  "Tier Distribution Comparison": "层级分布对比",
+  "Movement Flow": "变动流向",
+  "Churn by Tier": "分层流失",
+  "New Partner Distribution": "新合作商分布",
+  
+  // Lifecycle
+  "Lifecycle Analysis": "生命周期分析",
+  "Good Tier": "优质层",
+  "Average Tier": "中等层",
+  "Bad Tier": "较差层",
+  "Stayed": "留存",
+  "Left (churned)": "离开（流失）",
+  "Joined (new)": "加入（新增）",
+  "Gained from other tiers": "从其他层级获得",
+  "Lost to other tiers": "流失至其他层级",
+  
+  // PMM Scoring
+  "PMM Scoring Logic & Movement Framework": "PMM 评分逻辑与变动框架",
+  "Click to expand methodology": "点击展开方法论",
+  "Positive Movements": "正向变动",
+  "Negative Movements": "负向变动",
+  "Neutral": "中性",
+  "Rating Thresholds (Score/Partner):": "评级阈值（人均得分）：",
+  "Why Score/Partner?": "为什么用人均得分？",
+  "Raw score favors PMMs with more partners. Score/Partner normalizes for portfolio size, enabling fair comparison between a PMM managing 50 partners vs one managing 10.": "原始分数偏向管理更多合作商的PMM。人均得分按组合规模标准化，使管理50个合作商的PMM与管理10个合作商的PMM之间能够公平比较。",
+  
+  // City table
+  "City": "城市",
+  "Level": "级别",
+  "Net": "净值",
+  "Trend": "趋势",
+  "Status": "状态",
+  "Growing": "增长中",
+  "Stable": "稳定",
+  "Declining": "下降中",
+  "At Risk": "风险中",
+  
+  // Insights
+  "partners": "个合作商",
+  "Improved": "改善",
+  "Declined": "下降",
+  "Stable Good": "稳定优质",
+  "Stable Avg": "稳定中等",
+  "Stuck Bad": "停滞差",
+  
+  // Footer
+  "Keeta 3PL Capacity & Operations Intelligence": "Keeta 3PL 运力与运营情报",
+  "Powered by": "技术支持",
+  "AI Analytics Engine": "AI 分析引擎",
+  
+  // Misc
+  "Jan periods compare vs Dec": "1月各周期对比12月",
+  "Feb periods compare vs Jan (full month)": "2月各周期对比1月（全月）",
+  "Mar periods compare vs Feb (full month)": "3月各周期对比2月（全月）",
+  "Apr compares vs Mar (full month)": "4月对比3月（全月）",
+  "Jan periods vs Dec": "1月各周期 vs 12月",
+  "Feb vs Jan (full)": "2月 vs 1月（全月）",
+  "Mar vs Feb (full)": "3月 vs 2月（全月）",
+  "Apr vs Mar (full)": "4月 vs 3月（全月）"
+};
+
+let currentLang = 'en';
+const originalTexts = new Map();
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').style.background = lang === 'en' ? 'rgba(255,255,255,.95)' : 'transparent';
+  document.getElementById('btn-en').style.color = lang === 'en' ? '#16213e' : 'rgba(255,255,255,.7)';
+  document.getElementById('btn-zh').style.background = lang === 'zh' ? 'rgba(255,255,255,.95)' : 'transparent';
+  document.getElementById('btn-zh').style.color = lang === 'zh' ? '#16213e' : 'rgba(255,255,255,.7)';
+  
+  if (lang === 'zh') {
+    translatePage();
+  } else {
+    restorePage();
+  }
+}
+
+function translatePage() {
+  // Walk all text nodes and elements
+  const walker = document.createTreeWalker(document.querySelector('.page'), NodeFilter.SHOW_ELEMENT);
+  let node;
+  while (node = walker.nextNode()) {
+    if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE' || node.tagName === 'CANVAS') continue;
+    
+    // Check innerHTML for exact matches (for elements with mixed content)
+    const ih = node.innerHTML;
+    for (const [en, zh] of Object.entries(TRANSLATIONS)) {
+      if (ih.includes(en) && !ih.includes(zh)) {
+        if (!originalTexts.has(node)) originalTexts.set(node, ih);
+        node.innerHTML = node.innerHTML.replaceAll(en, zh);
+      }
+    }
+  }
+}
+
+function restorePage() {
+  for (const [node, original] of originalTexts) {
+    try { node.innerHTML = original; } catch(e) {}
+  }
+  originalTexts.clear();
+}
+
 </script>
 </body>
 </html>
