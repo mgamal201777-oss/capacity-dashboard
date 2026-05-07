@@ -15263,11 +15263,11 @@ if(ovChartDet) {
                     const table = document.getElementById('partnerAgeTable');
                     if (!table) return;
                     
-                    // Period-based default: 7 months (Sep=0,...,Mar=6)
+                    // Period-based default: 7 months (Sep=0,...,Mar=6), reversed (newest first)
                     if (!monthIndices) {
                         const pIdx = window._currentPeriodIdx || 0;
                         const ageSliceStart = pIdx === 0 ? 0 : 1;
-                        monthIndices = Array.from({length: 6}, (_, i) => ageSliceStart + i);
+                        monthIndices = Array.from({length: 6}, (_, i) => ageSliceStart + i).reverse();
                     }
                     const displayMonths = monthIndices;
                     const categoriesToShow = categoryFilter === 'all' ? partnerAgeData.categories : [categoryFilter];
