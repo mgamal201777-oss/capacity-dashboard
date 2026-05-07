@@ -7335,6 +7335,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <option value="3">Dec-25</option>
 <option value="4">Jan-26</option>
 <option value="5">Feb-26</option>
+<option value="6">Mar-26</option>
 </select>
 <select id="partnerAgeMonthFilter2" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
 <option value="">-- Month 2 --</option>
@@ -7343,7 +7344,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <option value="2">Nov-25</option>
 <option value="3">Dec-25</option>
 <option value="4">Jan-26</option>
-<option value="5" selected>Feb-26</option>
+<option value="5">Feb-26</option>
+<option value="6" selected>Mar-26</option>
 </select>
 <button id="partnerAgeCompareBtn" style="padding: 8px 20px; background: #059669; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Compare</button>
 <button id="partnerAgeResetBtn" style="padding: 8px 20px; background: #6b7280; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Reset to All Months</button>
@@ -7419,6 +7421,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <option value="3">Dec-25</option>
 <option value="4">Jan-26</option>
 <option value="5">Feb-26</option>
+<option value="6">Mar-26</option>
 </select>
 <select id="cityMonthFilter2" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
 <option value="">-- Month 2 --</option>
@@ -7427,7 +7430,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <option value="2">Nov-25</option>
 <option value="3">Dec-25</option>
 <option value="4">Jan-26</option>
-<option value="5" selected>Feb-26</option>
+<option value="5">Feb-26</option>
+<option value="6" selected>Mar-26</option>
 </select>
 <button id="cityCompareBtn" style="padding: 8px 20px; background: #059669; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Compare</button>
 </div>
@@ -13424,7 +13428,7 @@ if(ovChartDet) {
                         + '</tr></thead><tbody>';
 
                     // Correct weighted avg scale values for each month
-                    const weightedAvgScaleValues = [53.3, 48.8, 45.4, 35.9, 35.9, 35.1];
+                    const weightedAvgScaleValues = [53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3];
                     const totalTargetValues = [], totalActiveValues = [], totalWithValues = [];
                     let totalT1Target = 0, totalT2Target = 0, totalT1Active = 0, totalT2Active = 0, totalT1With = 0, totalT2With = 0, totalT1AvgScale = 0, totalT2AvgScale = 0;
                     months.forEach((m, i) => {
@@ -13972,80 +13976,80 @@ if(ovChartDet) {
 
                 // Partner Age Analysis Data
                 const partnerAgeData = {
-                    months: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'],
+                    months: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'],
                     categories: ['New <1 month', 'New <3 months', 'Old >3 months'],
                     data: {
                         'New <1 month': {
-                            count: [130, 166, 113, 173, 63, 27],
-                            activeCount: [51, 148, 92, 128, 56, 26],
-                            target: [1852, 4864, 2600, 2959, 1380, 583],
-                            avgScale: [36.3, 32.9, 28.3, 23.1, 24.6, 22.4],
-                            goodPartners: [12, 30, 28, 23, 15, 3],
-                            avgPartners: [20, 50, 30, 33, 5, 2],
-                            badPartners: [19, 63, 26, 38, 28, 4],
-                            goodTarget: [380, 1085, 875, 572, 396, 50],
-                            avgTarget: [559, 1578, 850, 729, 115, 67],
-                            badTarget: [913, 2106, 702, 824, 659, 77],
-                            goodAvgScale: [31.7, 36.2, 31.3, 24.9, 26.4, 16.7],
-                            avgAvgScale: [28.0, 31.6, 28.3, 22.1, 23.0, 33.5],
-                            badAvgScale: [48.1, 33.4, 27.0, 21.7, 23.5, 19.3],
-                            bigPartners: [2, 3, 0, 0, 0, 0],
-                            midPartners: [16, 40, 12, 14, 5, 1],
-                            smallPartners: [33, 100, 72, 80, 43, 8],
-                            bigTarget: [85, 161, 0, 0, 0, 0],
-                            midTarget: [455, 1452, 448, 498, 161, 42],
-                            smallTarget: [1312, 3156, 1979, 1627, 1009, 152],
-                            bigAvgScale: [42.5, 53.7, null, null, 0.0, 0.0],
-                            midAvgScale: [28.4, 36.3, 37.3, 35.6, 32.2, 42.0],
-                            smallAvgScale: [39.8, 31.6, 27.5, 20.3, 23.5, 19.0]
+                            count: [130, 166, 113, 173, 63, 27, 63],
+                            activeCount: [51, 148, 92, 128, 56, 26, 60],
+                            target: [1852, 4864, 2600, 2959, 1380, 583, 1433],
+                            avgScale: [36.3, 32.9, 28.3, 23.1, 24.6, 22.4, 23.9],
+                            goodPartners: [12, 30, 28, 23, 15, 3, 0],
+                            avgPartners: [20, 50, 30, 33, 5, 2, 10],
+                            badPartners: [19, 63, 26, 38, 28, 4, 3],
+                            goodTarget: [380, 1085, 875, 572, 396, 50, 0],
+                            avgTarget: [559, 1578, 850, 729, 115, 67, 333],
+                            badTarget: [913, 2106, 702, 824, 659, 77, 99],
+                            goodAvgScale: [31.7, 36.2, 31.3, 24.9, 26.4, 16.7, 16.7],
+                            avgAvgScale: [28.0, 31.6, 28.3, 22.1, 23.0, 33.5, 33.5],
+                            badAvgScale: [48.1, 33.4, 27.0, 21.7, 23.5, 19.3, 19.2],
+                            bigPartners: [2, 3, 0, 0, 0, 0, 0],
+                            midPartners: [16, 40, 12, 14, 5, 1, 1],
+                            smallPartners: [33, 100, 72, 80, 43, 8, 12],
+                            bigTarget: [85, 161, 0, 0, 0, 0, 0],
+                            midTarget: [455, 1452, 448, 498, 161, 42, 20],
+                            smallTarget: [1312, 3156, 1979, 1627, 1009, 152, 412],
+                            bigAvgScale: [42.5, 53.7, null, null, 0.0, 0.0, 0],
+                            midAvgScale: [28.4, 36.3, 37.3, 35.6, 32.2, 42.0, 42.0],
+                            smallAvgScale: [39.8, 31.6, 27.5, 20.3, 23.5, 19.0, 19.0]
                         },
                         'New <3 months': {
-                            count: [120, 131, 208, 231, 161, 131],
-                            activeCount: [86, 105, 174, 175, 144, 101],
-                            target: [2584, 3449, 6455, 5198, 3574, 2379],
-                            avgScale: [30.0, 32.8, 37.1, 29.7, 24.8, 23.6],
-                            goodPartners: [34, 45, 64, 64, 42, 38],
-                            avgPartners: [36, 47, 68, 85, 74, 55],
-                            badPartners: [16, 13, 41, 26, 28, 8],
-                            goodTarget: [1177, 1665, 2729, 2411, 1208, 1050],
-                            avgTarget: [1024, 1484, 2304, 2229, 1863, 1193],
-                            badTarget: [383, 300, 1397, 558, 503, 136],
-                            goodAvgScale: [34.6, 37.0, 42.6, 37.7, 28.8, 27.6],
-                            avgAvgScale: [28.4, 31.6, 33.9, 26.2, 25.2, 21.7],
-                            badAvgScale: [23.9, 23.1, 34.1, 21.5, 18.0, 17.0],
-                            bigPartners: [19, 24, 14, 14, 9, 0],
-                            midPartners: [56, 68, 98, 100, 56, 13],
-                            smallPartners: [11, 13, 61, 61, 79, 88],
-                            bigTarget: [985, 1042, 658, 683, 477, 0],
-                            midTarget: [1428, 2060, 4165, 3339, 1677, 506],
-                            smallTarget: [171, 347, 1607, 1176, 1420, 1873],
-                            bigAvgScale: [51.8, 43.4, 47.0, 48.8, 53.0, 0.0],
-                            midAvgScale: [25.5, 30.3, 42.5, 33.4, 29.9, 38.9],
-                            smallAvgScale: [15.5, 26.7, 26.3, 19.3, 18.0, 21.3]
+                            count: [120, 131, 208, 231, 161, 131, 103],
+                            activeCount: [86, 105, 174, 175, 144, 101, 101],
+                            target: [2584, 3449, 6455, 5198, 3574, 2379, 2691],
+                            avgScale: [30.0, 32.8, 37.1, 29.7, 24.8, 23.6, 26.6],
+                            goodPartners: [34, 45, 64, 64, 42, 38, 2],
+                            avgPartners: [36, 47, 68, 85, 74, 55, 90],
+                            badPartners: [16, 13, 41, 26, 28, 8, 9],
+                            goodTarget: [1177, 1665, 2729, 2411, 1208, 1050, 81],
+                            avgTarget: [1024, 1484, 2304, 2229, 1863, 1193, 2513],
+                            badTarget: [383, 300, 1397, 558, 503, 136, 262],
+                            goodAvgScale: [34.6, 37.0, 42.6, 37.7, 28.8, 27.6, 27.6],
+                            avgAvgScale: [28.4, 31.6, 33.9, 26.2, 25.2, 21.7, 21.7],
+                            badAvgScale: [23.9, 23.1, 34.1, 21.5, 18.0, 17.0, 17.0],
+                            bigPartners: [19, 24, 14, 14, 9, 0, 1],
+                            midPartners: [56, 68, 98, 100, 56, 13, 20],
+                            smallPartners: [11, 13, 61, 61, 79, 88, 80],
+                            bigTarget: [985, 1042, 658, 683, 477, 0, 122],
+                            midTarget: [1428, 2060, 4165, 3339, 1677, 506, 681],
+                            smallTarget: [171, 347, 1607, 1176, 1420, 1873, 2053],
+                            bigAvgScale: [51.8, 43.4, 47.0, 48.8, 53.0, 0.0, 0],
+                            midAvgScale: [25.5, 30.3, 42.5, 33.4, 29.9, 38.9, 38.9],
+                            smallAvgScale: [15.5, 26.7, 26.3, 19.3, 18.0, 21.3, 21.3]
                         },
                         'Old >3 months': {
-                            count: [512, 454, 559, 447, 463, 485],
-                            activeCount: [478, 444, 501, 371, 425, 424],
-                            target: [28357, 25693, 25782, 16025, 17499, 16403],
-                            avgScale: [59.3, 57.9, 51.5, 43.2, 41.2, 38.7],
-                            goodPartners: [114, 115, 113, 136, 212, 211],
-                            avgPartners: [151, 152, 177, 167, 195, 205],
-                            badPartners: [90, 67, 93, 58, 17, 8],
-                            goodTarget: [9672, 8333, 7814, 8036, 10745, 9092],
-                            avgTarget: [11315, 11533, 10997, 6300, 6352, 7154],
-                            badTarget: [3794, 3095, 4350, 1497, 372, 157],
-                            goodAvgScale: [84.8, 72.5, 69.2, 59.1, 50.7, 43.1],
-                            avgAvgScale: [74.9, 75.9, 62.1, 37.7, 32.6, 34.9],
-                            badAvgScale: [42.2, 46.2, 46.8, 25.8, 21.9, 19.6],
-                            bigPartners: [38, 47, 68, 73, 72, 77],
-                            midPartners: [190, 214, 229, 221, 214, 268],
-                            smallPartners: [127, 73, 86, 67, 138, 79],
-                            bigTarget: [6127, 6703, 7984, 6058, 4461, 5351],
-                            midTarget: [14095, 14197, 12640, 8515, 8760, 9434],
-                            smallTarget: [4559, 2061, 2537, 1260, 4248, 1618],
-                            bigAvgScale: [161.2, 142.6, 117.4, 83.0, 62.0, 69.5],
-                            midAvgScale: [74.2, 66.3, 55.2, 38.5, 40.9, 35.2],
-                            smallAvgScale: [35.9, 28.2, 29.5, 18.8, 30.8, 20.5]
+                            count: [512, 454, 559, 447, 463, 485, 451],
+                            activeCount: [478, 444, 501, 371, 425, 424, 447],
+                            target: [28357, 25693, 25782, 16025, 17499, 16403, 17354],
+                            avgScale: [59.3, 57.9, 51.5, 43.2, 41.2, 38.7, 38.8],
+                            goodPartners: [114, 115, 113, 136, 212, 211, 198],
+                            avgPartners: [151, 152, 177, 167, 195, 205, 218],
+                            badPartners: [90, 67, 93, 58, 17, 8, 24],
+                            goodTarget: [9672, 8333, 7814, 8036, 10745, 9092, 9000],
+                            avgTarget: [11315, 11533, 10997, 6300, 6352, 7154, 7673],
+                            badTarget: [3794, 3095, 4350, 1497, 372, 157, 579],
+                            goodAvgScale: [84.8, 72.5, 69.2, 59.1, 50.7, 43.1, 45.5],
+                            avgAvgScale: [74.9, 75.9, 62.1, 37.7, 32.6, 34.9, 35.2],
+                            badAvgScale: [42.2, 46.2, 46.8, 25.8, 21.9, 19.6, 24.1],
+                            bigPartners: [38, 47, 68, 73, 72, 77, 70],
+                            midPartners: [190, 214, 229, 221, 214, 268, 253],
+                            smallPartners: [127, 73, 86, 67, 138, 79, 117],
+                            bigTarget: [6127, 6703, 7984, 6058, 4461, 5351, 5516],
+                            midTarget: [14095, 14197, 12640, 8515, 8760, 9434, 9079],
+                            smallTarget: [4559, 2061, 2537, 1260, 4248, 1618, 2657],
+                            bigAvgScale: [161.2, 142.6, 117.4, 83.0, 62.0, 69.5, 69.5],
+                            midAvgScale: [74.2, 66.3, 55.2, 38.5, 40.9, 35.2, 35.9],
+                            smallAvgScale: [35.9, 28.2, 29.5, 18.8, 30.8, 20.5, 22.7]
                         }
                     }
                 };
@@ -15455,13 +15459,15 @@ if(ovChartDet) {
                     setupPartnerAgeTableFocus();
 
                     // Update takeaway
-                    const latestNew1 = partnerAgeData.data['New <1 month'].count[5];
-                    const latestNew3 = partnerAgeData.data['New <3 months'].count[5];
-                    const latestOld = partnerAgeData.data['Old >3 months'].count[5];
-                    const latestNewScale = partnerAgeData.data['New <1 month'].avgScale[5];
-                    const latestOldScale = partnerAgeData.data['Old >3 months'].avgScale[5];
+                    const _lastIdx = partnerAgeData.months.length - 1;
+                    const latestNew1 = partnerAgeData.data['New <1 month'].count[_lastIdx];
+                    const latestNew3 = partnerAgeData.data['New <3 months'].count[_lastIdx];
+                    const latestOld = partnerAgeData.data['Old >3 months'].count[_lastIdx];
+                    const latestNewScale = partnerAgeData.data['New <1 month'].avgScale[_lastIdx];
+                    const latestOldScale = partnerAgeData.data['Old >3 months'].avgScale[_lastIdx];
                     
-                    const insight = `In Feb, new partners (<1 month: ${latestNew1}, <3 months: ${latestNew3}) are ramping with lower scale (${latestNewScale}), while established partners (>3 months: ${latestOld}) show declining scale (${latestOldScale}) despite higher volume. Focus on retaining & scaling established base.`;
+                    const latestMonthLabel = partnerAgeData.months[_lastIdx];
+                    const insight = `In ${latestMonthLabel}, new partners (<1 month: ${latestNew1}, <3 months: ${latestNew3}) are ramping with lower scale (${latestNewScale}), while established partners (>3 months: ${latestOld}) show declining scale (${latestOldScale}) despite higher volume. Focus on retaining & scaling established base.`;
                     document.getElementById('partnerAgeInsight').textContent = insight;
 
                     document.getElementById('partnerAgeCompareBtn')?.addEventListener('click', () => {
@@ -21283,9 +21289,9 @@ if(ovChartDet) {
     // Monthly Willing vs Not-Willing Partners
     const willingCanvas = document.getElementById('willingVsNotWillingChart');
     if (willingCanvas) {
-      const willingMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-      const willingPartners = [213, 259, 81, 201, 130];
-      const notWillingPartners = [356, 381, 554, 413, 398];
+      const willingMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const willingPartners = [213, 259, 81, 201, 130, 262];
+      const notWillingPartners = [356, 381, 554, 413, 398, 270];
 
       m_willingVsNotWilling = new Chart(willingCanvas.getContext('2d'), {
         type: 'bar',
@@ -21333,9 +21339,9 @@ if(ovChartDet) {
     // Partner Willingness Trend (%)
     const trendCanvas = document.getElementById('willingnessTrendChart');
     if (trendCanvas) {
-      const trendMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-      const willingPct = [37.4, 40.5, 12.8, 32.7, 24.6];
-      const notWillingPct = [62.6, 59.5, 87.2, 67.3, 75.4];
+      const trendMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const willingPct = [37.4, 40.5, 12.8, 32.7, 24.6, 49.2];
+      const notWillingPct = [62.6, 59.5, 87.2, 67.3, 75.4, 50.8];
 
       m_willingnessTrend = new Chart(trendCanvas.getContext('2d'), {
         type: 'line',
@@ -21396,12 +21402,12 @@ if(ovChartDet) {
     // Growth Category Breakdown (Increase Slabs)
     const gcCanvas = document.getElementById('growthCategoryChart');
     if (gcCanvas) {
-      const gcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-      const gc1_10 = [42, 60, 73, 22, 79, 46];
-      const gc10_20 = [63, 60, 75, 23, 58, 52];
-      const gc20_30 = [40, 29, 31, 11, 28, 16];
-      const gc30plus = [54, 64, 80, 25, 36, 16];
-      const gcTotal = [199, 213, 259, 81, 201, 130];
+      const gcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const gc1_10 = [42, 60, 73, 22, 79, 46, 79];
+      const gc10_20 = [63, 60, 75, 23, 58, 52, 72];
+      const gc20_30 = [40, 29, 31, 11, 28, 16, 28];
+      const gc30plus = [54, 64, 80, 25, 36, 16, 83];
+      const gcTotal = [199, 213, 259, 81, 201, 130, 262];
 
       m_growthCategory = new Chart(gcCanvas.getContext('2d'), {
         type: 'bar',
@@ -21508,12 +21514,12 @@ if(ovChartDet) {
     // Growth Category Breakdown (Decrease Slabs)
     const dcCanvas = document.getElementById('decreaseCategoryChart');
     if (dcCanvas) {
-      const dcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-      const dc1_10 = [17, 39, 40, 52, 64, 84];
-      const dc10_20 = [38, 56, 64, 108, 77, 98];
-      const dc20_30 = [21, 26, 43, 83, 42, 50];
-      const dc30plus = [48, 40, 41, 215, 56, 52];
-      const dcTotal = [124, 161, 188, 458, 239, 284];
+      const dcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const dc1_10 = [17, 39, 40, 52, 64, 84, 59];
+      const dc10_20 = [38, 56, 64, 108, 77, 98, 30];
+      const dc20_30 = [21, 26, 43, 83, 42, 50, 21];
+      const dc30plus = [48, 40, 41, 215, 56, 52, 20];
+      const dcTotal = [124, 161, 188, 458, 239, 284, 130];
 
       m_decreaseCategory = new Chart(dcCanvas.getContext('2d'), {
         type: 'bar',
@@ -23320,6 +23326,14 @@ if(ovChartDet) {
             "not_willing": 398,
             "willing_pct": 24.6,
             "not_willing_pct": 75.4
+        },
+        {
+            "month": "Mar",
+            "total_partners": 608,
+            "willing": 262,
+            "not_willing": 270,
+            "willing_pct": 49.2,
+            "not_willing_pct": 50.8
         },
     ];
     function initPartnerWillingAnalysis() {
