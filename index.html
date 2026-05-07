@@ -6592,9 +6592,9 @@ startBriefingAuto();
 <div class="header-subtitle" id="monthlySubtitle" style="margin-bottom: 15px;">Sep 2025 – Feb 2026 Structure (capacity target monthly overview)</div>
 <div class="period-selector" style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
   <span style="font-size: 14px; font-weight: 600; color: #374151; align-self: center;">📅 Period:</span>
-  <button class="period-btn active" id="periodBtn0" onclick="switchPeriod(0)" style="padding: 6px 14px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Sep-25 → Feb-26</button>
+  <button class="period-btn" id="periodBtn0" onclick="switchPeriod(0)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Sep-25 → Feb-26</button>
   <button class="period-btn" id="periodBtn1" onclick="switchPeriod(1)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Oct-25 → Mar-26</button>
-  <button class="period-btn" id="periodBtn2" onclick="switchPeriod(2)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Nov-25 → Apr-26</button>
+  <button class="period-btn active" id="periodBtn2" onclick="switchPeriod(2)" style="padding: 6px 14px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Nov-25 → Apr-26</button>
 </div>
 <div class="month-controls">
 <button class="btn" onclick="changeMonth(-1)"><span>⬅️</span> Prev</button>
@@ -20238,14 +20238,14 @@ if(ovChartDet) {
             totalTarget: [32793, 34006, 34837, 24182, 22453, 19365, 21478, 22341],
             avgScale: [53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3, 35.3],
             perf: {
-                good:    [160, 190, 205, 223, 269, 252, 203, 252],
-                average: [207, 249, 275, 285, 274, 262, 310, 265],
-                bad:     [125, 143, 160, 122, 73, 20, 37, 78]
+                good:    [160, 190, 205, 223, 269, 252, 203, 244],
+                average: [207, 249, 275, 285, 274, 262, 310, 266],
+                bad:     [125, 143, 160, 122, 73, 20, 37, 70]
             },
             size: {
                 big:   [59, 74, 82, 87, 81, 77, 71, 61],
-                mid:   [262, 322, 339, 335, 275, 282, 274, 242],
-                small: [171, 186, 219, 208, 260, 175, 205, 292]
+                mid:   [262, 322, 339, 335, 275, 282, 274, 243],
+                small: [171, 186, 219, 208, 260, 175, 205, 276]
             },
             // Willingness (% of partners with target showing increase in each slab)
             willingPct: {
@@ -20374,7 +20374,7 @@ if(ovChartDet) {
   // Window 0: Sep-Feb (6 months, indices 1-6 of master)
   // Window 1: Oct-Mar (6 months, indices 2-7 of master)
 
-  let currentPeriodIdx = 0;
+  let currentPeriodIdx = 2;
   const PERIOD_SLICES = [
     { start: 1, count: 6, subtitle: 'Sep 2025 – Feb 2026 Structure (capacity target monthly overview)' },
     { start: 2, count: 6, subtitle: 'Oct 2025 – Mar 2026 Structure (capacity target monthly overview)' },
@@ -20437,9 +20437,9 @@ if(ovChartDet) {
   }
 
   // Active period data (initially period 0 = original)
-  let monthlyData = buildMonthlyData(0);
-  let avgScalePerfData = buildAvgScalePerfData(0);
-  let avgScaleSizeData = buildAvgScaleSizeData(0);
+  let monthlyData = buildMonthlyData(2);
+  let avgScalePerfData = buildAvgScalePerfData(2);
+  let avgScaleSizeData = buildAvgScaleSizeData(2);
 
   function switchPeriod(idx) {
     if (idx === currentPeriodIdx) return;
@@ -20526,7 +20526,7 @@ if(ovChartDet) {
     }
   }
   window.switchPeriod = switchPeriod;
-  window._currentPeriodIdx = 0;
+  window._currentPeriodIdx = 2;
 
   function fmtNum(n){
     try { return Number(n).toLocaleString('en-US'); } catch(e){ return String(n); }
