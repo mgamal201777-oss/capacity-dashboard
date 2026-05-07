@@ -8459,7 +8459,7 @@ Shows willingness to increase targets by partner performance reveals which level
 </tr>
 </thead>
 <tbody>
-<tr style="background: #f0f9ff;">
+<tr class="riders-slab-row" data-month-idx="0" style="background: #f0f9ff;">
 <td style="padding: 8px; border: 1px solid #ddd; font-weight: 700;">Sep-25</td>
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">58 <span style="color: #dc2626; font-weight: 600;">↓ (9.4%)</span></td>
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">145 <span style="color: #059669; font-weight: 600;">↑ (23.6%)</span></td>
@@ -8816,6 +8816,21 @@ setTimeout(function() {
         window._rebuildRidersSlabCharts = function(periodIdx) {
             buildRidersTotalChart(periodIdx);
             buildRidersIncDecCharts(periodIdx);
+            // Hide/show rows in the slab table based on period
+            var tableContainer = document.getElementById('ridersTableContainer');
+            if (tableContainer) {
+                var rows = tableContainer.querySelectorAll('tbody tr');
+                // months: Sep=0, Oct=1, Nov=2, Dec=3, Jan=4, Feb=5, Mar=6
+                // Period 0: show Sep-Feb (indices 0-5), Period 1: show Oct-Mar (indices 1-6)
+                var startIdx = periodIdx === 0 ? 0 : 1;
+                rows.forEach(function(row, idx) {
+                    if (idx >= startIdx && idx < startIdx + 6) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
         };
     }
 }, 100);
@@ -15257,6 +15272,60 @@ if(ovChartDet) {
                     }, 500);
                 });
 
+                // Period rebuild hook for movement section
+                window._rebuildMovementCharts = function(periodIdx) {
+                    buildPartnerMovementCharts(currentMovementQuality || 'allPartners');
+                    // Rebuild detail table too
+                    const tbody = document.getElementById('partnerMovementTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        const subtotals = [492, 582, 640, 630, 616, 534, 550];
+                        const pStart = periodIdx === 0 ? 0 : 1;
+                        const pEnd = pStart + 6;
+                        const slicedMonths = partnerMovementData.months.slice(pStart, pEnd);
+                        slicedMonths.forEach((month, sliceIdx) => {
+                            const idx = pStart + sliceIdx;
+                            const bg = sliceIdx % 2 === 0 ? '#f9fafb' : '#ffffff';
+                            let html = '<tr style="background: ' + bg + ';"><td style="padding: 10px; border: 1px solid #e5e7eb; font-weight: 600;">' + month + '</td>';
+                            [partnerMovementData.increase.good[idx], partnerMovementData.increase.average[idx], partnerMovementData.increase.bad[idx]].forEach(function(val, col) {
+                                var pct = ((val / subtotals[idx]) * 100).toFixed(1);
+                                var momColor = '#6b7280', momVal = '—';
+                                if (idx > 0) {
+                                    var prevVal = col === 0 ? partnerMovementData.increase.good[idx-1] : col === 1 ? partnerMovementData.increase.average[idx-1] : partnerMovementData.increase.bad[idx-1];
+                                    var momPct = prevVal === 0 ? (val > 0 ? 100 : 0) : ((val - prevVal) / prevVal * 100);
+                                    momColor = momPct >= 0 ? '#10b981' : '#ef4444';
+                                    momVal = momPct.toFixed(1);
+                                }
+                                html += '<td style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;"><div>' + val + ' (' + pct + '%)</div><div style="font-size:11px;color:' + momColor + ';font-weight:600;">' + (momVal !== '—' ? (parseFloat(momVal) >= 0 ? '+' : '') + momVal + '%' : momVal) + '</div></td>';
+                            });
+                            [partnerMovementData.decrease.good[idx], partnerMovementData.decrease.average[idx], partnerMovementData.decrease.bad[idx]].forEach(function(val, col) {
+                                var pct = ((val / subtotals[idx]) * 100).toFixed(1);
+                                var momColor = '#6b7280', momVal = '—';
+                                if (idx > 0) {
+                                    var prevVal = col === 0 ? partnerMovementData.decrease.good[idx-1] : col === 1 ? partnerMovementData.decrease.average[idx-1] : partnerMovementData.decrease.bad[idx-1];
+                                    var momPct = prevVal === 0 ? (val > 0 ? 100 : 0) : ((val - prevVal) / prevVal * 100);
+                                    momColor = momPct >= 0 ? '#10b981' : '#ef4444';
+                                    momVal = momPct.toFixed(1);
+                                }
+                                html += '<td style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;"><div>' + val + ' (' + pct + '%)</div><div style="font-size:11px;color:' + momColor + ';font-weight:600;">' + (momVal !== '—' ? (parseFloat(momVal) >= 0 ? '+' : '') + momVal + '%' : momVal) + '</div></td>';
+                            });
+                            [partnerMovementData.noChange.good[idx], partnerMovementData.noChange.average[idx], partnerMovementData.noChange.bad[idx]].forEach(function(val, col) {
+                                var pct = ((val / subtotals[idx]) * 100).toFixed(1);
+                                var momColor = '#6b7280', momVal = '—';
+                                if (idx > 0) {
+                                    var prevVal = col === 0 ? partnerMovementData.noChange.good[idx-1] : col === 1 ? partnerMovementData.noChange.average[idx-1] : partnerMovementData.noChange.bad[idx-1];
+                                    var momPct = prevVal === 0 ? (val > 0 ? 100 : 0) : ((val - prevVal) / prevVal * 100);
+                                    momColor = momPct >= 0 ? '#10b981' : '#ef4444';
+                                    momVal = momPct.toFixed(1);
+                                }
+                                html += '<td style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;"><div>' + val + ' (' + pct + '%)</div><div style="font-size:11px;color:' + momColor + ';font-weight:600;">' + (momVal !== '—' ? (parseFloat(momVal) >= 0 ? '+' : '') + momVal + '%' : momVal) + '</div></td>';
+                            });
+                            html += '<td style="padding: 10px; border: 1px solid #e5e7eb; text-align: center; font-weight: 700;">' + subtotals[idx] + '</td></tr>';
+                            tbody.innerHTML += html;
+                        });
+                    }
+                };
+
                 let partnerAgeTrendChart, partnerAgeScaleChart;
                 let selectedAgeCategory = 'all';
 
@@ -19891,10 +19960,18 @@ if(ovChartDet) {
 
         // Period switch rebuild hooks for sections in this script block
         window._rebuildCityWiseCharts = function(periodIdx) {
-            try { initCityWiseSection(); } catch(e) { console.error('Rebuild city-wise failed:', e); }
+            try {
+                // Only rebuild visuals, don't re-attach event listeners
+                buildCityWiseTable();
+                buildCityCharts();
+            } catch(e) { console.error('Rebuild city-wise failed:', e); }
         };
         window._rebuildPartnerAgeCharts = function(periodIdx) {
-            try { initPartnerAgeSection(); } catch(e) { console.error('Rebuild partner-age failed:', e); }
+            try {
+                // Only rebuild visuals, don't re-attach event listeners
+                buildPartnerAgeTable();
+                buildPartnerAgeCharts();
+            } catch(e) { console.error('Rebuild partner-age failed:', e); }
         };
         window._rebuildTierTables = function(periodIdx) {
             try { buildTierTables(); buildTierCharts(); } catch(e) { console.error('Rebuild tier failed:', e); }
@@ -20287,6 +20364,9 @@ if(ovChartDet) {
     }
     if (typeof window._rebuildWillingAnalysis === 'function') {
       try { window._rebuildWillingAnalysis(idx); } catch(e) { console.error('Period switch willing analysis error:', e); }
+    }
+    if (typeof window._rebuildMovementCharts === 'function') {
+      try { window._rebuildMovementCharts(idx); } catch(e) { console.error('Period switch movement error:', e); }
     }
   }
   window.switchPeriod = switchPeriod;
