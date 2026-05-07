@@ -22275,25 +22275,43 @@ if(ovChartDet) {
     if (trend === 'cars') {
       const avgCars = Math.round(totalCars/monthCount);
       container.innerHTML = `
-        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #3b82f6;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #3b82f6;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">🚗 Avg Cars Explained</div>
+                <div>Average monthly <span class="tooltip-highlight">car capacity targets</span> from ${months[0]} to ${months[lastIdx]}.</div>
+                <div class="tooltip-calc">${avgCars.toLocaleString()} = ${totalCars.toLocaleString()} ÷ ${monthCount} months</div>
+            </div>
                     <div style="font-size: 11px; color: #1e40af; font-weight: 600;">🚗 Avg Cars (per month)</div>
           <div style="font-size: 22px; font-weight: 700; color: #1e40af;">${avgCars.toLocaleString()}</div>
           <div style="font-size: 11px; color: #3b82f6;">${((totalCars/grandTotal)*100).toFixed(1)}% of total capacity</div>
                     <div style="font-size: 9px; color: #64748b; margin-top: 2px;">total: ${totalCars.toLocaleString()}</div>
         </div>
-        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #f59e0b;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #f59e0b;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📈 Peak Month</div>
+                <div>Highest monthly car volume: <span class="tooltip-highlight">${cars[maxCarIdx].toLocaleString()}</span> in ${months[maxCarIdx]}.</div>
+            </div>
           <div style="font-size: 11px; color: #92400e; font-weight: 600;">📈 Peak Month</div>
           <div style="font-size: 20px; font-weight: 700; color: #b45309;">${months[maxCarIdx]}</div>
           <div style="font-size: 11px; color: #f59e0b;">${cars[maxCarIdx].toLocaleString()} cars</div>
           <div style="font-size: 9px; color: #64748b; margin-top: 2px;">highest monthly volume</div>
         </div>
-        <div style="background: linear-gradient(135deg, ${parseFloat(carsGrowth) >= 0 ? '#d1fae5' : '#fee2e2'} 0%, ${parseFloat(carsGrowth) >= 0 ? '#a7f3d0' : '#fecaca'} 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid ${parseFloat(carsGrowth) >= 0 ? '#10b981' : '#ef4444'};">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, ${parseFloat(carsGrowth) >= 0 ? '#d1fae5' : '#fee2e2'} 0%, ${parseFloat(carsGrowth) >= 0 ? '#a7f3d0' : '#fecaca'} 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid ${parseFloat(carsGrowth) >= 0 ? '#10b981' : '#ef4444'};">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📊 Cars Growth</div>
+                <div>Change from ${months[0]} to ${months[lastIdx]}: <span class="tooltip-highlight">${cars[0].toLocaleString()} → ${cars[lastIdx].toLocaleString()}</span></div>
+                <div class="tooltip-calc">(${cars[lastIdx].toLocaleString()} - ${cars[0].toLocaleString()}) / ${cars[0].toLocaleString()} × 100 = ${carsGrowth}%</div>
+            </div>
                     <div style="font-size: 11px; color: ${parseFloat(carsGrowth) >= 0 ? '#065f46' : '#991b1b'}; font-weight: 600;">📊 Cars Growth (${months[0]}→${months[lastIdx]})</div>
           <div style="font-size: 20px; font-weight: 700; color: ${parseFloat(carsGrowth) >= 0 ? '#059669' : '#dc2626'};">${parseFloat(carsGrowth) >= 0 ? '+' : ''}${carsGrowth}%</div>
                     <div style="font-size: 11px; color: ${parseFloat(carsGrowth) >= 0 ? '#10b981' : '#ef4444'};">${cars[0].toLocaleString()} → ${cars[lastIdx].toLocaleString()}</div>
           <div style="font-size: 9px; color: #64748b; margin-top: 2px;">avg MoM: ${parseFloat(avgCarsMoM) >= 0 ? '+' : ''}${avgCarsMoM}%</div>
         </div>
-        <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #ef4444;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #ef4444;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📉 Lowest Month</div>
+                <div>Lowest monthly car volume: <span class="tooltip-highlight">${cars[minCarIdx].toLocaleString()}</span> in ${months[minCarIdx]}.</div>
+            </div>
           <div style="font-size: 11px; color: #991b1b; font-weight: 600;">📉 Lowest Month</div>
           <div style="font-size: 20px; font-weight: 700; color: #dc2626;">${months[minCarIdx]}</div>
           <div style="font-size: 11px; color: #ef4444;">${cars[minCarIdx].toLocaleString()} cars</div>
@@ -22303,25 +22321,43 @@ if(ovChartDet) {
     } else if (trend === 'bikes') {
       const avgBikes = Math.round(totalBikes/monthCount);
       container.innerHTML = `
-        <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #10b981;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #10b981;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">🏍️ Avg Bikes Explained</div>
+                <div>Average monthly <span class="tooltip-highlight">bike capacity targets</span> from ${months[0]} to ${months[lastIdx]}.</div>
+                <div class="tooltip-calc">${avgBikes.toLocaleString()} = ${totalBikes.toLocaleString()} ÷ ${monthCount} months</div>
+            </div>
                     <div style="font-size: 11px; color: #065f46; font-weight: 600;">🏍️ Avg Bikes (per month)</div>
           <div style="font-size: 22px; font-weight: 700; color: #065f46;">${avgBikes.toLocaleString()}</div>
           <div style="font-size: 11px; color: #10b981;">${((totalBikes/grandTotal)*100).toFixed(1)}% of total capacity</div>
                     <div style="font-size: 9px; color: #64748b; margin-top: 2px;">total: ${totalBikes.toLocaleString()}</div>
         </div>
-        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #f59e0b;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #f59e0b;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📈 Peak Month</div>
+                <div>Highest monthly bike volume: <span class="tooltip-highlight">${bikes[maxBikeIdx].toLocaleString()}</span> in ${months[maxBikeIdx]}.</div>
+            </div>
           <div style="font-size: 11px; color: #92400e; font-weight: 600;">📈 Peak Month</div>
           <div style="font-size: 20px; font-weight: 700; color: #b45309;">${months[maxBikeIdx]}</div>
           <div style="font-size: 11px; color: #f59e0b;">${bikes[maxBikeIdx].toLocaleString()} bikes</div>
           <div style="font-size: 9px; color: #64748b; margin-top: 2px;">highest monthly volume</div>
         </div>
-        <div style="background: linear-gradient(135deg, ${parseFloat(bikesGrowth) >= 0 ? '#d1fae5' : '#fee2e2'} 0%, ${parseFloat(bikesGrowth) >= 0 ? '#a7f3d0' : '#fecaca'} 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid ${parseFloat(bikesGrowth) >= 0 ? '#10b981' : '#ef4444'};">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, ${parseFloat(bikesGrowth) >= 0 ? '#d1fae5' : '#fee2e2'} 0%, ${parseFloat(bikesGrowth) >= 0 ? '#a7f3d0' : '#fecaca'} 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid ${parseFloat(bikesGrowth) >= 0 ? '#10b981' : '#ef4444'};">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📊 Bikes Growth</div>
+                <div>Change from ${months[0]} to ${months[lastIdx]}: <span class="tooltip-highlight">${bikes[0].toLocaleString()} → ${bikes[lastIdx].toLocaleString()}</span></div>
+                <div class="tooltip-calc">(${bikes[lastIdx].toLocaleString()} - ${bikes[0].toLocaleString()}) / ${bikes[0].toLocaleString()} × 100 = ${bikesGrowth}%</div>
+            </div>
                     <div style="font-size: 11px; color: ${parseFloat(bikesGrowth) >= 0 ? '#065f46' : '#991b1b'}; font-weight: 600;">📊 Bikes Growth (${months[0]}→${months[lastIdx]})</div>
           <div style="font-size: 20px; font-weight: 700; color: ${parseFloat(bikesGrowth) >= 0 ? '#059669' : '#dc2626'};">${parseFloat(bikesGrowth) >= 0 ? '+' : ''}${bikesGrowth}%</div>
                     <div style="font-size: 11px; color: ${parseFloat(bikesGrowth) >= 0 ? '#10b981' : '#ef4444'};">${bikes[0].toLocaleString()} → ${bikes[lastIdx].toLocaleString()}</div>
           <div style="font-size: 9px; color: #64748b; margin-top: 2px;">avg MoM: ${parseFloat(avgBikesMoM) >= 0 ? '+' : ''}${avgBikesMoM}%</div>
         </div>
-        <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #ef4444;">
+        <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #ef4444;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📉 Lowest Month</div>
+                <div>Lowest monthly bike volume: <span class="tooltip-highlight">${bikes[minBikeIdx].toLocaleString()}</span> in ${months[minBikeIdx]}.</div>
+            </div>
           <div style="font-size: 11px; color: #991b1b; font-weight: 600;">📉 Lowest Month</div>
           <div style="font-size: 20px; font-weight: 700; color: #dc2626;">${months[minBikeIdx]}</div>
           <div style="font-size: 11px; color: #ef4444;">${bikes[minBikeIdx].toLocaleString()} bikes</div>
@@ -22340,24 +22376,48 @@ if(ovChartDet) {
       
       container.innerHTML = `
         <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #3b82f6;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">🚗 Avg Cars Explained</div>
+                <div>Average monthly <span class="tooltip-highlight">car-based capacity targets</span> across all cities from ${months[0]} to ${months[lastIdx]}.</div>
+                <div class="tooltip-calc">${avgCars.toLocaleString()} = ${totalCars.toLocaleString()} total ÷ ${monthCount} months</div>
+                <div>Represents <span class="tooltip-highlight">${((totalCars/grandTotal)*100).toFixed(1)}%</span> of total vehicle capacity.</div>
+            </div>
                     <div style="font-size: 11px; color: #1e40af; font-weight: 600;">🚗 Avg Cars (per month)</div>
           <div style="font-size: 22px; font-weight: 700; color: #1e40af;">${avgCars.toLocaleString()}</div>
           <div style="font-size: 11px; color: #3b82f6;">${((totalCars/grandTotal)*100).toFixed(1)}% of total</div>
                     <div style="font-size: 9px; color: #64748b; margin-top: 2px;">total: ${totalCars.toLocaleString()}</div>
         </div>
         <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #10b981;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">🏍️ Avg Bikes Explained</div>
+                <div>Average monthly <span class="tooltip-highlight">bike-based capacity targets</span> across all cities from ${months[0]} to ${months[lastIdx]}.</div>
+                <div class="tooltip-calc">${avgBikes.toLocaleString()} = ${totalBikes.toLocaleString()} total ÷ ${monthCount} months</div>
+                <div>Represents <span class="tooltip-highlight">${((totalBikes/grandTotal)*100).toFixed(1)}%</span> of total vehicle capacity.</div>
+            </div>
                     <div style="font-size: 11px; color: #065f46; font-weight: 600;">🏍️ Avg Bikes (per month)</div>
           <div style="font-size: 22px; font-weight: 700; color: #065f46;">${avgBikes.toLocaleString()}</div>
           <div style="font-size: 11px; color: #10b981;">${((totalBikes/grandTotal)*100).toFixed(1)}% of total</div>
                     <div style="font-size: 9px; color: #64748b; margin-top: 2px;">total: ${totalBikes.toLocaleString()}</div>
         </div>
         <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #f59e0b;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📈 Bikes Share Growth Explained</div>
+                <div><span class="tooltip-highlight">${parseFloat(bikesShareGrowth) >= 0 ? '+' : ''}${bikesShareGrowth}pp Share Change:</span> Bikes' share grew from ${bikesShareStart}% (${months[0]}) to ${bikesShareEnd}% (${months[lastIdx]}).</div>
+                <div class="tooltip-calc">Share: ${bikesShareEnd}% - ${bikesShareStart}% = ${parseFloat(bikesShareGrowth) >= 0 ? '+' : ''}${bikesShareGrowth} percentage points</div>
+                <div><span class="tooltip-highlight">${parseFloat(bikesGrowthVol) >= 0 ? '+' : ''}${bikesGrowthVol}% Volume Change:</span> Bike count went from ${bikes[0].toLocaleString()} (${months[0]}) to ${bikes[lastIdx].toLocaleString()} (${months[lastIdx]}).</div>
+            </div>
                     <div style="font-size: 11px; color: #92400e; font-weight: 600;">📈 Bikes Share Growth (${months[0]}→${months[lastIdx]})</div>
           <div style="font-size: 20px; font-weight: 700; color: #b45309;">${parseFloat(bikesGrowthVol) >= 0 ? '+' : ''}${bikesGrowthVol}% <span style="font-size: 12px; font-weight: 600;">volume</span></div>
           <div style="font-size: 13px; color: #d97706; font-weight: 600;">${parseFloat(bikesShareGrowth) >= 0 ? '+' : ''}${bikesShareGrowth}pp <span style="font-size: 10px; font-weight: 500;">share (${bikesShareStart}%→${bikesShareEnd}%)</span></div>
           <div style="font-size: 9px; color: #64748b; margin-top: 2px;">avg growth/month: ${parseFloat(avgBikesMoM) >= 0 ? '+' : ''}${avgBikesMoM}%</div>
         </div>
         <div class="kpi-tooltip-wrapper" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); padding: 15px; border-radius: 10px; text-align: center; border-left: 4px solid #8b5cf6;">
+            <div class="kpi-tooltip">
+                <div class="tooltip-title">📊 Avg Total Explained</div>
+                <div>Average monthly <span class="tooltip-highlight">total capacity targets (Cars + Bikes)</span> across all 17 cities.</div>
+                <div class="tooltip-calc">${avgTotal.toLocaleString()} = ${grandTotal.toLocaleString()} total ÷ ${monthCount} months</div>
+                <div>Period: <span class="tooltip-highlight">${months[0]} → ${months[lastIdx]}</span></div>
+            </div>
           <div style="font-size: 11px; color: #5b21b6; font-weight: 600;">📊 Avg Total (per month)</div>
           <div style="font-size: 22px; font-weight: 700; color: #6d28d9;">${avgTotal.toLocaleString()}</div>
                     <div style="font-size: 11px; color: #8b5cf6;">${months[0]} - ${months[lastIdx]} 2026</div>
