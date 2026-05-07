@@ -23751,7 +23751,7 @@ if(ovChartDet) {
         if (existing) existing.destroy();
         
         const pIdx = window._currentPeriodIdx || 0;
-        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Oct','Nov','Dec','Jan','Feb','Mar'];
+        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Nov','Dec','Jan','Feb','Mar'];
         const dataWithoutJune = partnerWillingData.filter(d => periodMonths.includes(d.month));
         
         new Chart(ctx, {
@@ -23825,7 +23825,7 @@ if(ovChartDet) {
         if (existing) existing.destroy();
         
         const pIdx = window._currentPeriodIdx || 0;
-        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Oct','Nov','Dec','Jan','Feb','Mar'];
+        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Nov','Dec','Jan','Feb','Mar'];
         const dataWithoutJune = partnerWillingData.filter(d => periodMonths.includes(d.month));
         
         new Chart(ctx, {
@@ -23909,13 +23909,16 @@ if(ovChartDet) {
         const existingGc = Chart.getChart(ctx);
         if (existingGc) existingGc.destroy();
         const pIdx = window._currentPeriodIdx || 0;
-        const sliceStart = pIdx === 0 ? 0 : 1;
-        const months = allMonths.slice(sliceStart, sliceStart + 6);
-        const inc1_10 = allInc1_10.slice(sliceStart, sliceStart + 6);
-        const inc11_20 = allInc11_20.slice(sliceStart, sliceStart + 6);
-        const inc21_30 = allInc21_30.slice(sliceStart, sliceStart + 6);
-        const incGt30 = allIncGt30.slice(sliceStart, sliceStart + 6);
-        const totalIncrease = allTotalIncrease.slice(sliceStart, sliceStart + 6);
+        // Period 0: base=Sep(idx0), show Oct-Feb = indices 1-5 (5 months)
+        // Period 1: base=Oct(idx1), show Nov-Mar = indices 2-6 (5 months)
+        const sliceStart = pIdx === 0 ? 1 : 2;
+        const sliceCount = 5;
+        const months = allMonths.slice(sliceStart, sliceStart + sliceCount);
+        const inc1_10 = allInc1_10.slice(sliceStart, sliceStart + sliceCount);
+        const inc11_20 = allInc11_20.slice(sliceStart, sliceStart + sliceCount);
+        const inc21_30 = allInc21_30.slice(sliceStart, sliceStart + sliceCount);
+        const incGt30 = allIncGt30.slice(sliceStart, sliceStart + sliceCount);
+        const totalIncrease = allTotalIncrease.slice(sliceStart, sliceStart + sliceCount);
         
         new Chart(ctx, {
             type: 'bar',
@@ -24016,13 +24019,16 @@ if(ovChartDet) {
         const existingDc = Chart.getChart(ctx);
         if (existingDc) existingDc.destroy();
         const pIdx = window._currentPeriodIdx || 0;
-        const sliceStart = pIdx === 0 ? 0 : 1;
-        const months = allMonths.slice(sliceStart, sliceStart + 6);
-        const dec1_10 = allDec1_10.slice(sliceStart, sliceStart + 6);
-        const dec11_20 = allDec11_20.slice(sliceStart, sliceStart + 6);
-        const dec21_30 = allDec21_30.slice(sliceStart, sliceStart + 6);
-        const decLt30 = allDecLt30.slice(sliceStart, sliceStart + 6);
-        const totalDecrease = allTotalDecrease.slice(sliceStart, sliceStart + 6);
+        // Period 0: base=Sep(idx0), show Oct-Feb = indices 1-5 (5 months)
+        // Period 1: base=Oct(idx1), show Nov-Mar = indices 2-6 (5 months)
+        const sliceStart = pIdx === 0 ? 1 : 2;
+        const sliceCount = 5;
+        const months = allMonths.slice(sliceStart, sliceStart + sliceCount);
+        const dec1_10 = allDec1_10.slice(sliceStart, sliceStart + sliceCount);
+        const dec11_20 = allDec11_20.slice(sliceStart, sliceStart + sliceCount);
+        const dec21_30 = allDec21_30.slice(sliceStart, sliceStart + sliceCount);
+        const decLt30 = allDecLt30.slice(sliceStart, sliceStart + sliceCount);
+        const totalDecrease = allTotalDecrease.slice(sliceStart, sliceStart + sliceCount);
         
         new Chart(ctx, {
             type: 'bar',
