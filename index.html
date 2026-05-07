@@ -6592,8 +6592,8 @@ startBriefingAuto();
 <div class="header-subtitle" id="monthlySubtitle" style="margin-bottom: 15px;">Sep 2025 – Feb 2026 Structure (capacity target monthly overview)</div>
 <div class="period-selector" style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
   <span style="font-size: 14px; font-weight: 600; color: #374151; align-self: center;">📅 Period:</span>
-  <button class="period-btn active" id="periodBtn0" onclick="switchPeriod(0)" style="padding: 6px 14px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Aug-25 → Feb-26</button>
-  <button class="period-btn" id="periodBtn1" onclick="switchPeriod(1)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Sep-25 → Mar-26</button>
+  <button class="period-btn active" id="periodBtn0" onclick="switchPeriod(0)" style="padding: 6px 14px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Sep-25 → Feb-26</button>
+  <button class="period-btn" id="periodBtn1" onclick="switchPeriod(1)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Oct-25 → Mar-26</button>
 </div>
 <div class="month-controls">
 <button class="btn" onclick="changeMonth(-1)"><span>⬅️</span> Prev</button>
@@ -8515,205 +8515,250 @@ document.getElementById('toggleRidersTable').addEventListener('click', function(
 setTimeout(function() {
     const ridersCanvas = document.getElementById('ridersSlabTrendChart');
     if (ridersCanvas && typeof Chart !== 'undefined') {
-        const existingChart = Chart.getChart(ridersCanvas);
-        if (existingChart) existingChart.destroy();
-        const ridersCtx = ridersCanvas.getContext('2d');
-        const totalChart = new Chart(ridersCtx, {
-            type: 'line',
-            data: {
-                labels: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'],
-                datasets: [
-                    {
-                        label: '≥1-<20',
-                        data: [58, 95, 119, 183, 181, 141],
-                        borderColor: '#dc2626',
-                        backgroundColor: 'rgba(220, 38, 38, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#dc2626',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥20-<30',
-                        data: [145, 158, 193, 182, 156, 160],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#f59e0b',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥30-<50',
-                        data: [176, 201, 221, 181, 172, 156],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#10b981',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥50-<80',
-                        data: [136, 138, 136, 75, 63, 49],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#3b82f6',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥80-<100',
-                        data: [36, 38, 37, 20, 23, 25],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#8b5cf6',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥100-<150',
-                        data: [34, 40, 35, 21, 19, 13],
-                        borderColor: '#ec4899',
-                        backgroundColor: 'rgba(236, 72, 153, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#ec4899',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥150-<200',
-                        data: [14, 13, 14, 8, 7, 6],
-                        borderColor: '#f97316',
-                        backgroundColor: 'rgba(249, 115, 22, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#f97316',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥200-<300',
-                        data: [11, 9, 7, 4, 4, 1],
-                        borderColor: '#06b6d4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#06b6d4',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: '≥300',
-                        data: [5, 5, 5, 0, 0, 0],
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.05)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#6366f1',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            font: { size: 11 },
+        // Master 8-month data (Aug-25 → Mar-26)
+        const ridersMasterLabels = ['Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'];
+        const ridersMasterTotals = [492, 615, 697, 767, 674, 625, 551, 608];
+        const ridersMasterSeries = [
+            { label: '≥1-<20', data: [38, 58, 95, 119, 183, 181, 141, 144], borderColor: '#dc2626', bg: 'rgba(220, 38, 38, 0.05)' },
+            { label: '≥20-<30', data: [80, 145, 158, 193, 182, 156, 160, 174], borderColor: '#f59e0b', bg: 'rgba(245, 158, 11, 0.05)' },
+            { label: '≥30-<50', data: [177, 176, 201, 221, 181, 172, 156, 183], borderColor: '#10b981', bg: 'rgba(16, 185, 129, 0.05)' },
+            { label: '≥50-<80', data: [103, 136, 138, 136, 75, 63, 49, 63], borderColor: '#3b82f6', bg: 'rgba(59, 130, 246, 0.05)' },
+            { label: '≥80-<100', data: [35, 36, 38, 37, 20, 23, 25, 21], borderColor: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.05)' },
+            { label: '≥100-<150', data: [33, 34, 40, 35, 21, 19, 13, 15], borderColor: '#ec4899', bg: 'rgba(236, 72, 153, 0.05)' },
+            { label: '≥150-<200', data: [11, 14, 13, 14, 8, 7, 6, 5], borderColor: '#f97316', bg: 'rgba(249, 115, 22, 0.05)' },
+            { label: '≥200-<300', data: [11, 11, 9, 7, 4, 4, 1, 3], borderColor: '#06b6d4', bg: 'rgba(6, 182, 212, 0.05)' },
+            { label: '≥300', data: [4, 5, 5, 5, 0, 0, 0, 0], borderColor: '#6366f1', bg: 'rgba(99, 102, 241, 0.05)' }
+        ];
+
+        // Increased master data (Aug-25 → Mar-26)
+        const ridersIncMasterSeries = [
+            { label: '≥1-<20', data: [266, 171, 238, 282, 85, 200, 139, 268] },
+            { label: '≥20-<30', data: [41, 99, 47, 64, 21, 8, 12, 32] },
+            { label: '≥30-<50', data: [16, 77, 43, 31, 12, 3, 1, 10] },
+            { label: '≥50-<80', data: [8, 26, 11, 8, 2, 1, 1, 2] },
+            { label: '≥80-<100', data: [1, 4, 0, 0, 0, 0, 0, 0] },
+            { label: '≥100-<150', data: [3, 3, 2, 1, 0, 0, 0, 0] },
+            { label: '≥150-<200', data: [0, 1, 0, 0, 0, 0, 0, 0] },
+            { label: '≥200-<300', data: [0, 0, 0, 0, 0, 0, 0, 0] },
+            { label: '≥300', data: [0, 0, 0, 0, 0, 0, 0, 0] }
+        ];
+
+        // Decreased master data (Aug-25 → Mar-26)
+        const ridersDecMasterSeries = [
+            { label: '<0 & >-20', data: [97, 88, 127, 145, 317, 221, 255, 117] },
+            { label: '≤-20 & >-30', data: [7, 17, 17, 22, 65, 11, 19, 8] },
+            { label: '≤-30 & >-50', data: [8, 12, 10, 9, 41, 6, 6, 4] },
+            { label: '≤-50 & >-80', data: [3, 2, 4, 9, 21, 0, 3, 1] },
+            { label: '≤-80 & >-100', data: [0, 2, 0, 1, 6, 1, 1, 0] },
+            { label: '≤-100 & >-150', data: [0, 2, 1, 1, 4, 1, 0, 0] },
+            { label: '≤-150 & >-200', data: [1, 0, 0, 1, 2, 0, 0, 0] },
+            { label: '≤-200 & >-300', data: [0, 0, 1, 0, 1, 0, 0, 0] },
+            { label: '≤-300', data: [2, 1, 2, 0, 1, 0, 0, 0] }
+        ];
+
+        const RIDERS_PERIOD_SLICES = [
+            { start: 1, count: 6 },
+            { start: 2, count: 6 }
+        ];
+
+        function buildRidersTotalChart(periodIdx) {
+            const s = RIDERS_PERIOD_SLICES[periodIdx];
+            const labels = ridersMasterLabels.slice(s.start, s.start + s.count);
+            const totals = ridersMasterTotals.slice(s.start, s.start + s.count);
+
+            const existingChart = Chart.getChart(ridersCanvas);
+            if (existingChart) existingChart.destroy();
+
+            const datasets = ridersMasterSeries.map(series => ({
+                label: series.label,
+                data: series.data.slice(s.start, s.start + s.count),
+                borderColor: series.borderColor,
+                backgroundColor: series.bg,
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: series.borderColor,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }));
+
+            const totalChart = new Chart(ridersCanvas.getContext('2d'), {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { font: { size: 11 }, padding: 10, boxWidth: 12, usePointStyle: true }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
                             padding: 10,
-                            boxWidth: 12,
-                            usePointStyle: true
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1f2937',
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 10,
-                        displayColors: true,
-                        callbacks: {
-                            label: function(context) {
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const monthIndex = context.dataIndex;
+                                    const value = context.parsed.y || 0;
+                                    const pct = totals[monthIndex] ? ((value / totals[monthIndex]) * 100).toFixed(1) : '0.0';
+                                    return `${context.dataset.label}: ${value} (${pct}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: function(context) { return context.dataset.borderColor; },
+                            font: { size: 9, weight: 'bold' },
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 2,
+                            clamp: true,
+                            clip: false,
+                            formatter: function(value, context) {
                                 const monthIndex = context.dataIndex;
-                                const totals = [615, 697, 767, 674, 625, 551];
-                                const value = context.parsed.y || 0;
-                                const pct = totals[monthIndex] ? ((value / totals[monthIndex]) * 100).toFixed(1) : '0.0';
-                                return `${context.dataset.label}: ${value} (${pct}%)`;
+                                const pct = ((value / totals[monthIndex]) * 100).toFixed(1);
+                                return value + '\n(' + pct + '%)';
                             }
                         }
                     },
-                    datalabels: {
-                        display: true,
-                        color: function(context) {
-                            return context.dataset.borderColor;
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { font: { size: 11 } },
+                            title: { display: true, text: 'Number of Partners', font: { size: 12, weight: 'bold' } }
                         },
-                        font: { size: 9, weight: 'bold' },
-                        anchor: 'end',
-                        align: 'top',
-                        offset: 2,
-                        clamp: true,
-                        clip: false,
-                        formatter: function(value, context) {
-                            const monthIndex = context.dataIndex;
-                            const totals = [615, 697, 767, 674, 625, 551];
-                            const pct = ((value / totals[monthIndex]) * 100).toFixed(1);
-                            return value + '\n(' + pct + '%)';
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { font: { size: 11 } },
-                        title: {
-                            display: true,
-                            text: 'Number of Partners',
-                            font: { size: 12, weight: 'bold' }
-                        }
-                    },
-                    x: {
-                        ticks: { font: { size: 11 } },
-                        title: {
-                            display: true,
-                            text: 'Month',
-                            font: { size: 12, weight: 'bold' }
+                        x: {
+                            ticks: { font: { size: 11 } },
+                            title: { display: true, text: 'Month', font: { size: 12, weight: 'bold' } }
                         }
                     }
                 }
+            });
+            window.ridersSlabCharts = window.ridersSlabCharts || {};
+            window.ridersSlabCharts.total = totalChart;
+        }
+
+        // Build increased/decreased charts with period slicing
+        function buildRidersIncDecCharts(periodIdx) {
+            const s = RIDERS_PERIOD_SLICES[periodIdx];
+            const labels = ridersMasterLabels.slice(s.start, s.start + s.count);
+            const colors = ['#dc2626', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#06b6d4', '#6366f1'];
+
+            // Build increased chart
+            const incCanvas = document.getElementById('ridersSlabIncreasedChart');
+            if (incCanvas) {
+                const existingInc = Chart.getChart(incCanvas);
+                if (existingInc) existingInc.destroy();
+                const incTotals = [];
+                for (let mi = 0; mi < s.count; mi++) {
+                    let sum = 0;
+                    ridersIncMasterSeries.forEach(ser => { sum += ser.data[s.start + mi]; });
+                    incTotals.push(sum);
+                }
+                const incDatasets = ridersIncMasterSeries.map((ser, i) => ({
+                    label: ser.label,
+                    data: ser.data.slice(s.start, s.start + s.count),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: colors[i % colors.length],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }));
+                const incChart = new Chart(incCanvas.getContext('2d'), {
+                    type: 'line',
+                    data: { labels, datasets: incDatasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { font: { size: 11 }, padding: 10, boxWidth: 12, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10, displayColors: true,
+                                callbacks: { label: function(ctx) { const idx = ctx.dataIndex; const total = incTotals[idx] || 0; const value = ctx.parsed.y || 0; const pct = total ? ((value / total) * 100).toFixed(1) : '0.0'; return `${ctx.dataset.label}: ${value} (${pct}%)`; } }
+                            },
+                            datalabels: { display: true, color: function(ctx) { return ctx.dataset.borderColor; }, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, clamp: true, clip: false,
+                                formatter: function(value, ctx) { const idx = ctx.dataIndex; const total = incTotals[idx] || 0; const val = Number.isFinite(Number(value)) ? Number(value) : 0; const pct = total ? ((val / total) * 100).toFixed(1) : '0.0'; return val + '\n(' + pct + '%)'; }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { font: { size: 11 } }, title: { display: true, text: 'Number of Partners', font: { size: 12, weight: 'bold' } } },
+                            x: { ticks: { font: { size: 11 } }, title: { display: true, text: 'Month', font: { size: 12, weight: 'bold' } } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+                window.ridersSlabCharts = window.ridersSlabCharts || {};
+                window.ridersSlabCharts.increased = incChart;
             }
-        });
-        window.ridersSlabCharts = window.ridersSlabCharts || {};
-        window.ridersSlabCharts.total = totalChart;
+
+            // Build decreased chart
+            const decCanvas = document.getElementById('ridersSlabDecreasedChart');
+            if (decCanvas) {
+                const existingDec = Chart.getChart(decCanvas);
+                if (existingDec) existingDec.destroy();
+                const decTotals = [];
+                for (let mi = 0; mi < s.count; mi++) {
+                    let sum = 0;
+                    ridersDecMasterSeries.forEach(ser => { sum += ser.data[s.start + mi]; });
+                    decTotals.push(sum);
+                }
+                const decDatasets = ridersDecMasterSeries.map((ser, i) => ({
+                    label: ser.label,
+                    data: ser.data.slice(s.start, s.start + s.count),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: colors[i % colors.length],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }));
+                const decChart = new Chart(decCanvas.getContext('2d'), {
+                    type: 'line',
+                    data: { labels, datasets: decDatasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { font: { size: 11 }, padding: 10, boxWidth: 12, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10, displayColors: true,
+                                callbacks: { label: function(ctx) { const idx = ctx.dataIndex; const total = decTotals[idx] || 0; const value = ctx.parsed.y || 0; const pct = total ? ((value / total) * 100).toFixed(1) : '0.0'; return `${ctx.dataset.label}: ${value} (${pct}%)`; } }
+                            },
+                            datalabels: { display: true, color: function(ctx) { return ctx.dataset.borderColor; }, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, clamp: true, clip: false,
+                                formatter: function(value, ctx) { const idx = ctx.dataIndex; const total = decTotals[idx] || 0; const val = Number.isFinite(Number(value)) ? Number(value) : 0; const pct = total ? ((val / total) * 100).toFixed(1) : '0.0'; return val + '\n(' + pct + '%)'; }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { font: { size: 11 } }, title: { display: true, text: 'Number of Partners', font: { size: 12, weight: 'bold' } } },
+                            x: { ticks: { font: { size: 11 } }, title: { display: true, text: 'Month', font: { size: 12, weight: 'bold' } } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+                window.ridersSlabCharts = window.ridersSlabCharts || {};
+                window.ridersSlabCharts.decreased = decChart;
+            }
+        }
+
+        // Initial build
+        buildRidersTotalChart(window._currentPeriodIdx || 0);
+        buildRidersIncDecCharts(window._currentPeriodIdx || 0);
+
+        // Expose rebuild function for period switching
+        window._rebuildRidersSlabCharts = function(periodIdx) {
+            buildRidersTotalChart(periodIdx);
+            buildRidersIncDecCharts(periodIdx);
+        };
     }
 }, 100);
 
@@ -8837,15 +8882,8 @@ setTimeout(function() {
         });
     }
 
+    // Inc/Dec charts are now built by the period-aware block above — skip table-based rebuilding
     const colors = ['#dc2626', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#06b6d4', '#6366f1'];
-    const incTable = document.querySelector('#increasedTableContainer table');
-    const decTable = document.querySelector('#decreasedTableContainer table');
-    const incParsed = parseSlabTable(incTable);
-    const decParsed = parseSlabTable(decTable);
-
-    window.ridersSlabCharts = window.ridersSlabCharts || {};
-    window.ridersSlabCharts.increased = buildSlabChart('ridersSlabIncreasedChart', incParsed, colors);
-    window.ridersSlabCharts.decreased = buildSlabChart('ridersSlabDecreasedChart', decParsed, colors);
 
     const buttons = Array.from(document.querySelectorAll('.slab-slicer-btn[data-target="ridersSlab"]'));
     function apply(view) {
@@ -13420,7 +13458,12 @@ if(ovChartDet) {
                 }
 
                 function buildTierTables() {
-                    const months = tierCityData.months;
+                    // Period-based slicing: 7 months (Sep=0,...,Mar=6)
+                    // Period 0: indices 0-5, Period 1: indices 1-6
+                    const pIdx = window._currentPeriodIdx || 0;
+                    const tierSliceStart = pIdx === 0 ? 0 : 1;
+                    const tierMonthIndices = Array.from({length: 6}, (_, i) => tierSliceStart + i);
+                    const months = tierMonthIndices.map(i => tierCityData.months[i]);
                     const rows = [];
                     const overviewTable = document.getElementById('tierOverviewTable');
                     const perfTable = document.getElementById('tierPerfTable');
@@ -13452,19 +13495,21 @@ if(ovChartDet) {
                         + '<th style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">Weighted Avg Scale</th>'
                         + '</tr></thead><tbody>';
 
-                    // Correct weighted avg scale values for each month
-                    const weightedAvgScaleValues = [53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3];
+                    // Correct weighted avg scale values for each month (7 months master)
+                    const weightedAvgScaleValuesMaster = [53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3];
+                    const weightedAvgScaleValues = tierMonthIndices.map(idx => weightedAvgScaleValuesMaster[idx]);
                     const totalTargetValues = [], totalActiveValues = [], totalWithValues = [];
                     let totalT1Target = 0, totalT2Target = 0, totalT1Active = 0, totalT2Active = 0, totalT1With = 0, totalT2With = 0, totalT1AvgScale = 0, totalT2AvgScale = 0;
                     months.forEach((m, i) => {
-                        const t1Target = tierCityData.t1.target[i];
-                        const t2Target = tierCityData.t2.target[i];
-                        const t1Active = tierCityData.t1.active[i];
-                        const t2Active = tierCityData.t2.active[i];
-                        const t1With = tierCityData.t1.withTarget[i];
-                        const t2With = tierCityData.t2.withTarget[i];
-                        const t1Avg = tierCityData.t1.avgScale[i];
-                        const t2Avg = tierCityData.t2.avgScale[i];
+                        const di = tierMonthIndices[i]; // data index into tierCityData arrays
+                        const t1Target = tierCityData.t1.target[di];
+                        const t2Target = tierCityData.t2.target[di];
+                        const t1Active = tierCityData.t1.active[di];
+                        const t2Active = tierCityData.t2.active[di];
+                        const t1With = tierCityData.t1.withTarget[di];
+                        const t2With = tierCityData.t2.withTarget[di];
+                        const t1Avg = tierCityData.t1.avgScale[di];
+                        const t2Avg = tierCityData.t2.avgScale[di];
                         const totalTarget = t1Target + t2Target;
                         const totalActive = t1Active + t2Active;
                         const totalWith = t1With + t2With;
@@ -13482,16 +13527,18 @@ if(ovChartDet) {
                             + `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:600;white-space:nowrap;max-width:70px;">${m}</td>`;
                         
                         if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
-                            rowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1Target)} (${tierPct(t1Target,totalTarget).toFixed(1)}%)${tierDeltaHtml(t1Target, i>0 ? tierCityData.t1.target[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1Active)} (${tierPct(t1Active,totalActive).toFixed(1)}%)${tierDeltaHtml(t1Active, i>0 ? tierCityData.t1.active[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1With)} (${tierPct(t1With,totalWith).toFixed(1)}%)${tierDeltaHtml(t1With, i>0 ? tierCityData.t1.withTarget[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${t1Avg.toFixed(1)}${tierDeltaHtml(t1Avg, i>0 ? tierCityData.t1.avgScale[i-1] : null)}</td>`;
+                            const prevDi = i > 0 ? tierMonthIndices[i-1] : -1;
+                            rowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1Target)} (${tierPct(t1Target,totalTarget).toFixed(1)}%)${tierDeltaHtml(t1Target, prevDi>=0 ? tierCityData.t1.target[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1Active)} (${tierPct(t1Active,totalActive).toFixed(1)}%)${tierDeltaHtml(t1Active, prevDi>=0 ? tierCityData.t1.active[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t1With)} (${tierPct(t1With,totalWith).toFixed(1)}%)${tierDeltaHtml(t1With, prevDi>=0 ? tierCityData.t1.withTarget[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${t1Avg.toFixed(1)}${tierDeltaHtml(t1Avg, prevDi>=0 ? tierCityData.t1.avgScale[prevDi] : null)}</td>`;
                         }
                         if (tierFilterSelected === 'both' || tierFilterSelected === 't2') {
-                            rowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2Target)} (${tierPct(t2Target,totalTarget).toFixed(1)}%)${tierDeltaHtml(t2Target, i>0 ? tierCityData.t2.target[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2Active)} (${tierPct(t2Active,totalActive).toFixed(1)}%)${tierDeltaHtml(t2Active, i>0 ? tierCityData.t2.active[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2With)} (${tierPct(t2With,totalWith).toFixed(1)}%)${tierDeltaHtml(t2With, i>0 ? tierCityData.t2.withTarget[i-1] : null)}</td>`
-                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${t2Avg.toFixed(1)}${tierDeltaHtml(t2Avg, i>0 ? tierCityData.t2.avgScale[i-1] : null)}</td>`;
+                            const prevDi = i > 0 ? tierMonthIndices[i-1] : -1;
+                            rowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2Target)} (${tierPct(t2Target,totalTarget).toFixed(1)}%)${tierDeltaHtml(t2Target, prevDi>=0 ? tierCityData.t2.target[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2Active)} (${tierPct(t2Active,totalActive).toFixed(1)}%)${tierDeltaHtml(t2Active, prevDi>=0 ? tierCityData.t2.active[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${tierFmtNum(t2With)} (${tierPct(t2With,totalWith).toFixed(1)}%)${tierDeltaHtml(t2With, prevDi>=0 ? tierCityData.t2.withTarget[prevDi] : null)}</td>`
+                                + `<td style="padding:8px;border:1px solid #e5e7eb;white-space:nowrap;">${t2Avg.toFixed(1)}${tierDeltaHtml(t2Avg, prevDi>=0 ? tierCityData.t2.avgScale[prevDi] : null)}</td>`;
                         }
                         
                         rowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;white-space:nowrap;">${tierFmtNum(totalTarget)} (100%)${tierDeltaHtml(totalTarget, i>0 ? totalTargetValues[i-1] : null)}</td>`
@@ -13518,11 +13565,12 @@ if(ovChartDet) {
                     // Calculate weighted average scale dynamically
                     let sumWeightedAvg = 0;
                     months.forEach((m, i) => {
-                        const t1w = tierCityData.t1.withTarget[i];
-                        const t2w = tierCityData.t2.withTarget[i];
+                        const di2 = tierMonthIndices[i];
+                        const t1w = tierCityData.t1.withTarget[di2];
+                        const t2w = tierCityData.t2.withTarget[di2];
                         const totalW = t1w + t2w;
                         if (totalW > 0) {
-                            sumWeightedAvg += (t1w * tierCityData.t1.avgScale[i] + t2w * tierCityData.t2.avgScale[i]) / totalW;
+                            sumWeightedAvg += (t1w * tierCityData.t1.avgScale[di2] + t2w * tierCityData.t2.avgScale[di2]) / totalW;
                         }
                     });
                     const totalWeightedAvg = sumWeightedAvg / countMonths;
@@ -13530,16 +13578,18 @@ if(ovChartDet) {
                     // Calculate totals for Total columns
                     let sumTotalTarget = 0, sumTotalActive = 0, sumTotalWith = 0;
                     months.forEach((m, i) => {
-                        sumTotalTarget += tierCityData.t1.target[i] + tierCityData.t2.target[i];
-                        sumTotalActive += tierCityData.t1.active[i] + tierCityData.t2.active[i];
-                        sumTotalWith += tierCityData.t1.withTarget[i] + tierCityData.t2.withTarget[i];
+                        const di3 = tierMonthIndices[i];
+                        sumTotalTarget += tierCityData.t1.target[di3] + tierCityData.t2.target[di3];
+                        sumTotalActive += tierCityData.t1.active[di3] + tierCityData.t2.active[di3];
+                        sumTotalWith += tierCityData.t1.withTarget[di3] + tierCityData.t2.withTarget[di3];
                     });
                     const avgTotalTarget = sumTotalTarget / countMonths;
                     const avgTotalActive = sumTotalActive / countMonths;
                     const avgTotalWith = sumTotalWith / countMonths;
 
+                    const avgLabel = months.length >= 2 ? `Avg ${months[0].split('-')[0]}–${months[months.length-1].split('-')[0]}` : 'Average';
                     let avgRowHtml = `<tr style="background:#e0f2fe;font-weight:700;">
-                        <td style="padding:8px;border:1px solid #e5e7eb;max-width:70px;">Avg Sep–Feb</td>`;
+                        <td style="padding:8px;border:1px solid #e5e7eb;max-width:70px;">${avgLabel}</td>`;
                     
                     if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
                         avgRowHtml += `<td style="padding:8px;border:1px solid #e5e7eb;word-wrap:break-word;overflow-wrap:break-word;">${tierFmtNum(avgT1Target.toFixed(0))} (${tierPct(avgT1Target,totalTargetAll).toFixed(1)}%)</td>`
@@ -13584,8 +13634,9 @@ if(ovChartDet) {
                         let sumT1G = 0, sumT1A = 0, sumT1B = 0;
                         let sumT2G = 0, sumT2A = 0, sumT2B = 0;
                         months.forEach((m, i) => {
-                            const tg = tierCityData.perf.t1.good[i], ta = tierCityData.perf.t1.average[i], tb = tierCityData.perf.t1.bad[i];
-                            const t2g = tierCityData.perf.t2.good[i], t2a = tierCityData.perf.t2.average[i], t2b = tierCityData.perf.t2.bad[i];
+                            const pdi = tierMonthIndices[i];
+                            const tg = tierCityData.perf.t1.good[pdi], ta = tierCityData.perf.t1.average[pdi], tb = tierCityData.perf.t1.bad[pdi];
+                            const t2g = tierCityData.perf.t2.good[pdi], t2a = tierCityData.perf.t2.average[pdi], t2b = tierCityData.perf.t2.bad[pdi];
                             const t1Total = tg + ta + tb;
                             const t2Total = t2g + t2a + t2b;
                             const combined = t1Total + t2Total;
@@ -13595,19 +13646,20 @@ if(ovChartDet) {
                             const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
                             h += `<tr style="background:${bg};">
                                 <td style="padding:8px;border:1px solid #e5e7eb;font-weight:600;">${m}</td>`;
+                            const prevPdi = i > 0 ? tierMonthIndices[i-1] : -1;
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(tg)} (${tierPct(tg,t1Total).toFixed(1)}%)${tierDeltaHtml(tg, i>0 ? tierCityData.perf.t1.good[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(ta)} (${tierPct(ta,t1Total).toFixed(1)}%)${tierDeltaHtml(ta, i>0 ? tierCityData.perf.t1.average[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(tb)} (${tierPct(tb,t1Total).toFixed(1)}%)${tierDeltaHtml(tb, i>0 ? tierCityData.perf.t1.bad[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, i>0 ? (tierCityData.perf.t1.good[i-1] + tierCityData.perf.t1.average[i-1] + tierCityData.perf.t1.bad[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(tg)} (${tierPct(tg,t1Total).toFixed(1)}%)${tierDeltaHtml(tg, prevPdi>=0 ? tierCityData.perf.t1.good[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(ta)} (${tierPct(ta,t1Total).toFixed(1)}%)${tierDeltaHtml(ta, prevPdi>=0 ? tierCityData.perf.t1.average[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(tb)} (${tierPct(tb,t1Total).toFixed(1)}%)${tierDeltaHtml(tb, prevPdi>=0 ? tierCityData.perf.t1.bad[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, prevPdi>=0 ? (tierCityData.perf.t1.good[prevPdi] + tierCityData.perf.t1.average[prevPdi] + tierCityData.perf.t1.bad[prevPdi]) : null)}</td>`;
                             }
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't2') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2g)} (${tierPct(t2g,t2Total).toFixed(1)}%)${tierDeltaHtml(t2g, i>0 ? tierCityData.perf.t2.good[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2a)} (${tierPct(t2a,t2Total).toFixed(1)}%)${tierDeltaHtml(t2a, i>0 ? tierCityData.perf.t2.average[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2b)} (${tierPct(t2b,t2Total).toFixed(1)}%)${tierDeltaHtml(t2b, i>0 ? tierCityData.perf.t2.bad[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, i>0 ? (tierCityData.perf.t2.good[i-1] + tierCityData.perf.t2.average[i-1] + tierCityData.perf.t2.bad[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2g)} (${tierPct(t2g,t2Total).toFixed(1)}%)${tierDeltaHtml(t2g, prevPdi>=0 ? tierCityData.perf.t2.good[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2a)} (${tierPct(t2a,t2Total).toFixed(1)}%)${tierDeltaHtml(t2a, prevPdi>=0 ? tierCityData.perf.t2.average[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(t2b)} (${tierPct(t2b,t2Total).toFixed(1)}%)${tierDeltaHtml(t2b, prevPdi>=0 ? tierCityData.perf.t2.bad[prevPdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, prevPdi>=0 ? (tierCityData.perf.t2.good[prevPdi] + tierCityData.perf.t2.average[prevPdi] + tierCityData.perf.t2.bad[prevPdi]) : null)}</td>`;
                             }
-                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, i>0 ? ((tierCityData.perf.t1.good[i-1] + tierCityData.perf.t1.average[i-1] + tierCityData.perf.t1.bad[i-1]) + (tierCityData.perf.t2.good[i-1] + tierCityData.perf.t2.average[i-1] + tierCityData.perf.t2.bad[i-1])) : null)}</td>
+                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, prevPdi>=0 ? ((tierCityData.perf.t1.good[prevPdi] + tierCityData.perf.t1.average[prevPdi] + tierCityData.perf.t1.bad[prevPdi]) + (tierCityData.perf.t2.good[prevPdi] + tierCityData.perf.t2.average[prevPdi] + tierCityData.perf.t2.bad[prevPdi])) : null)}</td>
                             </tr>`;
                         });
                     const countMonths = months.length;
@@ -13617,7 +13669,7 @@ if(ovChartDet) {
                     const avgT2G = sumT2G / countMonths, avgT2A = sumT2A / countMonths, avgT2B = sumT2B / countMonths;
                     const totalCombined = avgT1 + avgT2;
                     h += `<tr style="background:#e0f2fe;font-weight:700;">
-                        <td style="padding:8px;border:1px solid #e5e7eb;">Avg Sep–Feb</td>`;
+                        <td style="padding:8px;border:1px solid #e5e7eb;">${avgLabel}</td>`;
                     if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
                         h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgT1G.toFixed(0))} (${tierPct(avgT1G,avgT1).toFixed(1)}%)</td>
                         <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgT1A.toFixed(0))} (${tierPct(avgT1A,avgT1).toFixed(1)}%)</td>
@@ -13657,8 +13709,9 @@ if(ovChartDet) {
                         let sumB1 = 0, sumM1 = 0, sumS1 = 0;
                         let sumB2 = 0, sumM2 = 0, sumS2 = 0;
                         months.forEach((m, i) => {
-                            const b1 = tierCityData.size.t1.big[i], m1 = tierCityData.size.t1.mid[i], s1 = tierCityData.size.t1.small[i];
-                            const b2 = tierCityData.size.t2.big[i], m2 = tierCityData.size.t2.mid[i], s2 = tierCityData.size.t2.small[i];
+                            const sdi = tierMonthIndices[i];
+                            const b1 = tierCityData.size.t1.big[sdi], m1 = tierCityData.size.t1.mid[sdi], s1 = tierCityData.size.t1.small[sdi];
+                            const b2 = tierCityData.size.t2.big[sdi], m2 = tierCityData.size.t2.mid[sdi], s2 = tierCityData.size.t2.small[sdi];
                             const t1Total = b1 + m1 + s1;
                             const t2Total = b2 + m2 + s2;
                             const combined = t1Total + t2Total;
@@ -13666,21 +13719,22 @@ if(ovChartDet) {
                             sumB1 += b1; sumM1 += m1; sumS1 += s1;
                             sumB2 += b2; sumM2 += m2; sumS2 += s2;
                             const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
+                            const prevSdi = i > 0 ? tierMonthIndices[i-1] : -1;
                             h += `<tr style="background:${bg};">
                                 <td style="padding:8px;border:1px solid #e5e7eb;font-weight:600;">${m}</td>`;
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, i>0 ? tierCityData.size.t1.big[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m1)} (${tierPct(m1,t1Total).toFixed(1)}%)${tierDeltaHtml(m1, i>0 ? tierCityData.size.t1.mid[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s1)} (${tierPct(s1,t1Total).toFixed(1)}%)${tierDeltaHtml(s1, i>0 ? tierCityData.size.t1.small[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, i>0 ? (tierCityData.size.t1.big[i-1] + tierCityData.size.t1.mid[i-1] + tierCityData.size.t1.small[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, prevSdi>=0 ? tierCityData.size.t1.big[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m1)} (${tierPct(m1,t1Total).toFixed(1)}%)${tierDeltaHtml(m1, prevSdi>=0 ? tierCityData.size.t1.mid[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s1)} (${tierPct(s1,t1Total).toFixed(1)}%)${tierDeltaHtml(s1, prevSdi>=0 ? tierCityData.size.t1.small[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, prevSdi>=0 ? (tierCityData.size.t1.big[prevSdi] + tierCityData.size.t1.mid[prevSdi] + tierCityData.size.t1.small[prevSdi]) : null)}</td>`;
                             }
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't2') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, i>0 ? tierCityData.size.t2.big[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m2)} (${tierPct(m2,t2Total).toFixed(1)}%)${tierDeltaHtml(m2, i>0 ? tierCityData.size.t2.mid[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s2)} (${tierPct(s2,t2Total).toFixed(1)}%)${tierDeltaHtml(s2, i>0 ? tierCityData.size.t2.small[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, i>0 ? (tierCityData.size.t2.big[i-1] + tierCityData.size.t2.mid[i-1] + tierCityData.size.t2.small[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, prevSdi>=0 ? tierCityData.size.t2.big[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m2)} (${tierPct(m2,t2Total).toFixed(1)}%)${tierDeltaHtml(m2, prevSdi>=0 ? tierCityData.size.t2.mid[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s2)} (${tierPct(s2,t2Total).toFixed(1)}%)${tierDeltaHtml(s2, prevSdi>=0 ? tierCityData.size.t2.small[prevSdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, prevSdi>=0 ? (tierCityData.size.t2.big[prevSdi] + tierCityData.size.t2.mid[prevSdi] + tierCityData.size.t2.small[prevSdi]) : null)}</td>`;
                             }
-                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, i>0 ? ((tierCityData.size.t1.big[i-1] + tierCityData.size.t1.mid[i-1] + tierCityData.size.t1.small[i-1]) + (tierCityData.size.t2.big[i-1] + tierCityData.size.t2.mid[i-1] + tierCityData.size.t2.small[i-1])) : null)}</td>
+                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, prevSdi>=0 ? ((tierCityData.size.t1.big[prevSdi] + tierCityData.size.t1.mid[prevSdi] + tierCityData.size.t1.small[prevSdi]) + (tierCityData.size.t2.big[prevSdi] + tierCityData.size.t2.mid[prevSdi] + tierCityData.size.t2.small[prevSdi])) : null)}</td>
                             </tr>`;
                         });
                     const countMonths = months.length;
@@ -13690,7 +13744,7 @@ if(ovChartDet) {
                     const avgB2 = sumB2 / countMonths, avgM2 = sumM2 / countMonths, avgS2 = sumS2 / countMonths;
                     const totalCombined = avgT1 + avgT2;
                     h += `<tr style="background:#e0f2fe;font-weight:700;">
-                        <td style="padding:8px;border:1px solid #e5e7eb;">Avg Sep–Feb</td>`;
+                        <td style="padding:8px;border:1px solid #e5e7eb;">${avgLabel}</td>`;
                     if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
                         h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgB1.toFixed(0))} (${tierPct(avgB1,avgT1).toFixed(1)}%)</td>
                         <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgM1.toFixed(0))} (${tierPct(avgM1,avgT1).toFixed(1)}%)</td>
@@ -13730,8 +13784,9 @@ if(ovChartDet) {
                         let sumG1 = 0, sumA1 = 0, sumB1 = 0;
                         let sumG2 = 0, sumA2 = 0, sumB2 = 0;
                         months.forEach((m, i) => {
-                            const g1 = tierCityData.targetPerf.t1.good[i], a1 = tierCityData.targetPerf.t1.average[i], b1 = tierCityData.targetPerf.t1.bad[i];
-                            const g2 = tierCityData.targetPerf.t2.good[i], a2 = tierCityData.targetPerf.t2.average[i], b2 = tierCityData.targetPerf.t2.bad[i];
+                            const tpdi = tierMonthIndices[i];
+                            const g1 = tierCityData.targetPerf.t1.good[tpdi], a1 = tierCityData.targetPerf.t1.average[tpdi], b1 = tierCityData.targetPerf.t1.bad[tpdi];
+                            const g2 = tierCityData.targetPerf.t2.good[tpdi], a2 = tierCityData.targetPerf.t2.average[tpdi], b2 = tierCityData.targetPerf.t2.bad[tpdi];
                             const t1Total = g1 + a1 + b1;
                             const t2Total = g2 + a2 + b2;
                             const combined = t1Total + t2Total;
@@ -13739,21 +13794,22 @@ if(ovChartDet) {
                             sumG1 += g1; sumA1 += a1; sumB1 += b1;
                             sumG2 += g2; sumA2 += a2; sumB2 += b2;
                             const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
+                            const prevTpdi = i > 0 ? tierMonthIndices[i-1] : -1;
                             h += `<tr style="background:${bg};">
                                 <td style="padding:8px;border:1px solid #e5e7eb;font-weight:600;">${m}</td>`;
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(g1)} (${tierPct(g1,t1Total).toFixed(1)}%)${tierDeltaHtml(g1, i>0 ? tierCityData.targetPerf.t1.good[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(a1)} (${tierPct(a1,t1Total).toFixed(1)}%)${tierDeltaHtml(a1, i>0 ? tierCityData.targetPerf.t1.average[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, i>0 ? tierCityData.targetPerf.t1.bad[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, i>0 ? (tierCityData.targetPerf.t1.good[i-1] + tierCityData.targetPerf.t1.average[i-1] + tierCityData.targetPerf.t1.bad[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(g1)} (${tierPct(g1,t1Total).toFixed(1)}%)${tierDeltaHtml(g1, prevTpdi>=0 ? tierCityData.targetPerf.t1.good[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(a1)} (${tierPct(a1,t1Total).toFixed(1)}%)${tierDeltaHtml(a1, prevTpdi>=0 ? tierCityData.targetPerf.t1.average[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, prevTpdi>=0 ? tierCityData.targetPerf.t1.bad[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, prevTpdi>=0 ? (tierCityData.targetPerf.t1.good[prevTpdi] + tierCityData.targetPerf.t1.average[prevTpdi] + tierCityData.targetPerf.t1.bad[prevTpdi]) : null)}</td>`;
                             }
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't2') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(g2)} (${tierPct(g2,t2Total).toFixed(1)}%)${tierDeltaHtml(g2, i>0 ? tierCityData.targetPerf.t2.good[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(a2)} (${tierPct(a2,t2Total).toFixed(1)}%)${tierDeltaHtml(a2, i>0 ? tierCityData.targetPerf.t2.average[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, i>0 ? tierCityData.targetPerf.t2.bad[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, i>0 ? (tierCityData.targetPerf.t2.good[i-1] + tierCityData.targetPerf.t2.average[i-1] + tierCityData.targetPerf.t2.bad[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(g2)} (${tierPct(g2,t2Total).toFixed(1)}%)${tierDeltaHtml(g2, prevTpdi>=0 ? tierCityData.targetPerf.t2.good[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(a2)} (${tierPct(a2,t2Total).toFixed(1)}%)${tierDeltaHtml(a2, prevTpdi>=0 ? tierCityData.targetPerf.t2.average[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, prevTpdi>=0 ? tierCityData.targetPerf.t2.bad[prevTpdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, prevTpdi>=0 ? (tierCityData.targetPerf.t2.good[prevTpdi] + tierCityData.targetPerf.t2.average[prevTpdi] + tierCityData.targetPerf.t2.bad[prevTpdi]) : null)}</td>`;
                             }
-                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, i>0 ? ((tierCityData.targetPerf.t1.good[i-1] + tierCityData.targetPerf.t1.average[i-1] + tierCityData.targetPerf.t1.bad[i-1]) + (tierCityData.targetPerf.t2.good[i-1] + tierCityData.targetPerf.t2.average[i-1] + tierCityData.targetPerf.t2.bad[i-1])) : null)}</td>
+                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, prevTpdi>=0 ? ((tierCityData.targetPerf.t1.good[prevTpdi] + tierCityData.targetPerf.t1.average[prevTpdi] + tierCityData.targetPerf.t1.bad[prevTpdi]) + (tierCityData.targetPerf.t2.good[prevTpdi] + tierCityData.targetPerf.t2.average[prevTpdi] + tierCityData.targetPerf.t2.bad[prevTpdi])) : null)}</td>
                             </tr>`;
                         });
                     const countMonths = months.length;
@@ -13763,7 +13819,7 @@ if(ovChartDet) {
                     const avgG2 = sumG2 / countMonths, avgA2 = sumA2 / countMonths, avgB2 = sumB2 / countMonths;
                     const totalCombined = avgT1 + avgT2;
                     h += `<tr style="background:#e0f2fe;font-weight:700;">
-                        <td style="padding:8px;border:1px solid #e5e7eb;">Avg Sep–Feb</td>`;
+                        <td style="padding:8px;border:1px solid #e5e7eb;">${avgLabel}</td>`;
                     if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
                         h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgG1.toFixed(0))} (${tierPct(avgG1,avgT1).toFixed(1)}%)</td>
                         <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgA1.toFixed(0))} (${tierPct(avgA1,avgT1).toFixed(1)}%)</td>
@@ -13803,8 +13859,9 @@ if(ovChartDet) {
                         let sumB1 = 0, sumM1 = 0, sumS1 = 0;
                         let sumB2 = 0, sumM2 = 0, sumS2 = 0;
                         months.forEach((m, i) => {
-                            const b1 = tierCityData.targetSize.t1.big[i], m1 = tierCityData.targetSize.t1.mid[i], s1 = tierCityData.targetSize.t1.small[i];
-                            const b2 = tierCityData.targetSize.t2.big[i], m2 = tierCityData.targetSize.t2.mid[i], s2 = tierCityData.targetSize.t2.small[i];
+                            const tsdi = tierMonthIndices[i];
+                            const b1 = tierCityData.targetSize.t1.big[tsdi], m1 = tierCityData.targetSize.t1.mid[tsdi], s1 = tierCityData.targetSize.t1.small[tsdi];
+                            const b2 = tierCityData.targetSize.t2.big[tsdi], m2 = tierCityData.targetSize.t2.mid[tsdi], s2 = tierCityData.targetSize.t2.small[tsdi];
                             const t1Total = b1 + m1 + s1;
                             const t2Total = b2 + m2 + s2;
                             const combined = t1Total + t2Total;
@@ -13812,21 +13869,22 @@ if(ovChartDet) {
                             sumB1 += b1; sumM1 += m1; sumS1 += s1;
                             sumB2 += b2; sumM2 += m2; sumS2 += s2;
                             const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
+                            const prevTsdi = i > 0 ? tierMonthIndices[i-1] : -1;
                             h += `<tr style="background:${bg};">
                                 <td style="padding:8px;border:1px solid #e5e7eb;font-weight:600;">${m}</td>`;
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, i>0 ? tierCityData.targetSize.t1.big[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m1)} (${tierPct(m1,t1Total).toFixed(1)}%)${tierDeltaHtml(m1, i>0 ? tierCityData.targetSize.t1.mid[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s1)} (${tierPct(s1,t1Total).toFixed(1)}%)${tierDeltaHtml(s1, i>0 ? tierCityData.targetSize.t1.small[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, i>0 ? (tierCityData.targetSize.t1.big[i-1] + tierCityData.targetSize.t1.mid[i-1] + tierCityData.targetSize.t1.small[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b1)} (${tierPct(b1,t1Total).toFixed(1)}%)${tierDeltaHtml(b1, prevTsdi>=0 ? tierCityData.targetSize.t1.big[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m1)} (${tierPct(m1,t1Total).toFixed(1)}%)${tierDeltaHtml(m1, prevTsdi>=0 ? tierCityData.targetSize.t1.mid[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s1)} (${tierPct(s1,t1Total).toFixed(1)}%)${tierDeltaHtml(s1, prevTsdi>=0 ? tierCityData.targetSize.t1.small[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t1Total)} (100%)${tierDeltaHtml(t1Total, prevTsdi>=0 ? (tierCityData.targetSize.t1.big[prevTsdi] + tierCityData.targetSize.t1.mid[prevTsdi] + tierCityData.targetSize.t1.small[prevTsdi]) : null)}</td>`;
                             }
                             if (tierFilterSelected === 'both' || tierFilterSelected === 't2') {
-                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, i>0 ? tierCityData.targetSize.t2.big[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m2)} (${tierPct(m2,t2Total).toFixed(1)}%)${tierDeltaHtml(m2, i>0 ? tierCityData.targetSize.t2.mid[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s2)} (${tierPct(s2,t2Total).toFixed(1)}%)${tierDeltaHtml(s2, i>0 ? tierCityData.targetSize.t2.small[i-1] : null)}</td>
-                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, i>0 ? (tierCityData.targetSize.t2.big[i-1] + tierCityData.targetSize.t2.mid[i-1] + tierCityData.targetSize.t2.small[i-1]) : null)}</td>`;
+                                h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(b2)} (${tierPct(b2,t2Total).toFixed(1)}%)${tierDeltaHtml(b2, prevTsdi>=0 ? tierCityData.targetSize.t2.big[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(m2)} (${tierPct(m2,t2Total).toFixed(1)}%)${tierDeltaHtml(m2, prevTsdi>=0 ? tierCityData.targetSize.t2.mid[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(s2)} (${tierPct(s2,t2Total).toFixed(1)}%)${tierDeltaHtml(s2, prevTsdi>=0 ? tierCityData.targetSize.t2.small[prevTsdi] : null)}</td>
+                                <td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(t2Total)} (100%)${tierDeltaHtml(t2Total, prevTsdi>=0 ? (tierCityData.targetSize.t2.big[prevTsdi] + tierCityData.targetSize.t2.mid[prevTsdi] + tierCityData.targetSize.t2.small[prevTsdi]) : null)}</td>`;
                             }
-                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, i>0 ? ((tierCityData.targetSize.t1.big[i-1] + tierCityData.targetSize.t1.mid[i-1] + tierCityData.targetSize.t1.small[i-1]) + (tierCityData.targetSize.t2.big[i-1] + tierCityData.targetSize.t2.mid[i-1] + tierCityData.targetSize.t2.small[i-1])) : null)}</td>
+                            h += `<td style="padding:8px;border:1px solid #e5e7eb;font-weight:700;">${tierFmtNum(combined)} (100%)${tierDeltaHtml(combined, prevTsdi>=0 ? ((tierCityData.targetSize.t1.big[prevTsdi] + tierCityData.targetSize.t1.mid[prevTsdi] + tierCityData.targetSize.t1.small[prevTsdi]) + (tierCityData.targetSize.t2.big[prevTsdi] + tierCityData.targetSize.t2.mid[prevTsdi] + tierCityData.targetSize.t2.small[prevTsdi])) : null)}</td>
                             </tr>`;
                         });
                     const countMonths = months.length;
@@ -13836,7 +13894,7 @@ if(ovChartDet) {
                     const avgB2 = sumB2 / countMonths, avgM2 = sumM2 / countMonths, avgS2 = sumS2 / countMonths;
                     const totalCombined = avgT1 + avgT2;
                     h += `<tr style="background:#e0f2fe;font-weight:700;">
-                        <td style="padding:8px;border:1px solid #e5e7eb;">Avg Sep–Feb</td>`;
+                        <td style="padding:8px;border:1px solid #e5e7eb;">${avgLabel}</td>`;
                     if (tierFilterSelected === 'both' || tierFilterSelected === 't1') {
                         h += `<td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgB1.toFixed(0))} (${tierPct(avgB1,avgT1).toFixed(1)}%)</td>
                         <td style="padding:8px;border:1px solid #e5e7eb;">${tierFmtNum(avgM1.toFixed(0))} (${tierPct(avgM1,avgT1).toFixed(1)}%)</td>
@@ -13862,13 +13920,17 @@ if(ovChartDet) {
 
                 let tierTargetChart, tierPartnersChart;
                 function buildTierCharts() {
-                    const months = tierCityData.months;
-                    let t1Target = tierFilterSelected === 't2' ? [] : tierCityData.t1.target;
-                    let t2Target = tierFilterSelected === 't1' ? [] : tierCityData.t2.target;
+                    // Period-based slicing for charts (7 months: Sep=0,...,Mar=6)
+                    const tcPIdx = window._currentPeriodIdx || 0;
+                    const tcSliceStart = tcPIdx === 0 ? 0 : 1;
+                    const tcIndices = Array.from({length: 6}, (_, i) => tcSliceStart + i);
+                    const months = tcIndices.map(i => tierCityData.months[i]);
+                    let t1Target = tierFilterSelected === 't2' ? [] : tcIndices.map(i => tierCityData.t1.target[i]);
+                    let t2Target = tierFilterSelected === 't1' ? [] : tcIndices.map(i => tierCityData.t2.target[i]);
                     let totalTarget = months.map((_, i) => (t1Target[i] || 0) + (t2Target[i] || 0));
 
-                    let t1With = tierFilterSelected === 't2' ? [] : tierCityData.t1.withTarget;
-                    let t2With = tierFilterSelected === 't1' ? [] : tierCityData.t2.withTarget;
+                    let t1With = tierFilterSelected === 't2' ? [] : tcIndices.map(i => tierCityData.t1.withTarget[i]);
+                    let t2With = tierFilterSelected === 't1' ? [] : tcIndices.map(i => tierCityData.t2.withTarget[i]);
                     let totalWith = months.map((_, i) => (t1With[i] || 0) + (t2With[i] || 0));
 
                     const targetCtx = document.getElementById('tierTargetChart');
@@ -14234,8 +14296,13 @@ if(ovChartDet) {
                     if (cityPartnersChart) cityPartnersChart.destroy();
                     if (cityCombinedTrendChart) cityCombinedTrendChart.destroy();
                     
-                    // If monthIndices not provided, use all months
-                    if (!monthIndices) monthIndices = Array.from({length: cityWiseData.months.length}, (_, i) => i);
+                    // If monthIndices not provided, use period-based default (7 months: Sep=0,...,Mar=6)
+                    // Period 0: indices 0-5 (Sep→Feb), Period 1: indices 1-6 (Oct→Mar)
+                    if (!monthIndices) {
+                        const pIdx = window._currentPeriodIdx || 0;
+                        const citySliceStart = pIdx === 0 ? 0 : 1;
+                        monthIndices = Array.from({length: 6}, (_, i) => citySliceStart + i);
+                    }
                     
                     const monthLabels = monthIndices.map(i => cityWiseData.months[i]);
                     
@@ -15120,7 +15187,13 @@ if(ovChartDet) {
                     const table = document.getElementById('partnerAgeTable');
                     if (!table) return;
                     
-                    const displayMonths = monthIndices || Array.from({length: partnerAgeData.months.length}, (_, i) => partnerAgeData.months.length - 1 - i);
+                    // Period-based default: 7 months (Sep=0,...,Mar=6)
+                    if (!monthIndices) {
+                        const pIdx = window._currentPeriodIdx || 0;
+                        const ageSliceStart = pIdx === 0 ? 0 : 1;
+                        monthIndices = Array.from({length: 6}, (_, i) => ageSliceStart + i);
+                    }
+                    const displayMonths = monthIndices;
                     const categoriesToShow = categoryFilter === 'all' ? partnerAgeData.categories : [categoryFilter];
 
                     const getArrow = (key) => {
@@ -15338,7 +15411,13 @@ if(ovChartDet) {
                     if (partnerAgeTrendChart) partnerAgeTrendChart.destroy();
                     if (partnerAgeScaleChart) partnerAgeScaleChart.destroy();
 
-                    if (!monthIndices) monthIndices = Array.from({length: partnerAgeData.months.length}, (_, i) => i);
+                    // Period-based default: 7 months (Sep=0,...,Mar=6)
+                    // Period 0: indices 0-5, Period 1: indices 1-6
+                    if (!monthIndices) {
+                        const pIdx = window._currentPeriodIdx || 0;
+                        const ageSliceStart = pIdx === 0 ? 0 : 1;
+                        monthIndices = Array.from({length: 6}, (_, i) => ageSliceStart + i);
+                    }
 
                     const selectedMonths = monthIndices.map(i => partnerAgeData.months[i]);
                     const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd'];
@@ -19731,6 +19810,17 @@ if(ovChartDet) {
             // Tier city (T1 vs T2) tables and charts
             try { initTierCitySection(); } catch(e) { console.error('Tier city section failed', e); }
         };
+
+        // Period switch rebuild hooks for sections in this script block
+        window._rebuildCityWiseCharts = function(periodIdx) {
+            try { initCityWiseSection(); } catch(e) { console.error('Rebuild city-wise failed:', e); }
+        };
+        window._rebuildPartnerAgeCharts = function(periodIdx) {
+            try { initPartnerAgeSection(); } catch(e) { console.error('Rebuild partner-age failed:', e); }
+        };
+        window._rebuildTierTables = function(periodIdx) {
+            try { buildTierTables(); buildTierCharts(); } catch(e) { console.error('Rebuild tier failed:', e); }
+        };
     
 
         // Adjustment Analysis Charts
@@ -20099,8 +20189,30 @@ if(ovChartDet) {
     // Re-init charts and view
     try { initMonthlyCharts(); } catch(e) { console.error('Period switch chart init error:', e); }
     try { updateMonthlyView(sel ? sel.value : monthlyData.months[monthlyData.months.length - 1]); } catch(e) { console.error('Period switch view update error:', e); }
+
+    // Broadcast period change to all other sections
+    window._currentPeriodIdx = idx;
+    if (typeof window._rebuildRidersSlabCharts === 'function') {
+      try { window._rebuildRidersSlabCharts(idx); } catch(e) { console.error('Period switch riders slab error:', e); }
+    }
+    if (typeof window._rebuildVehicleMonthlyCharts === 'function') {
+      try { window._rebuildVehicleMonthlyCharts(idx); } catch(e) { console.error('Period switch vehicle monthly error:', e); }
+    }
+    if (typeof window._rebuildCityWiseCharts === 'function') {
+      try { window._rebuildCityWiseCharts(idx); } catch(e) { console.error('Period switch city-wise error:', e); }
+    }
+    if (typeof window._rebuildPartnerAgeCharts === 'function') {
+      try { window._rebuildPartnerAgeCharts(idx); } catch(e) { console.error('Period switch partner-age error:', e); }
+    }
+    if (typeof window._rebuildTierTables === 'function') {
+      try { window._rebuildTierTables(idx); } catch(e) { console.error('Period switch tier tables error:', e); }
+    }
+    if (typeof window._rebuildWillingAnalysis === 'function') {
+      try { window._rebuildWillingAnalysis(idx); } catch(e) { console.error('Period switch willing analysis error:', e); }
+    }
   }
   window.switchPeriod = switchPeriod;
+  window._currentPeriodIdx = 0;
 
   function fmtNum(n){
     try { return Number(n).toLocaleString('en-US'); } catch(e){ return String(n); }
@@ -21311,12 +21423,20 @@ if(ovChartDet) {
             setAvgScaleView('size', 'trend');
         }
 
-    // Monthly Willing vs Not-Willing Partners
+    // Monthly Willing vs Not-Willing Partners - 7-month master (Oct=0,...,Mar=5... wait no. Actually Oct→Mar = 6 months)
+    // Keep willing charts showing all available data (Oct→Mar) regardless of period since willing analysis has its own baseline logic
     const willingCanvas = document.getElementById('willingVsNotWillingChart');
     if (willingCanvas) {
-      const willingMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
-      const willingPartners = [213, 259, 81, 201, 130, 262];
-      const notWillingPartners = [356, 381, 554, 413, 398, 270];
+      const willingMasterMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const willingMasterPartners = [213, 259, 81, 201, 130, 262];
+      const notWillingMasterPartners = [356, 381, 554, 413, 398, 270];
+      // Period 0 (Sep→Feb): show Oct, Nov, Dec, Jan, Feb = indices 0-4 (5 months)
+      // Period 1 (Oct→Mar): show all 6 months
+      const wSliceStart = 0;
+      const wSliceCount = currentPeriodIdx === 0 ? 5 : 6;
+      const willingMonths = willingMasterMonths.slice(wSliceStart, wSliceStart + wSliceCount);
+      const willingPartners = willingMasterPartners.slice(wSliceStart, wSliceStart + wSliceCount);
+      const notWillingPartners = notWillingMasterPartners.slice(wSliceStart, wSliceStart + wSliceCount);
 
       m_willingVsNotWilling = new Chart(willingCanvas.getContext('2d'), {
         type: 'bar',
@@ -21361,12 +21481,16 @@ if(ovChartDet) {
       });
     }
 
-    // Partner Willingness Trend (%)
+    // Partner Willingness Trend (%) - same slicing as willing bar chart
     const trendCanvas = document.getElementById('willingnessTrendChart');
     if (trendCanvas) {
-      const trendMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
-      const willingPct = [37.4, 40.5, 12.8, 32.7, 24.6, 49.2];
-      const notWillingPct = [62.6, 59.5, 87.2, 67.3, 75.4, 50.8];
+      const trendMasterMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const masterWillingPct = [37.4, 40.5, 12.8, 32.7, 24.6, 49.2];
+      const masterNotWillingPct = [62.6, 59.5, 87.2, 67.3, 75.4, 50.8];
+      const wtSliceCount = currentPeriodIdx === 0 ? 5 : 6;
+      const trendMonths = trendMasterMonths.slice(0, wtSliceCount);
+      const willingPct = masterWillingPct.slice(0, wtSliceCount);
+      const notWillingPct = masterNotWillingPct.slice(0, wtSliceCount);
 
       m_willingnessTrend = new Chart(trendCanvas.getContext('2d'), {
         type: 'line',
@@ -21424,15 +21548,23 @@ if(ovChartDet) {
       });
     }
 
-    // Growth Category Breakdown (Increase Slabs)
+    // Growth Category Breakdown (Increase Slabs) - 7-month master (Sep=0,...,Mar=6), sliced by period
     const gcCanvas = document.getElementById('growthCategoryChart');
     if (gcCanvas) {
-      const gcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
-      const gc1_10 = [42, 60, 73, 22, 79, 46, 79];
-      const gc10_20 = [63, 60, 75, 23, 58, 52, 72];
-      const gc20_30 = [40, 29, 31, 11, 28, 16, 28];
-      const gc30plus = [54, 64, 80, 25, 36, 16, 83];
-      const gcTotal = [199, 213, 259, 81, 201, 130, 262];
+      const gcMasterMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const gcMaster1_10 = [42, 60, 73, 22, 79, 46, 79];
+      const gcMaster10_20 = [63, 60, 75, 23, 58, 52, 72];
+      const gcMaster20_30 = [40, 29, 31, 11, 28, 16, 28];
+      const gcMaster30plus = [54, 64, 80, 25, 36, 16, 83];
+      const gcMasterTotal = [199, 213, 259, 81, 201, 130, 262];
+      // Period 0: indices 0-5 (Sep→Feb), Period 1: indices 1-6 (Oct→Mar)
+      const gcSliceStart = currentPeriodIdx === 0 ? 0 : 1;
+      const gcMonths = gcMasterMonths.slice(gcSliceStart, gcSliceStart + 6);
+      const gc1_10 = gcMaster1_10.slice(gcSliceStart, gcSliceStart + 6);
+      const gc10_20 = gcMaster10_20.slice(gcSliceStart, gcSliceStart + 6);
+      const gc20_30 = gcMaster20_30.slice(gcSliceStart, gcSliceStart + 6);
+      const gc30plus = gcMaster30plus.slice(gcSliceStart, gcSliceStart + 6);
+      const gcTotal = gcMasterTotal.slice(gcSliceStart, gcSliceStart + 6);
 
       m_growthCategory = new Chart(gcCanvas.getContext('2d'), {
         type: 'bar',
@@ -21536,15 +21668,23 @@ if(ovChartDet) {
       });
     }
 
-    // Growth Category Breakdown (Decrease Slabs)
+    // Growth Category Breakdown (Decrease Slabs) - 7-month master (Sep=0,...,Mar=6), sliced by period
     const dcCanvas = document.getElementById('decreaseCategoryChart');
     if (dcCanvas) {
-      const dcMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
-      const dc1_10 = [17, 39, 40, 52, 64, 84, 59];
-      const dc10_20 = [38, 56, 64, 108, 77, 98, 30];
-      const dc20_30 = [21, 26, 43, 83, 42, 50, 21];
-      const dc30plus = [48, 40, 41, 215, 56, 52, 20];
-      const dcTotal = [124, 161, 188, 458, 239, 284, 130];
+      const dcMasterMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+      const dcMaster1_10 = [17, 39, 40, 52, 64, 84, 59];
+      const dcMaster10_20 = [38, 56, 64, 108, 77, 98, 30];
+      const dcMaster20_30 = [21, 26, 43, 83, 42, 50, 21];
+      const dcMaster30plus = [48, 40, 41, 215, 56, 52, 20];
+      const dcMasterTotal = [124, 161, 188, 458, 239, 284, 130];
+      // Period 0: indices 0-5 (Sep→Feb), Period 1: indices 1-6 (Oct→Mar)
+      const dcSliceStart = currentPeriodIdx === 0 ? 0 : 1;
+      const dcMonths = dcMasterMonths.slice(dcSliceStart, dcSliceStart + 6);
+      const dc1_10 = dcMaster1_10.slice(dcSliceStart, dcSliceStart + 6);
+      const dc10_20 = dcMaster10_20.slice(dcSliceStart, dcSliceStart + 6);
+      const dc20_30 = dcMaster20_30.slice(dcSliceStart, dcSliceStart + 6);
+      const dc30plus = dcMaster30plus.slice(dcSliceStart, dcSliceStart + 6);
+      const dcTotal = dcMasterTotal.slice(dcSliceStart, dcSliceStart + 6);
 
       m_decreaseCategory = new Chart(dcCanvas.getContext('2d'), {
         type: 'bar',
@@ -21701,15 +21841,27 @@ if(ovChartDet) {
 // VEHICLE TYPE MONTHLY INSIGHTS SECTION
 // ==========================================
 (function() {
-  // Vehicle Type Monthly Data
-  const vehicleMonthlyData = {
-        months: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
-        cars: [27599, 28372, 28257, 18845, 17441, 14443],
-        bikes: [5194, 5634, 6580, 5337, 5012, 4922],
-    // Percentages pre-calculated
-        carsPct: [84.2, 83.4, 81.1, 77.9, 77.7, 74.6],
-        bikesPct: [15.8, 16.6, 18.9, 22.1, 22.3, 25.4]
+  // Vehicle Type Monthly Data - Master 8 months (Aug-25 → Mar-26)
+  const vehicleMasterData = {
+        months: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+        cars: [24968, 27599, 28372, 28257, 18845, 17441, 14443, 16308],
+        bikes: [3317, 5194, 5634, 6580, 5337, 5012, 4922, 5170]
   };
+  const VEHICLE_PERIOD_SLICES = [
+    { start: 1, count: 6 },
+    { start: 2, count: 6 }
+  ];
+  function buildVehicleMonthlyData(periodIdx) {
+    const s = VEHICLE_PERIOD_SLICES[periodIdx];
+    const months = vehicleMasterData.months.slice(s.start, s.start + s.count);
+    const cars = vehicleMasterData.cars.slice(s.start, s.start + s.count);
+    const bikes = vehicleMasterData.bikes.slice(s.start, s.start + s.count);
+    const totals = cars.map((c, i) => c + bikes[i]);
+    const carsPct = cars.map((c, i) => parseFloat(((c / totals[i]) * 100).toFixed(1)));
+    const bikesPct = bikes.map((b, i) => parseFloat(((b / totals[i]) * 100).toFixed(1)));
+    return { months, cars, bikes, carsPct, bikesPct };
+  }
+  let vehicleMonthlyData = buildVehicleMonthlyData(window._currentPeriodIdx || 0);
 
   // City-level data
   const cityVehicleData = {
@@ -21751,9 +21903,9 @@ if(ovChartDet) {
       const ctx = chart.ctx;
       const labels = chart.data.labels;
       
-      // Check if this is a monthly chart (labels are EXACTLY the month names)
-            const monthLabels = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
-            const isMonthlyChart = labels && labels.length === 6 && 
+      // Check if this is a monthly chart (labels are EXACTLY the month names from vehicleMonthlyData)
+            const monthLabels = vehicleMonthlyData.months;
+            const isMonthlyChart = labels && labels.length === monthLabels.length && 
         JSON.stringify(labels) === JSON.stringify(monthLabels);
       
       chart.data.datasets.forEach((dataset, i) => {
@@ -23289,6 +23441,17 @@ if(ovChartDet) {
     renderVehicleDataTable();
   }
 
+  // Rebuild vehicle monthly charts on period switch
+  window._rebuildVehicleMonthlyCharts = function(periodIdx) {
+    vehicleMonthlyData = buildVehicleMonthlyData(periodIdx);
+    // Also update city data slicing
+    if (typeof buildCityVehicleSlicedData === 'function') buildCityVehicleSlicedData(periodIdx);
+    try { renderVehicleMonthlyChart(); } catch(e) { console.error('Vehicle monthly chart rebuild error:', e); }
+    try { updateVehicleMonthlyKpiCards(currentVehicleMonthlyTrend); } catch(e) {}
+    try { renderVehicleDataTable(); } catch(e) {}
+    // Also update the vehicleTrendLabelsPlugin monthLabels reference
+  };
+
   // Expose functions globally
   window.switchVehicleMonthlyView = switchVehicleMonthlyView;
   window.filterVehicleCityLevel = filterVehicleCityLevel;
@@ -23367,8 +23530,9 @@ if(ovChartDet) {
             createWillingnessTrendChart();
             createGrowthCategoryChart();
             createDecreaseCategoryChart();
-            createAvgScalePerfChart();
-            createAvgScaleSizeChart();
+            // avgScalePerf and avgScaleSize are handled by the IIFE period-aware section
+            // createAvgScalePerfChart();
+            // createAvgScaleSizeChart();
 } catch (error) {
             console.error('Error initializing partner willing analysis:', error);
         }
@@ -23380,8 +23544,12 @@ if(ovChartDet) {
             console.log('willingVsNotWillingChart canvas not found');
             return;
         }
+        const existing = Chart.getChart(ctx);
+        if (existing) existing.destroy();
         
-        const dataWithoutJune = partnerWillingData.filter(d => d.month !== 'Sep');
+        const pIdx = window._currentPeriodIdx || 0;
+        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Oct','Nov','Dec','Jan','Feb','Mar'];
+        const dataWithoutJune = partnerWillingData.filter(d => periodMonths.includes(d.month));
         
         new Chart(ctx, {
             type: 'bar',
@@ -23450,8 +23618,12 @@ if(ovChartDet) {
             console.log('willingnessTrendChart canvas not found');
             return;
         }
+        const existing = Chart.getChart(ctx);
+        if (existing) existing.destroy();
         
-        const dataWithoutJune = partnerWillingData.filter(d => d.month !== 'Sep');
+        const pIdx = window._currentPeriodIdx || 0;
+        const periodMonths = pIdx === 0 ? ['Oct','Nov','Dec','Jan','Feb'] : ['Oct','Nov','Dec','Jan','Feb','Mar'];
+        const dataWithoutJune = partnerWillingData.filter(d => periodMonths.includes(d.month));
         
         new Chart(ctx, {
             type: 'line',
@@ -23525,12 +23697,22 @@ if(ovChartDet) {
             return;
         }
         
-        const months = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-        const inc1_10 = [42, 60, 73, 22, 79, 46];
-        const inc11_20 = [63, 60, 75, 23, 58, 52];
-        const inc21_30 = [40, 29, 31, 11, 28, 16];
-        const incGt30 = [54, 64, 80, 25, 36, 16];
-        const totalIncrease = [199, 213, 259, 81, 201, 130];
+        const allMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+        const allInc1_10 = [42, 60, 73, 22, 79, 46, 79];
+        const allInc11_20 = [63, 60, 75, 23, 58, 52, 72];
+        const allInc21_30 = [40, 29, 31, 11, 28, 16, 28];
+        const allIncGt30 = [54, 64, 80, 25, 36, 16, 83];
+        const allTotalIncrease = [199, 213, 259, 81, 201, 130, 262];
+        const existingGc = Chart.getChart(ctx);
+        if (existingGc) existingGc.destroy();
+        const pIdx = window._currentPeriodIdx || 0;
+        const sliceStart = pIdx === 0 ? 0 : 1;
+        const months = allMonths.slice(sliceStart, sliceStart + 6);
+        const inc1_10 = allInc1_10.slice(sliceStart, sliceStart + 6);
+        const inc11_20 = allInc11_20.slice(sliceStart, sliceStart + 6);
+        const inc21_30 = allInc21_30.slice(sliceStart, sliceStart + 6);
+        const incGt30 = allIncGt30.slice(sliceStart, sliceStart + 6);
+        const totalIncrease = allTotalIncrease.slice(sliceStart, sliceStart + 6);
         
         new Chart(ctx, {
             type: 'bar',
@@ -23622,12 +23804,22 @@ if(ovChartDet) {
             return;
         }
         
-        const months = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'];
-        const dec1_10 = [17, 39, 40, 52, 64, 84];
-        const dec11_20 = [38, 56, 64, 108, 77, 98];
-        const dec21_30 = [21, 26, 43, 83, 42, 50];
-        const decLt30 = [48, 40, 41, 215, 56, 52];
-        const totalDecrease = [124, 161, 188, 458, 239, 284];
+        const allMonths = ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
+        const allDec1_10 = [17, 39, 40, 52, 64, 84, 59];
+        const allDec11_20 = [38, 56, 64, 108, 77, 98, 30];
+        const allDec21_30 = [21, 26, 43, 83, 42, 50, 21];
+        const allDecLt30 = [48, 40, 41, 215, 56, 52, 20];
+        const allTotalDecrease = [124, 161, 188, 458, 239, 284, 130];
+        const existingDc = Chart.getChart(ctx);
+        if (existingDc) existingDc.destroy();
+        const pIdx = window._currentPeriodIdx || 0;
+        const sliceStart = pIdx === 0 ? 0 : 1;
+        const months = allMonths.slice(sliceStart, sliceStart + 6);
+        const dec1_10 = allDec1_10.slice(sliceStart, sliceStart + 6);
+        const dec11_20 = allDec11_20.slice(sliceStart, sliceStart + 6);
+        const dec21_30 = allDec21_30.slice(sliceStart, sliceStart + 6);
+        const decLt30 = allDecLt30.slice(sliceStart, sliceStart + 6);
+        const totalDecrease = allTotalDecrease.slice(sliceStart, sliceStart + 6);
         
         new Chart(ctx, {
             type: 'bar',
@@ -23930,6 +24122,11 @@ if(ovChartDet) {
             }
         };
     }
+
+    // Period switch rebuild hook for willing analysis
+    window._rebuildWillingAnalysis = function(periodIdx) {
+        try { initPartnerWillingAnalysis(); } catch(e) { console.error('Rebuild willing analysis failed:', e); }
+    };
 
     
     // Top Movers Data and Functions
