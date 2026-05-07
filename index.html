@@ -6966,7 +6966,8 @@ startBriefingAuto();
     <option value="Nov">Nov-25</option>
     <option value="Dec">Dec-25</option>
     <option value="Jan">Jan-26</option>
-    <option selected="" value="Feb">Feb-26</option>
+    <option value="Feb">Feb-26</option>
+    <option selected="" value="Mar">Mar-26</option>
     </select>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -7246,7 +7247,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <p data-i18n-html="desc-movement" style="color: #6b7280; font-size: 13px; margin: 0 0 15px 0; font-style: italic;">Track partner target capacity movements: partners who increased, decreased, or maintained their targets across 6 months. Segmented by quality performance (Good ≥80% FR, Average 50-80% FR, Bad &lt;50% FR).</p>
 
 <div id="partnerMovementTakeaway" style="margin-bottom: 20px; padding: 12px; background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-left: 4px solid #06b6d4; border-radius: 6px;">
-    <p data-i18n-html="desc-movement-insight" style="margin: 0; font-size: 13px; color: #0e7490; font-weight: 600;">📊 Key Insight: <span id="partnerMovementInsight">Average of 195 partners increased targets monthly, while 243 decreased. December saw the sharpest decline (79 increases vs 457 decreases). February closed with 136 increases vs 284 decreases.</span></p>
+    <p data-i18n-html="desc-movement-insight" style="margin: 0; font-size: 13px; color: #0e7490; font-weight: 600;">📊 Key Insight: <span id="partnerMovementInsight">Average of 195 partners increased targets monthly, while 243 decreased. December saw the sharpest decline (79 increases vs 457 decreases). March closed with 312 increases vs 130 decreases — the strongest positive movement since November.</span></p>
 </div>
 
 <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
@@ -14625,7 +14626,8 @@ if(ovChartDet) {
 
                 function setupCityWiseTableFocus() {
                     const table = document.getElementById('cityWiseTable');
-                    if (!table) return;
+                    if (!table || table._focusHandlerAttached) return;
+                    table._focusHandlerAttached = true;
                     
                     table.addEventListener('click', function(e) {
                         const row = e.target.closest('tbody tr');
@@ -14901,11 +14903,11 @@ if(ovChartDet) {
                     
                     // Slice data based on current period (7 months total: Sep=0..Mar=6)
                     // Base month excluded from charts (first month is reference only)
-                    // Period 0: base=Sep(0), display Oct-Feb (indices 1-5) = 5 months
-                    // Period 1: base=Oct(1), display Nov-Mar (indices 2-6) = 5 months
+                    // Period 0: display Sep-Feb (indices 0-5) = 6 months
+                    // Period 1: display Oct-Mar (indices 1-6) = 6 months
                     const pmPeriodIdx = window._currentPeriodIdx || 0;
-                    const pmSliceStart = pmPeriodIdx === 0 ? 1 : 2;
-                    const pmSliceEnd = pmSliceStart + 5;
+                    const pmSliceStart = pmPeriodIdx === 0 ? 0 : 1;
+                    const pmSliceEnd = pmSliceStart + 6;
                     const pmMonthLabels = partnerMovementData.months.slice(pmSliceStart, pmSliceEnd);
                     increaseTotals = increaseTotals.slice(pmSliceStart, pmSliceEnd);
                     decreaseTotals = decreaseTotals.slice(pmSliceStart, pmSliceEnd);
@@ -15108,7 +15110,7 @@ if(ovChartDet) {
                         
                         tbody.innerHTML = '';
                         
-                        const subtotals = [492, 582, 640, 630, 616, 534];
+                        const subtotals = [492, 582, 640, 630, 616, 534, 550];
                         
                         partnerMovementData.months.forEach((month, idx) => {
                             const bg = idx % 2 === 0 ? '#f9fafb' : '#ffffff';
@@ -15192,20 +15194,20 @@ if(ovChartDet) {
                             tbody.innerHTML += html;
                         });
                         
-                        // Add average row
+                        // Add average row (Aug-Mar, 8 months)
                         const avgIncrease = {
-                            good: 98, average: 82, bad: 35
+                            good: 99, average: 91, bad: 34
                         };
                         const avgDecrease = {
-                            good: 62, average: 117, bad: 46
+                            good: 61, average: 112, bad: 41
                         };
                         const avgNoChange = {
-                            good: 46, average: 50, bad: 28
+                            good: 46, average: 54, bad: 26
                         };
-                        const avgSubtotal = 564;
+                        const avgSubtotal = 562;
                         
                         let avgHtml = `<tr style="background: #0891b2; color: white; font-weight: 700;">
-                            <td style="padding: 10px; border: 1px solid #e5e7eb;">Avr (Aug-Feb)</td>`;
+                            <td style="padding: 10px; border: 1px solid #e5e7eb;">Avr (Aug-Mar)</td>`;
                         
                         [avgIncrease.good, avgIncrease.average, avgIncrease.bad].forEach(val => {
                             const pct = ((val / avgSubtotal) * 100).toFixed(1);
@@ -21507,9 +21509,9 @@ if(ovChartDet) {
       const willingMasterPartners = [213, 259, 81, 201, 130, 262];
       const notWillingMasterPartners = [356, 381, 554, 413, 398, 270];
       // Period 0 (Sep→Feb): show Oct, Nov, Dec, Jan, Feb = indices 0-4 (5 months)
-      // Period 1 (Oct→Mar): show all 6 months
-      const wSliceStart = 0;
-      const wSliceCount = currentPeriodIdx === 0 ? 5 : 6;
+      // Period 1 (Oct→Mar): show Nov, Dec, Jan, Feb, Mar = indices 1-5 (5 months, Oct is base)
+      const wSliceStart = currentPeriodIdx === 0 ? 0 : 1;
+      const wSliceCount = 5;
       const willingMonths = willingMasterMonths.slice(wSliceStart, wSliceStart + wSliceCount);
       const willingPartners = willingMasterPartners.slice(wSliceStart, wSliceStart + wSliceCount);
       const notWillingPartners = notWillingMasterPartners.slice(wSliceStart, wSliceStart + wSliceCount);
@@ -21563,10 +21565,11 @@ if(ovChartDet) {
       const trendMasterMonths = ['Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'];
       const masterWillingPct = [37.4, 40.5, 12.8, 32.7, 24.6, 49.2];
       const masterNotWillingPct = [62.6, 59.5, 87.2, 67.3, 75.4, 50.8];
-      const wtSliceCount = currentPeriodIdx === 0 ? 5 : 6;
-      const trendMonths = trendMasterMonths.slice(0, wtSliceCount);
-      const willingPct = masterWillingPct.slice(0, wtSliceCount);
-      const notWillingPct = masterNotWillingPct.slice(0, wtSliceCount);
+      const wtSliceStart = currentPeriodIdx === 0 ? 0 : 1;
+      const wtSliceCount = 5;
+      const trendMonths = trendMasterMonths.slice(wtSliceStart, wtSliceStart + wtSliceCount);
+      const willingPct = masterWillingPct.slice(wtSliceStart, wtSliceStart + wtSliceCount);
+      const notWillingPct = masterNotWillingPct.slice(wtSliceStart, wtSliceStart + wtSliceCount);
 
       m_willingnessTrend = new Chart(trendCanvas.getContext('2d'), {
         type: 'line',
@@ -21633,14 +21636,16 @@ if(ovChartDet) {
       const gcMaster20_30 = [40, 29, 31, 11, 28, 16, 28];
       const gcMaster30plus = [54, 64, 80, 25, 36, 16, 83];
       const gcMasterTotal = [199, 213, 259, 81, 201, 130, 262];
-      // Period 0: indices 0-5 (Sep→Feb), Period 1: indices 1-6 (Oct→Mar)
-      const gcSliceStart = currentPeriodIdx === 0 ? 0 : 1;
-      const gcMonths = gcMasterMonths.slice(gcSliceStart, gcSliceStart + 6);
-      const gc1_10 = gcMaster1_10.slice(gcSliceStart, gcSliceStart + 6);
-      const gc10_20 = gcMaster10_20.slice(gcSliceStart, gcSliceStart + 6);
-      const gc20_30 = gcMaster20_30.slice(gcSliceStart, gcSliceStart + 6);
-      const gc30plus = gcMaster30plus.slice(gcSliceStart, gcSliceStart + 6);
-      const gcTotal = gcMasterTotal.slice(gcSliceStart, gcSliceStart + 6);
+      // Period 0: indices 1-5 (Oct-Feb, 5 months, Sep is base)
+      // Period 1: indices 2-6 (Nov-Mar, 5 months, Oct is base)
+      const gcSliceStart = currentPeriodIdx === 0 ? 1 : 2;
+      const gcSliceCount = 5;
+      const gcMonths = gcMasterMonths.slice(gcSliceStart, gcSliceStart + gcSliceCount);
+      const gc1_10 = gcMaster1_10.slice(gcSliceStart, gcSliceStart + gcSliceCount);
+      const gc10_20 = gcMaster10_20.slice(gcSliceStart, gcSliceStart + gcSliceCount);
+      const gc20_30 = gcMaster20_30.slice(gcSliceStart, gcSliceStart + gcSliceCount);
+      const gc30plus = gcMaster30plus.slice(gcSliceStart, gcSliceStart + gcSliceCount);
+      const gcTotal = gcMasterTotal.slice(gcSliceStart, gcSliceStart + gcSliceCount);
 
       m_growthCategory = new Chart(gcCanvas.getContext('2d'), {
         type: 'bar',
@@ -21753,14 +21758,16 @@ if(ovChartDet) {
       const dcMaster20_30 = [21, 26, 43, 83, 42, 50, 21];
       const dcMaster30plus = [48, 40, 41, 215, 56, 52, 20];
       const dcMasterTotal = [124, 161, 188, 458, 239, 284, 130];
-      // Period 0: indices 0-5 (Sep→Feb), Period 1: indices 1-6 (Oct→Mar)
-      const dcSliceStart = currentPeriodIdx === 0 ? 0 : 1;
-      const dcMonths = dcMasterMonths.slice(dcSliceStart, dcSliceStart + 6);
-      const dc1_10 = dcMaster1_10.slice(dcSliceStart, dcSliceStart + 6);
-      const dc10_20 = dcMaster10_20.slice(dcSliceStart, dcSliceStart + 6);
-      const dc20_30 = dcMaster20_30.slice(dcSliceStart, dcSliceStart + 6);
-      const dc30plus = dcMaster30plus.slice(dcSliceStart, dcSliceStart + 6);
-      const dcTotal = dcMasterTotal.slice(dcSliceStart, dcSliceStart + 6);
+      // Period 0: indices 1-5 (Oct-Feb, 5 months, Sep is base)
+      // Period 1: indices 2-6 (Nov-Mar, 5 months, Oct is base)
+      const dcSliceStart = currentPeriodIdx === 0 ? 1 : 2;
+      const dcSliceCount = 5;
+      const dcMonths = dcMasterMonths.slice(dcSliceStart, dcSliceStart + dcSliceCount);
+      const dc1_10 = dcMaster1_10.slice(dcSliceStart, dcSliceStart + dcSliceCount);
+      const dc10_20 = dcMaster10_20.slice(dcSliceStart, dcSliceStart + dcSliceCount);
+      const dc20_30 = dcMaster20_30.slice(dcSliceStart, dcSliceStart + dcSliceCount);
+      const dc30plus = dcMaster30plus.slice(dcSliceStart, dcSliceStart + dcSliceCount);
+      const dcTotal = dcMasterTotal.slice(dcSliceStart, dcSliceStart + dcSliceCount);
 
       m_decreaseCategory = new Chart(dcCanvas.getContext('2d'), {
         type: 'bar',
@@ -25663,6 +25670,53 @@ if(ovChartDet) {
                 { "rank": 18, "partner": "HERVEY AL-WAHHA", "newold": "Old", "cities": 3, "actual": 71, "target": 80 },
                 { "rank": 19, "partner": "SHAFAQ AL-KHAYR", "newold": "Old", "cities": 3, "actual": 83, "target": 75 },
                 { "rank": 20, "partner": "Ettijahat", "newold": "Old", "cities": 3, "actual": 64, "target": 54 }
+            ]
+        },
+        {
+            "month": "Mar",
+            "top_biggest": [
+                { "rank": 1, "partner": "ONE TRIP", "newold": "Old", "actual": 304.6, "target": 319 },
+                { "rank": 2, "partner": "ON Time Logistics", "newold": "Old", "actual": 291.4, "target": 288 },
+                { "rank": 3, "partner": "First Line Logistics", "newold": "Old", "actual": 197.9, "target": 282 },
+                { "rank": 4, "partner": "PARTNER SUCCESS", "newold": "Old", "actual": 241.7, "target": 255 },
+                { "rank": 5, "partner": "SDC Logistics", "newold": "Old", "actual": 210.3, "target": 249 },
+                { "rank": 6, "partner": "AL-BARAQ AL-KHATEF", "newold": "Old", "actual": 191.7, "target": 238 },
+                { "rank": 7, "partner": "AMC", "newold": "Old", "actual": 164.0, "target": 225 },
+                { "rank": 8, "partner": "Makhsos", "newold": "Old", "actual": 178.3, "target": 208 },
+                { "rank": 9, "partner": "Quick Way Logistics", "newold": "Old", "actual": 178.7, "target": 197 },
+                { "rank": 10, "partner": "Anan Capital", "newold": "Old", "actual": 182.0, "target": 188 },
+                { "rank": 11, "partner": "Abdul Aziz Muhammmad bin Hassan Asiri", "newold": "Old", "actual": 165.1, "target": 180 },
+                { "rank": 12, "partner": "PCC", "newold": "Old", "actual": 165.3, "target": 177 },
+                { "rank": 13, "partner": "AL-ANJAZ AL-MATARAA", "newold": "Old", "actual": 127.7, "target": 165 },
+                { "rank": 14, "partner": "SAKA SRIAA LALCHUDMAT AL-LUGASTIA", "newold": "Old", "actual": 141.6, "target": 159 },
+                { "rank": 15, "partner": "EXPSERCO", "newold": "Old", "actual": 129.6, "target": 151 },
+                { "rank": 16, "partner": "FAHAD AL-SHARQ", "newold": "Old", "actual": 140.3, "target": 150 },
+                { "rank": 17, "partner": "We All Wahid", "newold": "New", "actual": 118.7, "target": 148 },
+                { "rank": 18, "partner": "AMIYAL", "newold": "Old", "actual": 143.4, "target": 145 },
+                { "rank": 19, "partner": "Holoul", "newold": "Old", "actual": 133.9, "target": 145 },
+                { "rank": 20, "partner": "Plus Logistics", "newold": "Old", "actual": 104.0, "target": 122 }
+            ],
+            "top_smallest": [
+                { "rank": 1, "partner": "Afkar Logistics", "newold": "Old", "actual": 9.9, "target": 10 },
+                { "rank": 2, "partner": "STUL AL-MATIAZ", "newold": "Old", "actual": 9.9, "target": 10 },
+                { "rank": 3, "partner": "alshuhna almumayaza", "newold": "New", "actual": 8.9, "target": 10 },
+                { "rank": 4, "partner": "wajihat alruwad almutamayyiz company ( Makkah )", "newold": "New", "actual": 0, "target": 10 },
+                { "rank": 5, "partner": "MUASALATAL-JAZIRAH", "newold": "Old", "actual": 8.7, "target": 10 },
+                { "rank": 6, "partner": "alahdaf aldhahabiya", "newold": "New", "actual": 12.3, "target": 10 },
+                { "rank": 7, "partner": "al Aamal al Muhassana", "newold": "Old", "actual": 15.6, "target": 10 },
+                { "rank": 8, "partner": "AL-KHULAIJ AL-AZERG", "newold": "Old", "actual": 31.9, "target": 10 },
+                { "rank": 9, "partner": "Salasa", "newold": "Old", "actual": 7.0, "target": 10 },
+                { "rank": 10, "partner": "DOUA AL-MASSAR", "newold": "Old", "actual": 14.0, "target": 10 },
+                { "rank": 11, "partner": "Jet Speed", "newold": "Old", "actual": 9.4, "target": 10 },
+                { "rank": 12, "partner": "My Way Logistics", "newold": "New", "actual": 0, "target": 10 },
+                { "rank": 13, "partner": "adnansiddique", "newold": "Old", "actual": 0, "target": 10 },
+                { "rank": 14, "partner": "mohammedshoeb", "newold": "Old", "actual": 0, "target": 10 },
+                { "rank": 15, "partner": "Takamul Al-Imdad for Logistics Services", "newold": "Old", "actual": 10.6, "target": 11 },
+                { "rank": 16, "partner": "almasarat althnaiya", "newold": "Old", "actual": 9.1, "target": 11 },
+                { "rank": 17, "partner": "Alkhutut Almudhia", "newold": "Old", "actual": 9.9, "target": 12 },
+                { "rank": 18, "partner": "onestep", "newold": "Old", "actual": 9.9, "target": 12 },
+                { "rank": 19, "partner": "Company Minassah Sahm Commercial", "newold": "Old", "actual": 14.1, "target": 12 },
+                { "rank": 20, "partner": "Quma Teser", "newold": "Old", "actual": 12.9, "target": 12 }
             ]
         },
     ];
