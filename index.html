@@ -14210,7 +14210,7 @@ if(ovChartDet) {
                     if (cityCombinedTrendChart) cityCombinedTrendChart.destroy();
                     
                     // If monthIndices not provided, use all months
-                    if (!monthIndices) monthIndices = [0, 1, 2, 3, 4, 5];
+                    if (!monthIndices) monthIndices = Array.from({length: cityWiseData.months.length}, (_, i) => i);
                     
                     const monthLabels = monthIndices.map(i => cityWiseData.months[i]);
                     
@@ -15095,7 +15095,7 @@ if(ovChartDet) {
                     const table = document.getElementById('partnerAgeTable');
                     if (!table) return;
                     
-                    const displayMonths = monthIndices || [5, 4, 3, 2, 1, 0];
+                    const displayMonths = monthIndices || Array.from({length: partnerAgeData.months.length}, (_, i) => partnerAgeData.months.length - 1 - i);
                     const categoriesToShow = categoryFilter === 'all' ? partnerAgeData.categories : [categoryFilter];
 
                     const getArrow = (key) => {
@@ -15313,7 +15313,7 @@ if(ovChartDet) {
                     if (partnerAgeTrendChart) partnerAgeTrendChart.destroy();
                     if (partnerAgeScaleChart) partnerAgeScaleChart.destroy();
 
-                    if (!monthIndices) monthIndices = [0, 1, 2, 3, 4, 5];
+                    if (!monthIndices) monthIndices = Array.from({length: partnerAgeData.months.length}, (_, i) => i);
 
                     const selectedMonths = monthIndices.map(i => partnerAgeData.months[i]);
                     const colors = ['#8b5cf6', '#a78bfa', '#c4b5fd'];
