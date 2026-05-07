@@ -8816,21 +8816,23 @@ setTimeout(function() {
         window._rebuildRidersSlabCharts = function(periodIdx) {
             buildRidersTotalChart(periodIdx);
             buildRidersIncDecCharts(periodIdx);
-            // Hide/show rows in the slab table based on period
-            var tableContainer = document.getElementById('ridersTableContainer');
-            if (tableContainer) {
-                var rows = tableContainer.querySelectorAll('tbody tr');
-                // months: Sep=0, Oct=1, Nov=2, Dec=3, Jan=4, Feb=5, Mar=6
-                // Period 0: show Sep-Feb (indices 0-5), Period 1: show Oct-Mar (indices 1-6)
-                var startIdx = periodIdx === 0 ? 0 : 1;
-                rows.forEach(function(row, idx) {
-                    if (idx >= startIdx && idx < startIdx + 6) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            }
+            // Hide/show rows in ALL slab tables based on period
+            // months: Sep=0, Oct=1, Nov=2, Dec=3, Jan=4, Feb=5, Mar=6
+            // Period 0: show Sep-Feb (indices 0-5), Period 1: show Oct-Mar (indices 1-6)
+            var startIdx = periodIdx === 0 ? 0 : 1;
+            ['ridersTableContainer', 'increasedTableContainer', 'decreasedTableContainer'].forEach(function(id) {
+                var tableContainer = document.getElementById(id);
+                if (tableContainer) {
+                    var rows = tableContainer.querySelectorAll('tbody tr');
+                    rows.forEach(function(row, idx) {
+                        if (idx >= startIdx && idx < startIdx + 6) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                }
+            });
         };
     }
 }, 100);
@@ -9087,6 +9089,19 @@ setTimeout(function() {
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 700; background: #d1fae5;">153</td>
 </tr>
+<tr style="background: #f0fdf4;">
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: 700;">Mar</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">268 (85.9%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #ea580c; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">32 (10.3%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #059669; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">10 (3.2%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #0284c7; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">2 (0.6%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 700; background: #d1fae5;">312</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -9213,6 +9228,19 @@ document.getElementById('toggleIncreasedTable').addEventListener('click', functi
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
 <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 700; background: #fecaca;">284</td>
+</tr>
+<tr style="background: #fef2f2;">
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: 700;">Mar</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">117 (90.0%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #ea580c; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">8 (6.2%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><span style="background: #f97316; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 600;">4 (3.1%)</span></td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">1 (0.8%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">0 (0.0%)</td>
+<td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 700; background: #fecaca;">130</td>
 </tr>
 </tbody>
 </table>
@@ -19964,6 +19992,26 @@ if(ovChartDet) {
                 // Only rebuild visuals, don't re-attach event listeners
                 buildCityWiseTable();
                 buildCityCharts();
+                // Update month filter dropdowns to show only period-appropriate months
+                var startIdx = periodIdx === 0 ? 0 : 1;
+                var allMonths = ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'];
+                ['cityMonthFilter1', 'cityMonthFilter2'].forEach(function(id) {
+                    var sel = document.getElementById(id);
+                    if (!sel) return;
+                    var currentVal = sel.value;
+                    // Keep first option (placeholder)
+                    while (sel.options.length > 1) sel.remove(1);
+                    for (var i = startIdx; i < startIdx + 6; i++) {
+                        var opt = document.createElement('option');
+                        opt.value = i;
+                        opt.textContent = allMonths[i];
+                        sel.appendChild(opt);
+                    }
+                    // Restore selection if still valid
+                    if (currentVal !== '' && parseInt(currentVal) >= startIdx && parseInt(currentVal) < startIdx + 6) {
+                        sel.value = currentVal;
+                    }
+                });
             } catch(e) { console.error('Rebuild city-wise failed:', e); }
         };
         window._rebuildPartnerAgeCharts = function(periodIdx) {
@@ -19971,6 +20019,24 @@ if(ovChartDet) {
                 // Only rebuild visuals, don't re-attach event listeners
                 buildPartnerAgeTable();
                 buildPartnerAgeCharts();
+                // Update month filter dropdowns to show only period-appropriate months
+                var startIdx = periodIdx === 0 ? 0 : 1;
+                var allMonths = ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'];
+                ['partnerAgeMonthFilter1', 'partnerAgeMonthFilter2'].forEach(function(id) {
+                    var sel = document.getElementById(id);
+                    if (!sel) return;
+                    var currentVal = sel.value;
+                    while (sel.options.length > 1) sel.remove(1);
+                    for (var i = startIdx; i < startIdx + 6; i++) {
+                        var opt = document.createElement('option');
+                        opt.value = i;
+                        opt.textContent = allMonths[i];
+                        sel.appendChild(opt);
+                    }
+                    if (currentVal !== '' && parseInt(currentVal) >= startIdx && parseInt(currentVal) < startIdx + 6) {
+                        sel.value = currentVal;
+                    }
+                });
             } catch(e) { console.error('Rebuild partner-age failed:', e); }
         };
         window._rebuildTierTables = function(periodIdx) {
