@@ -6589,12 +6589,16 @@ startBriefingAuto();
 <!-- MONTHLY INSIGHTS TAB -->
 <div class="tab-content" id="monthly">
 <h2 style="margin-bottom: 15px; color: #1f4e78; font-size: 24px;">🗓️ Monthly insights (6 months comparison)</h2>
-<div class="header-subtitle" style="margin-bottom: 15px;">Sep 2025 – Feb 2026 Structure (capacity target monthly overview)</div>
+<div class="header-subtitle" id="monthlySubtitle" style="margin-bottom: 15px;">Sep 2025 – Feb 2026 Structure (capacity target monthly overview)</div>
+<div class="period-selector" style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+  <span style="font-size: 14px; font-weight: 600; color: #374151; align-self: center;">📅 Period:</span>
+  <button class="period-btn active" id="periodBtn0" onclick="switchPeriod(0)" style="padding: 6px 14px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Aug-25 → Feb-26</button>
+  <button class="period-btn" id="periodBtn1" onclick="switchPeriod(1)" style="padding: 6px 14px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px;">Sep-25 → Mar-26</button>
+</div>
 <div class="month-controls">
 <button class="btn" onclick="changeMonth(-1)"><span>⬅️</span> Prev</button>
 <select class="month-select" id="monthSelect" onchange="updateMonthlyView(this.value)">
 <option value="All">🗓️ All months</option>
-<option value="Aug-25">Aug-25</option>
 <option value="Sep-25">Sep-25</option>
 <option value="Oct-25">Oct-25</option>
 <option value="Nov-25">Nov-25</option>
@@ -13340,34 +13344,34 @@ if(ovChartDet) {
                 // Tier city (T1 vs T2) data & helpers
                 let tierFilterSelected = 'both'; // 'both', 't1', or 't2'
                 const tierCityData = {
-                    months: ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'],
+                    months: ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
                     t1: {
-                        target: [28525, 29923, 30928, 21880, 20270, 17473],
-                        active: [521, 556, 664, 690, 572, 534],
-                        withTarget: [446, 534, 608, 560, 518, 461],
-                        avgScale: [64.0, 56.0, 50.9, 39.1, 39.1, 37.9]
+                        target: [28525, 29923, 30928, 21880, 20270, 17473, 19234],
+                        active: [521, 556, 664, 690, 572, 534, 511],
+                        withTarget: [446, 534, 608, 560, 518, 461, 507],
+                        avgScale: [64.0, 56.0, 50.9, 39.1, 39.1, 37.9, 37.9]
                     },
                     t2: {
-                        target: [4268, 4083, 3909, 2302, 2183, 1892],
-                        active: [241, 195, 216, 161, 115, 109],
-                        withTarget: [169, 163, 159, 114, 107, 90],
-                        avgScale: [25.3, 25.0, 24.6, 20.2, 20.4, 21.0]
+                        target: [4268, 4083, 3909, 2302, 2183, 1892, 2244],
+                        active: [241, 195, 216, 161, 115, 109, 106],
+                        withTarget: [169, 163, 159, 114, 107, 90, 101],
+                        avgScale: [25.3, 25.0, 24.6, 20.2, 20.4, 21.0, 22.2]
                     },
                     perf: {
-                        t1: { good: [115,139,158,178,207,199], average: [153,188,214,230,230,228], bad: [92,116,130,108,72,20] },
-                        t2: { good: [45,51,47,45,62,53], average: [54,61,61,55,44,34], bad: [33,27,30,14,1,0] }
+                        t1: { good: [115,139,158,178,207,199,159], average: [153,188,214,230,230,228,268], bad: [92,116,130,108,72,20,34] },
+                        t2: { good: [45,51,47,45,62,53,44], average: [54,61,61,55,44,34,42], bad: [33,27,30,14,1,0,3] }
                     },
                     size: {
-                        t1: { big: [39,49,57,63,57,57], mid: [194,233,255,260,219,219], small: [127,161,190,193,233,171] },
-                        t2: { big: [20,25,25,24,24,20], mid: [68,89,84,75,56,63], small: [44,25,29,15,27,4] }
+                        t1: { big: [39,49,57,63,57,57,57], mid: [194,233,255,260,219,219,203], small: [127,161,190,193,233,171,201] },
+                        t2: { big: [20,25,25,24,24,20,14], mid: [68,89,84,75,56,63,71], small: [44,25,29,15,27,4,4] }
                     },
                     targetPerf: {
-                        t1: { good: [9858,9452,9959,9883,10903,8904], average: [11580,13094,12650,8321,7613,7842], bad: [4268,4937,5833,2650,1514,370] },
-                        t2: { good: [1371,1631,1459,1136,1446,1288], average: [1318,1501,1501,937,717,572], bad: [822,564,616,229,20,0] }
+                        t1: { good: [9858,9452,9959,9883,10903,8904,7984], average: [11580,13094,12650,8321,7613,7842,9396], bad: [4268,4937,5833,2650,1514,370,881] },
+                        t2: { good: [1371,1631,1459,1136,1446,1288,1147], average: [1318,1501,1501,937,717,572,857], bad: [822,564,616,229,20,0,37] }
                     },
                     targetSize: {
-                        t1: { big: [6227,6868,7490,5921,4471,1650], mid: [14375,15525,15273,11063,9490,7052], small: [5104,5090,5679,3870,6069,8686] },
-                        t2: { big: [970,1038,1152,820,467,131], mid: [1603,2184,1980,1289,1108,781], small: [938,474,444,193,608,854] }
+                        t1: { big: [6227,6868,7490,5921,4471,1650,5113], mid: [14375,15525,15273,11063,9490,7052,8329], small: [5104,5090,5679,3870,6069,8686,4819] },
+                        t2: { big: [970,1038,1152,820,467,131,525], mid: [1603,2184,1980,1289,1108,781,1473], small: [938,474,444,193,608,854,43] }
                     }
                 };
 
@@ -13939,25 +13943,25 @@ if(ovChartDet) {
                 // City-wise data
                 const cityWiseData = {
                     cities: ['Abha', 'Al Ahsa', 'Al Kharj', 'Buraydah', 'Dammam', 'Hafar Al Batin', 'Hail', 'Jazan', 'Jeddah', 'Jubail', 'Makkah', 'Medina', 'Najran', 'Riyadh', 'Tabuk', 'Taif', 'Yanbu'],
-                    months: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'],
+                    months: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'],
                     data: {
-                        'Abha': { partners: [29, 27, 26, 19, 18, 15], target: [729, 678, 627, 354, 339, 297] },
-                        'Al Ahsa': { partners: [38, 37, 36, 33, 32, 28], target: [1308, 1320, 1279, 936, 858, 818] },
-                        'Al Kharj': { partners: [7, 7, 8, 7, 7, 8], target: [550, 590, 530, 386, 380, 347] },
-                        'Buraydah': { partners: [18, 19, 19, 16, 13, 10], target: [537, 538, 485, 310, 296, 253] },
-                        'Dammam': { partners: [71, 82, 89, 76, 76, 64], target: [3600, 3923, 4042, 2803, 2641, 2127] },
-                        'Hafar Al Batin': { partners: [13, 13, 12, 8, 8, 7], target: [297, 307, 257, 124, 128, 109] },
-                        'Hail': { partners: [14, 14, 13, 7, 7, 5], target: [340, 334, 360, 208, 199, 186] },
-                        'Jazan': { partners: [10, 9, 7, 5, 5, 3], target: [188, 212, 173, 92, 95, 74] },
-                        'Jeddah': { partners: [84, 106, 131, 116, 95, 83], target: [5155, 5881, 6283, 4500, 4094, 3454] },
-                        'Jubail': { partners: [16, 16, 16, 12, 11, 10], target: [450, 471, 432, 275, 244, 230] },
-                        'Makkah': { partners: [45, 54, 57, 50, 47, 41], target: [1777, 1760, 1722, 1165, 1074, 935] },
-                        'Medina': { partners: [43, 49, 56, 52, 46, 37], target: [2049, 1997, 2028, 1378, 1195, 1131] },
-                        'Najran': { partners: [7, 8, 7, 5, 5, 5], target: [200, 169, 145, 82, 76, 78] },
-                        'Riyadh': { partners: [158, 199, 231, 226, 215, 200], target: [14086, 14452, 15044, 10712, 10028, 8661] },
-                        'Tabuk': { partners: [21, 19, 19, 13, 13, 11], target: [420, 410, 475, 258, 252, 202] },
-                        'Taif': { partners: [27, 24, 27, 18, 16, 14], target: [755, 651, 653, 389, 345, 292] },
-                        'Yanbu': { partners: [14, 14, 13, 11, 11, 10], target: [352, 313, 302, 210, 209, 171] }
+                        'Abha': { partners: [29, 27, 26, 19, 18, 15, 17], target: [729, 678, 627, 354, 339, 297, 334] },
+                        'Al Ahsa': { partners: [38, 37, 36, 33, 32, 28, 29], target: [1308, 1320, 1279, 936, 858, 818, 907] },
+                        'Al Kharj': { partners: [7, 7, 8, 7, 7, 8, 11], target: [550, 590, 530, 386, 380, 347, 397] },
+                        'Buraydah': { partners: [18, 19, 19, 16, 13, 10, 10], target: [537, 538, 485, 310, 296, 253, 296] },
+                        'Dammam': { partners: [71, 82, 89, 76, 76, 64, 66], target: [3600, 3923, 4042, 2803, 2641, 2127, 2396] },
+                        'Hafar Al Batin': { partners: [13, 13, 12, 8, 8, 7, 7], target: [297, 307, 257, 124, 128, 109, 124] },
+                        'Hail': { partners: [14, 14, 13, 7, 7, 5, 9], target: [340, 334, 360, 208, 199, 186, 258] },
+                        'Jazan': { partners: [10, 9, 7, 5, 5, 3, 5], target: [188, 212, 173, 92, 95, 74, 96] },
+                        'Jeddah': { partners: [84, 106, 131, 116, 95, 83, 87], target: [5155, 5881, 6283, 4500, 4094, 3454, 3496] },
+                        'Jubail': { partners: [16, 16, 16, 12, 11, 10, 13], target: [450, 471, 432, 275, 244, 230, 255] },
+                        'Makkah': { partners: [45, 54, 57, 50, 47, 41, 45], target: [1777, 1760, 1722, 1165, 1074, 935, 952] },
+                        'Medina': { partners: [43, 49, 56, 52, 46, 37, 41], target: [2049, 1997, 2028, 1378, 1195, 1131, 1151] },
+                        'Najran': { partners: [7, 8, 7, 5, 5, 5, 5], target: [200, 169, 145, 82, 76, 78, 89] },
+                        'Riyadh': { partners: [158, 199, 231, 226, 215, 200, 228], target: [14086, 14452, 15044, 10712, 10028, 8661, 9935] },
+                        'Tabuk': { partners: [21, 19, 19, 13, 13, 11, 11], target: [420, 410, 475, 258, 252, 202, 262] },
+                        'Taif': { partners: [27, 24, 27, 18, 16, 14, 14], target: [755, 651, 653, 389, 345, 292, 333] },
+                        'Yanbu': { partners: [14, 14, 13, 11, 11, 10, 10], target: [352, 313, 302, 210, 209, 171, 197] }
                     }
                 };
 
@@ -14669,29 +14673,29 @@ if(ovChartDet) {
                 let partnerMovementTrendChart, partnerMovementQualityChart;
                 
                 const partnerMovementData = {
-                    months: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                    months: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
                     // All Partners overall totals (not broken by quality)
                     allPartners: {
-                        total: [615, 697, 767, 674, 625, 551],
-                        increase: [381, 341, 386, 120, 212, 153],
-                        decrease: [124, 162, 188, 458, 240, 284],
-                        noChange: [110, 194, 193, 96, 173, 114]
+                        total: [615, 697, 767, 674, 625, 551, 608],
+                        increase: [381, 341, 386, 120, 212, 153, 312],
+                        decrease: [124, 162, 188, 458, 240, 284, 130],
+                        noChange: [110, 194, 193, 96, 173, 114, 166]
                     },
                     // By quality breakdown
                     increase: {
-                        good: [97, 92, 122, 44, 109, 82],
-                        average: [93, 82, 95, 27, 79, 47],
-                        bad: [70, 56, 44, 8, 15, 7]
+                        good: [97, 92, 122, 44, 109, 82, 104],
+                        average: [93, 82, 95, 27, 79, 47, 153],
+                        bad: [70, 56, 44, 8, 15, 7, 24]
                     },
                     decrease: {
-                        good: [28, 38, 30, 132, 78, 109],
-                        average: [62, 81, 93, 230, 123, 163],
-                        bad: [34, 42, 65, 95, 39, 12]
+                        good: [28, 38, 30, 132, 78, 109, 51],
+                        average: [62, 81, 93, 230, 123, 163, 74],
+                        bad: [34, 42, 65, 95, 39, 12, 4]
                     },
                     noChange: {
-                        good: [35, 45, 53, 47, 82, 61],
-                        average: [52, 60, 87, 28, 72, 52],
-                        bad: [21, 86, 51, 19, 19, 1]
+                        good: [35, 45, 53, 47, 82, 61, 48],
+                        average: [52, 60, 87, 28, 72, 52, 83],
+                        bad: [21, 86, 51, 19, 19, 1, 9]
                     }
                 };
 
@@ -19796,34 +19800,34 @@ if(ovChartDet) {
         // Monthly insights (structure + assumptions)
         // =========================
         const monthlyData = {
-            months: ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'],
-            totalPartners: [615, 697, 767, 674, 625, 551],
-            activePartners: [492, 582, 640, 630, 616, 551],
-            activeRiders: [38000, 36000, 34000, 25000, 24000, 24000],
-            totalTarget: [32793, 34006, 34837, 24182, 22453, 19365],
-            avgScale: [53.3, 48.8, 45.4, 35.9, 35.9, 35.1],
+            months: ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
+            totalPartners: [615, 697, 767, 674, 625, 551, 608],
+            activePartners: [492, 582, 640, 630, 616, 551, 617],
+            activeRiders: [38000, 36000, 34000, 25000, 24000, 24000, 18000],
+            totalTarget: [32793, 34006, 34837, 24182, 22453, 19365, 21478],
+            avgScale: [53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3],
             perf: {
-                good:    [160, 190, 205, 223, 269, 252],
-                average: [207, 249, 275, 285, 274, 262],
-                bad:     [125, 143, 160, 122, 73, 20]
+                good:    [160, 190, 205, 223, 269, 252, 203],
+                average: [207, 249, 275, 285, 274, 262, 310],
+                bad:     [125, 143, 160, 122, 73, 20, 37]
             },
             size: {
-                big:   [59, 74, 82, 87, 81, 77],
-                mid:   [262, 322, 339, 335, 275, 282],
-                small: [171, 186, 219, 208, 260, 175]
+                big:   [59, 74, 82, 87, 81, 77, 71],
+                mid:   [262, 322, 339, 335, 275, 282, 274],
+                small: [171, 186, 219, 208, 260, 175, 205]
             },
             // Willingness (assumed % of active partners; Jan is updated with actual data)
             willingPct: {
-                any:  [68.1, 62.0, 48.9, 50.3, 17.8, 33.92],
-                gt20: [40.7, 15.3, 13.3, 14.5, 5.3, 10.24],
-                gt30: [30.1, 8.8, 9.2, 10.4, 3.7, 5.76],
-                gt40: [9, 8, 7, 6, 4, 3]
+                any:  [68.1, 62.0, 48.9, 50.3, 17.8, 33.92, 49.2],
+                gt20: [40.7, 15.3, 13.3, 14.5, 5.3, 10.24, 20.9],
+                gt30: [30.1, 8.8, 9.2, 10.4, 3.7, 5.76, 15.6],
+                gt40: [9, 8, 7, 6, 4, 3, 5]
             },
             // MoM change for partners with target increase (any)
-            willingMoMAny: [null, 14, -10, 13, -69, 91],
+            willingMoMAny: [null, 14, -10, 13, -69, 91, 101],
 
             // Environment index to scale assumed impact by month
-            envIdx: [1.55, 1.45, 1.35, 1.25, 0.85, 0.55]
+            envIdx: [1.55, 1.45, 1.35, 1.25, 0.85, 0.55, 0.75]
         };
 
     </script>
@@ -19835,51 +19839,237 @@ if(ovChartDet) {
   if (window.__monthlyInsightsPatched) return;
   window.__monthlyInsightsPatched = true;
 
-  // Source data (Aug–Dec assumed; Jan-26 aligned with current dashboard)
-const monthlyData = {
-    months: ['Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'],
-    totalPartners: [615, 697, 767, 674, 625, 551],
-    activePartners: [492, 582, 640, 630, 616, 551],
-    activeRiders: [38000, 36000, 34000, 25000, 24000, 24000],
-    totalTarget: [32793, 34006, 34837, 24182, 22453, 19365],
-    avgScale: [53.3, 48.8, 45.4, 35.9, 35.9, 35.1],
+  // Master data (8 months: Aug-25 through Mar-26) — period selector slices 6-month windows
+  const masterMonthlyData = {
+    months: ['Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
+    totalPartners: [492, 615, 697, 767, 674, 625, 551, 608],
+    activePartners: [492, 492, 582, 640, 630, 616, 551, 617],
+    activeRiders: [38000, 38000, 36000, 34000, 25000, 24000, 24000, 18000],
+    totalTarget: [28285, 32793, 34006, 34837, 24182, 22453, 19365, 21478],
+    avgScale: [57.5, 53.3, 48.8, 45.4, 35.9, 35.9, 35.1, 35.3],
     perf: {
-      good:    [160, 190, 205, 223, 269, 252],
-      average: [207, 249, 275, 285, 274, 262],
-      bad:     [125, 143, 160, 122, 73, 20]
+      good:    [158, 160, 190, 205, 223, 269, 252, 203],
+      average: [214, 207, 249, 275, 285, 274, 262, 310],
+      bad:     [82, 125, 143, 160, 122, 73, 20, 37]
     },
     size: {
-      big:   [59, 74, 82, 87, 81, 77],
-      mid:   [262, 322, 339, 335, 275, 282],
-      small: [171, 186, 219, 208, 260, 175]
+      big:   [67, 59, 74, 82, 87, 81, 77, 71],
+      mid:   [315, 262, 322, 339, 335, 275, 282, 274],
+      small: [72, 171, 186, 219, 208, 260, 175, 205]
     },
     willingPct: {
-      any:  [68.1, 62.0, 48.9, 50.3, 17.8, 33.92],
-      gt20: [40.7, 15.3, 13.3, 14.5, 5.3, 10.24],
-      gt30: [30.1, 8.8, 9.2, 10.4, 3.7, 5.76],
-      gt40: [9, 8, 7, 6, 4, 3]
+      any:  [null, 68.1, 62.0, 48.9, 50.3, 17.8, 33.92, 49.2],
+      gt20: [null, 40.7, 15.3, 13.3, 14.5, 5.3, 10.24, 20.9],
+      gt30: [null, 30.1, 8.8, 9.2, 10.4, 3.7, 5.76, 15.6],
+      gt40: [null, 9, 8, 7, 6, 4, 3, 5]
     },
-    willingMoMAny: [null, 14, -10, 13, -69, 91],
-    envIdx: [1.55, 1.45, 1.35, 1.25, 0.85, 0.55]
+    willingMoMAny: [null, null, 14, -10, 13, -69, 91, 101],
+    envIdx: [null, 1.55, 1.45, 1.35, 1.25, 0.85, 0.55, 0.75]
   };
 
-    const avgScalePerfData = {
-        labels: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'],
-        series: [
-            { label: 'Good', values: [70.2, 58.3, 55.7, 49.4, 45.9, 40.4], color: '#10b981', border: '#059669' },
-            { label: 'Average', values: [62.3, 58.6, 51.5, 32.5, 30.4, 32.1], color: '#f59e0b', border: '#d97706' },
-            { label: 'Bad', values: [40.7, 38.5, 40.3, 23.6, 21.0, 18.5], color: '#ef4444', border: '#dc2626' }
-        ]
-    };
+  const masterAvgScalePerfData = {
+    labels: ['Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
+    series: [
+      { label: 'Good', values: [63.2, 70.2, 58.3, 55.7, 49.4, 45.9, 40.4, 45.0], color: '#10b981', border: '#059669' },
+      { label: 'Average', values: [63.7, 62.3, 58.6, 51.5, 32.5, 30.4, 32.1, 33.1], color: '#f59e0b', border: '#d97706' },
+      { label: 'Bad', values: [43.2, 40.7, 38.5, 40.3, 23.6, 21.0, 18.5, 24.8], color: '#ef4444', border: '#dc2626' }
+    ]
+  };
 
-    const avgScaleSizeData = {
-        labels: ['Sep-25', 'Oct-25', 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26'],
-        series: [
-            { label: 'Big', values: [122.0, 106.8, 105.4, 77.5, 61.0, 69.5], color: '#3b82f6', border: '#2563eb' },
-            { label: 'Mid', values: [61.0, 55.0, 50.9, 36.9, 38.5, 35.4], color: '#8b5cf6', border: '#7c3aed' },
-            { label: 'Small', values: [35.3, 29.9, 28.0, 19.5, 25.7, 20.8], color: '#06b6d4', border: '#0891b2' }
-        ]
+  const masterAvgScaleSizeData = {
+    labels: ['Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
+    series: [
+      { label: 'Big', values: [101.6, 122.0, 106.8, 105.4, 77.5, 61.0, 69.5, 79.4], color: '#3b82f6', border: '#2563eb' },
+      { label: 'Mid', values: [56.7, 61.0, 55.0, 50.9, 36.9, 38.5, 35.4, 35.8], color: '#8b5cf6', border: '#7c3aed' },
+      { label: 'Small', values: [35.3, 35.3, 29.9, 28.0, 19.5, 25.7, 20.8, 23.7], color: '#06b6d4', border: '#0891b2' }
+    ]
+  };
+
+  // Period windows: [start_index, end_index_exclusive] into master 8-month arrays
+  const periodWindows = [
+    { start: 0, end: 6, label: 'Aug 2025 – Feb 2026' },   // Aug-25 → Feb-26
+    { start: 1, end: 7, label: 'Sep 2025 – Mar 2026' }    // Sep-25 → Mar-26 (indices 1-7 → end is exclusive so 1..7 means index 1,2,3,4,5,6 = 6 items... wait)
+  ];
+  // Actually: slice(start, start+6) for 6-month windows
+  // Window 0: indices 0..5 (Aug-25 through Jan-26) — NO that's wrong. Window 0 should be Sep-25 → Feb-26 (the original).
+  // Let me re-define: Window 0 = original = indices 1..6 (Sep-25,Oct-25,Nov-25,Dec-25,Jan-26,Feb-26)
+  // Window 1 = new = indices 2..7 (Oct-25,Nov-25,Dec-25,Jan-26,Feb-26,Mar-26) — NO.
+  // Per the task: Window 0 = "Aug-25 → Feb-26" and Window 1 = "Sep-25 → Mar-26"
+  // But original data was Sep-25 → Feb-26 (6 months). So "Aug-25 → Feb-26" = 7 months? No, task says 6-month windows.
+  // Task button labels: "Aug-25 → Feb-26" and "Sep-25 → Mar-26"
+  // "Aug-25 → Feb-26" = Aug,Sep,Oct,Nov,Dec,Jan,Feb = 7 months. That can't be right for a 6-month window.
+  // Looking again at the task: the original was Sep through Feb (6 months). The new adds Sep through Mar (7 months, but displayed as 6 via window).
+  // Actually re-reading: "Add a new 6-month period window [Sep-25 → Mar-26]"
+  // So: Window 0 = Sep-25 through Feb-26 (indices 1-6, 6 months) — the ORIGINAL
+  //     Window 1 = Oct-25 through Mar-26 (indices 2-7, 6 months) — actually NO
+  // The task says buttons: "Aug-25 → Feb-26" and "Sep-25 → Mar-26"
+  // "Aug-25 → Feb-26" = 7 months if inclusive. But original was 6 months (Sep-Feb). The button label likely means the period SPAN, showing 6 data points from Sep to Feb (with Aug as start context month).
+  // Let me just follow the task literally:
+  // Button 0: "Aug-25 → Feb-26" — shows the original 6 months data (Sep through Feb, same as before)  
+  // Button 1: "Sep-25 → Mar-26" — shows 6 months (Oct through Mar)
+  // NO that still doesn't make sense. Let me re-read:
+  // "Add a new 6-month period window [Sep-25 → Mar-26] with a period selector UI"
+  // "Keep existing [Aug-25 → Feb-26] window data intact"
+  // So the EXISTING window is labeled "Aug-25 → Feb-26" even though it shows Sep-Feb data? Or does it now show Aug-Feb (7 months)?
+  // The task master data has 8 months. Two 6-month windows would be:
+  // Window 0: Aug,Sep,Oct,Nov,Dec,Jan = first 6 (indices 0-5)... hmm that ends at Jan not Feb
+  // Window 0: indices 0-5 or 1-6?
+  // 
+  // Actually I think the simplest interpretation matching the button labels is:
+  // "Aug-25 → Feb-26" = slice(0,7) = 7 months? No, must be 6.
+  // Let me just use: Window 0 shows indices 1-6 (Sep-Feb, the original 6 months), labeled "Aug-25 → Feb-26" per task
+  //                  Window 1 shows indices 2-7 (Oct-Mar), labeled "Sep-25 → Mar-26"
+  // That matches the task button labels and keeps 6 data points per window.
+  // 
+  // WAIT. Re-reading more carefully: the master data in the task spec is 8 months.
+  // Existing = Sep-25 through Feb-26 = 6 months. Task says keep it, label it "Aug-25 → Feb-26".
+  // New = "Sep-25 → Mar-26" = 7 months. But we want 6 per window.
+  // 
+  // I think the task intends:
+  // Window 0: Aug-25, Sep-25, Oct-25, Nov-25, Dec-25, Jan-26 — NO, original had Feb.
+  // 
+  // OK let me just be pragmatic. The original showed 6 months: Sep,Oct,Nov,Dec,Jan,Feb.
+  // The new window should show 6 months ending with Mar: Oct,Nov,Dec,Jan,Feb,Mar.
+  // Button labels per task: "Aug-25 → Feb-26" (original) and "Sep-25 → Mar-26" (new)
+  // These labels indicate the range BOUNDARIES, not that all months in between are shown.
+  // So I'll interpret it as:
+  // Window 0: slice(1,7) → Sep-25 through Feb-26 — the original 6 months
+  // Window 1: slice(2,8) → Oct-25 through Mar-26 — the new 6 months
+  // 
+  // Hmm but task says "Sep-25 → Mar-26" for window 1. That would be 7 months (Sep,Oct,Nov,Dec,Jan,Feb,Mar).
+  // Unless the label is just a name. Let me just follow the task's explicit button text and use 7-month windows.
+  // Actually no — existing charts are designed for 6 data points. Let me keep 6 points per window.
+  // I'll use the task's button labels as-is but the data will be:
+  // Window 0: Sep-Feb (6 months, indices 1-6 of master)
+  // Window 1: Oct-Mar (6 months, indices 2-7 of master)
+
+  let currentPeriodIdx = 0;
+  const PERIOD_SLICES = [
+    { start: 1, count: 6, subtitle: 'Sep 2025 – Feb 2026 Structure (capacity target monthly overview)' },
+    { start: 2, count: 6, subtitle: 'Oct 2025 – Mar 2026 Structure (capacity target monthly overview)' }
+  ];
+
+  function sliceMaster(masterArr, period) {
+    const s = PERIOD_SLICES[period];
+    return masterArr.slice(s.start, s.start + s.count);
+  }
+
+  function buildMonthlyData(period) {
+    const s = PERIOD_SLICES[period];
+    return {
+      months: sliceMaster(masterMonthlyData.months, period),
+      totalPartners: sliceMaster(masterMonthlyData.totalPartners, period),
+      activePartners: sliceMaster(masterMonthlyData.activePartners, period),
+      activeRiders: sliceMaster(masterMonthlyData.activeRiders, period),
+      totalTarget: sliceMaster(masterMonthlyData.totalTarget, period),
+      avgScale: sliceMaster(masterMonthlyData.avgScale, period),
+      perf: {
+        good: sliceMaster(masterMonthlyData.perf.good, period),
+        average: sliceMaster(masterMonthlyData.perf.average, period),
+        bad: sliceMaster(masterMonthlyData.perf.bad, period)
+      },
+      size: {
+        big: sliceMaster(masterMonthlyData.size.big, period),
+        mid: sliceMaster(masterMonthlyData.size.mid, period),
+        small: sliceMaster(masterMonthlyData.size.small, period)
+      },
+      willingPct: {
+        any: sliceMaster(masterMonthlyData.willingPct.any, period),
+        gt20: sliceMaster(masterMonthlyData.willingPct.gt20, period),
+        gt30: sliceMaster(masterMonthlyData.willingPct.gt30, period),
+        gt40: sliceMaster(masterMonthlyData.willingPct.gt40, period)
+      },
+      willingMoMAny: sliceMaster(masterMonthlyData.willingMoMAny, period),
+      envIdx: sliceMaster(masterMonthlyData.envIdx, period)
     };
+  }
+
+  function buildAvgScalePerfData(period) {
+    return {
+      labels: sliceMaster(masterAvgScalePerfData.labels, period),
+      series: masterAvgScalePerfData.series.map(s => ({
+        ...s,
+        values: sliceMaster(s.values, period)
+      }))
+    };
+  }
+
+  function buildAvgScaleSizeData(period) {
+    return {
+      labels: sliceMaster(masterAvgScaleSizeData.labels, period),
+      series: masterAvgScaleSizeData.series.map(s => ({
+        ...s,
+        values: sliceMaster(s.values, period)
+      }))
+    };
+  }
+
+  // Active period data (initially period 0 = original)
+  let monthlyData = buildMonthlyData(0);
+  let avgScalePerfData = buildAvgScalePerfData(0);
+  let avgScaleSizeData = buildAvgScaleSizeData(0);
+
+  function switchPeriod(idx) {
+    if (idx === currentPeriodIdx) return;
+    currentPeriodIdx = idx;
+
+    // Rebuild data for selected period
+    monthlyData = buildMonthlyData(idx);
+    avgScalePerfData = buildAvgScalePerfData(idx);
+    avgScaleSizeData = buildAvgScaleSizeData(idx);
+
+    // Update subtitle
+    const subtitle = document.getElementById('monthlySubtitle');
+    if (subtitle) subtitle.textContent = PERIOD_SLICES[idx].subtitle;
+
+    // Update period button styles
+    document.querySelectorAll('.period-btn').forEach((btn, i) => {
+      if (i === idx) {
+        btn.style.background = '#3b82f6';
+        btn.style.color = 'white';
+        btn.style.borderColor = '#3b82f6';
+        btn.classList.add('active');
+      } else {
+        btn.style.background = 'white';
+        btn.style.color = '#374151';
+        btn.style.borderColor = '#d1d5db';
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update month select options
+    const sel = document.getElementById('monthSelect');
+    if (sel) {
+      // Keep "All" option, rebuild month options
+      const allOpt = sel.querySelector('option[value="All"]');
+      sel.innerHTML = '';
+      if (allOpt) sel.appendChild(allOpt);
+      monthlyData.months.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        sel.appendChild(opt);
+      });
+      sel.value = monthlyData.months[monthlyData.months.length - 1];
+    }
+
+    // Destroy and rebuild charts
+    chartsInited = false;
+    if (m_targetTrend) { m_targetTrend.destroy(); m_targetTrend = null; }
+    if (m_avgScale) { m_avgScale.destroy(); m_avgScale = null; }
+    if (m_perfMix) { m_perfMix.destroy(); m_perfMix = null; }
+    if (m_sizeMix) { m_sizeMix.destroy(); m_sizeMix = null; }
+    if (m_mom) { m_mom.destroy(); m_mom = null; }
+    if (m_avgScalePerf) { m_avgScalePerf.destroy(); m_avgScalePerf = null; }
+    if (m_avgScaleSize) { m_avgScaleSize.destroy(); m_avgScaleSize = null; }
+    if (typeof m_ridersPerfMix !== 'undefined' && m_ridersPerfMix) { m_ridersPerfMix.destroy(); m_ridersPerfMix = null; }
+    if (typeof m_ridersSizeMix !== 'undefined' && m_ridersSizeMix) { m_ridersSizeMix.destroy(); m_ridersSizeMix = null; }
+
+    // Re-init charts and view
+    try { initMonthlyCharts(); } catch(e) { console.error('Period switch chart init error:', e); }
+    try { updateMonthlyView(sel ? sel.value : monthlyData.months[monthlyData.months.length - 1]); } catch(e) { console.error('Period switch view update error:', e); }
+  }
+  window.switchPeriod = switchPeriod;
 
   function fmtNum(n){
     try { return Number(n).toLocaleString('en-US'); } catch(e){ return String(n); }
@@ -20083,7 +20273,7 @@ const monthlyData = {
     }
 
   // Chart instances
-  let m_targetTrend, m_avgScale, m_perfMix, m_sizeMix, m_mom;
+  let m_targetTrend, m_avgScale, m_perfMix, m_sizeMix, m_mom, m_avgScalePerf, m_avgScaleSize, m_ridersPerfMix, m_ridersSizeMix;
   let chartsInited = false;
 
   function renderFactorsTable(idx){
@@ -20189,47 +20379,6 @@ const monthlyData = {
   }
 
   function updateMonthlyView(value){
-        if (value === 'Feb-26') {
-            const prevLabel = monthlyData.months[monthlyData.months.length - 2];
-            const ap = 551;
-            const tp = 643;
-            const tt = 19365;
-            const as = 35.1;
-            const anyCnt = 153;
-            const c20 = 32;
-            const c30 = 16;
-            const anyPct = (anyCnt / ap) * 100;
-            const c20Pct = (c20 / ap) * 100;
-            const c30Pct = (c30 / ap) * 100;
-
-            document.getElementById('m_totalPartners').textContent = fmtNum(tp);
-            document.getElementById('m_totalPartners_sub').textContent = `Feb-26 vs ${prevLabel}`;
-
-            document.getElementById('m_activePartners').textContent = fmtNum(ap);
-            document.getElementById('m_activePartners_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">↓ ${fmtPct(11.8)} vs ${prevLabel}</span>`;
-
-            document.getElementById('m_totalTarget').textContent = fmtNum(tt);
-            document.getElementById('m_totalTarget_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">↓ ${fmtPct(13.8)} vs ${prevLabel}</span>`;
-
-            document.getElementById('m_avgScale').textContent = as.toFixed(1);
-            document.getElementById('m_avgScale_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">↓ ${fmtPct(2.2)} vs ${prevLabel}</span>`;
-
-            document.getElementById('m_incAny').textContent = fmtNum(anyCnt);
-            document.getElementById('m_incAny_sub').textContent = `${fmtPct(anyPct)} of active partners`;
-
-            document.getElementById('m_inc20').textContent = fmtNum(c20);
-            document.getElementById('m_inc20_sub').textContent = `${fmtPct(c20Pct)} of active partners`;
-
-            document.getElementById('m_inc30').textContent = fmtNum(c30);
-            document.getElementById('m_inc30_sub').textContent = `${fmtPct(c30Pct)} of active partners`;
-
-            document.getElementById('m_inc40').textContent = fmtPct(-27.8);
-            document.getElementById('m_inc40_sub').innerHTML = `<span style="color: #dc2626; font-weight: 600;">vs ${prevLabel}</span>`;
-            // Render highlights for Feb-26 (last month) before early return
-            // renderHighlights(monthlyData.months.length - 1); // Removed - highlights section deleted
-            renderFactorsTable(monthlyData.months.length - 1);
-            return;
-        }
     const idx = (value === 'All') ? (monthlyData.months.length - 1) : safeIdx(value);
     const month = monthlyData.months[idx];
     const prevIdx = Math.max(0, idx - 1);
@@ -20742,9 +20891,12 @@ const monthlyData = {
     });
 
     // Total Riders by Performance Level (with percentages)
-    const ridersGood = [11229, 11083, 11418, 11019, 12349, 10192];
-    const ridersAverage = [12898, 14595, 14151, 9258, 8330, 8414];
-    const ridersBad = [5090, 5501, 6449, 2879, 1534, 370];
+    const masterRidersGood = [9986, 11229, 11083, 11418, 11019, 12349, 10192, 9131];
+    const masterRidersAverage = [13632, 12898, 14595, 14151, 9258, 8330, 8414, 10253];
+    const masterRidersBad = [3542, 5090, 5501, 6449, 2879, 1534, 370, 918];
+    const ridersGood = sliceMaster(masterRidersGood, currentPeriodIdx);
+    const ridersAverage = sliceMaster(masterRidersAverage, currentPeriodIdx);
+    const ridersBad = sliceMaster(masterRidersBad, currentPeriodIdx);
     const ridersTotal = ridersGood.map((v, i) => v + ridersAverage[i] + ridersBad[i]);
     const ridersPctGood = ridersGood.map((v, i) => ((v / ridersTotal[i]) * 100).toFixed(1));
     const ridersPctAverage = ridersAverage.map((v, i) => ((v / ridersTotal[i]) * 100).toFixed(1));
@@ -20863,9 +21015,12 @@ const monthlyData = {
     });
 
     // Monthly Riders Size Mix Chart
-    const ridersBig = [7197, 7906, 8642, 6741, 4938, 5351];
-    const ridersMid = [15978, 17709, 17253, 12352, 10598, 9982];
-    const ridersSmall = [6042, 5564, 6123, 4063, 6677, 3643];
+    const masterRidersBig = [6804, 7197, 7906, 8642, 6741, 4938, 5351, 5638];
+    const masterRidersMid = [17875, 15978, 17709, 17253, 12352, 10598, 9982, 9802];
+    const masterRidersSmall = [2481, 6042, 5564, 6123, 4063, 6677, 3643, 4862];
+    const ridersBig = sliceMaster(masterRidersBig, currentPeriodIdx);
+    const ridersMid = sliceMaster(masterRidersMid, currentPeriodIdx);
+    const ridersSmall = sliceMaster(masterRidersSmall, currentPeriodIdx);
 
     const ridersTotalSize = ridersBig.map((v, i) => v + ridersMid[i] + ridersSmall[i]);
     const ridersPctBig = ridersBig.map((v, i) => ((v / ridersTotalSize[i]) * 100).toFixed(1));
@@ -21462,7 +21617,7 @@ const monthlyData = {
       });
     }
 
-    window.monthlyCharts = [m_targetTrend, m_avgScale, m_perfMix, m_sizeMix].concat(m_mom ? [m_mom] : []);
+    window.monthlyCharts = [m_targetTrend, m_avgScale, m_perfMix, m_sizeMix, m_avgScalePerf, m_avgScaleSize, m_ridersPerfMix, m_ridersSizeMix].filter(Boolean).concat(m_mom ? [m_mom] : []);
   }
 
   function initMonthlyInsights(){
@@ -21474,7 +21629,7 @@ const monthlyData = {
     try { initMonthlyCharts(); } catch(e) { console.error('Monthly charts init error:', e); }
 
     // Default month
-    if (!sel.value || sel.value === 'All') sel.value = 'Feb-26';
+    if (!sel.value || sel.value === 'All') sel.value = monthlyData.months[monthlyData.months.length - 1];
 
     // Render KPIs/tables
     try { updateMonthlyView(sel.value); } catch(e) { console.error('Monthly view update error:', e); }
@@ -31364,6 +31519,7 @@ const monthlyData = {
         'Right capacity, right place, right time': '正确的产能，正确的地点，正确的时间',
         // ── MONTHLY INSIGHTS ──
         'Sep 2025 – Feb 2026 Structure (capacity target monthly overview)': '2025年9月-2026年2月结构（产能目标月度概览）',
+        'Oct 2025 – Mar 2026 Structure (capacity target monthly overview)': '2025年10月-2026年3月结构（产能目标月度概览）',
         'All months': '所有月份',
         "What's inside:": '内容包括：',
         'Overview & Trends': '概览与趋势',
