@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keeta Partner Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --keeta:#00B37A; --keeta-dark:#009A66; --keeta-light:#E6F8F2; --dark:#1a1a2e; --dark2:#16213e; --text:#2d3436; --text-light:#636e72; --text-muted:#b2bec3; --bg:#f8f9fa; --card:#ffffff; --border:#e9ecef; --danger:#e74c3c; --radius:16px; --radius-sm:10px; --transition:all 0.25s ease; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
+.header { background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%); padding:30px 20px; position:relative; overflow:hidden; text-align:center; }
+.header::after { content:''; position:absolute; top:-50%; right:-10%; width:400px; height:400px; background:radial-gradient(circle, rgba(0,179,122,0.15) 0%, transparent 70%); pointer-events:none; }
+.header-inner { max-width:800px; margin:0 auto; position:relative; z-index:1; }
+.header h1 { color:#fff; font-size:1.8rem; font-weight:700; margin-bottom:8px; }
+.header h1 span { color:var(--keeta); }
+.header p { color:rgba(255,255,255,0.7); font-size:0.9rem; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+.card { background:var(--card); border-radius:var(--radius); padding:30px; box-shadow:0 2px 12px rgba(0,0,0,0.08); margin-bottom:24px; transition:var(--transition); }
+.card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.12); }
+.section-title { font-size:1.2rem; font-weight:700; color:var(--dark); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.section-title .num { background:var(--keeta); color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; }
+.form-group { margin-bottom:20px; }
+.form-label { display:block; font-size:0.9rem; font-weight:600; color:var(--dark); margin-bottom:8px; }
+.form-label .required { color:var(--danger); margin-left:4px; }
+.form-label .sub { font-weight:400; color:var(--text-light); font-size:0.8rem; display:block; margin-top:4px; }
+input[type="text"], input[type="number"], select, textarea { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-size:0.9rem; font-family:inherit; transition:var(--transition); background:var(--card); }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--keeta); box-shadow:0 0 0 3px rgba(0,179,122,0.15); }
+textarea { min-height:100px; resize:vertical; }
+.option-group { display:flex; flex-direction:column; gap:10px; }
+.option-card { display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:8px; cursor:pointer; transition:var(--transition); background:var(--card); }
+.option-card:hover { border-color:var(--keeta); background:var(--keeta-light); }
+.option-card.selected { border-color:var(--keeta); background:var(--keeta-light); }
+.option-card input[type="radio"] { width:20px; height:20px; accent-color:var(--keeta); cursor:pointer; }
+.option-card label { cursor:pointer; font-size:0.9rem; flex:1; }
+.conditional { display:none; margin-top:16px; padding:20px; border-left:3px solid var(--keeta); background:var(--keeta-light); border-radius:0 8px 8px 0; }
+.conditional.visible { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+.city-table { width:100%; border-collapse:collapse; font-size:0.85rem; margin-top:10px; }
+.city-table th, .city-table td { padding:10px 8px; border:1px solid var(--border); text-align:left; }
+.city-table th { background:var(--dark); color:#fff; font-weight:600; font-size:0.75rem; text-transform:uppercase; }
+.city-table td { background:var(--card); }
+.city-table input, .city-table select { width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem; }
+.city-table input[type="number"] { min-width:60px; }
+.btn { display:inline-block; padding:12px 28px; border-radius:8px; font-weight:600; font-size:0.95rem; cursor:pointer; border:none; transition:var(--transition); }
+.btn-primary { background:var(--keeta); color:#fff; }
+.btn-primary:hover { background:var(--keeta-dark); transform:translateY(-2px); }
+.btn-secondary { background:var(--bg); color:var(--text); border:1px solid var(--border); }
+.btn-secondary:hover { background:var(--border); }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-sm { padding:6px 14px; font-size:0.8rem; }
+.btn-group { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+.progress-bar { position:sticky; top:0; z-index:100; background:var(--card); padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+.progress-track { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg, var(--keeta), var(--keeta-dark)); border-radius:3px; transition:width 0.5s ease; }
+.progress-text { font-size:0.8rem; font-weight:600; color:var(--text-light); min-width:50px; text-align:right; }
+.success-page { text-align:center; padding:80px 20px; display:none; }
+.success-page .icon { font-size:4rem; margin-bottom:20px; }
+.success-page h2 { font-size:1.8rem; color:var(--dark); margin-bottom:12px; }
+.success-page p { color:var(--text-light); max-width:400px; margin:0 auto 24px; }
+.error-msg { color:var(--danger); font-size:0.8rem; margin-top:4px; display:none; }
+.error-msg.visible { display:block; }
+@media (max-width:600px) { .city-table { font-size:0.75rem; } .city-table th, .city-table td { padding:6px 4px; } }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar">
+  <div class="progress-text" id="progressText">0%</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div id="formPage">
+<header class="header">
+  <div class="header-inner">
+    <h1>Keeta <span>Partner</span> Survey</h1>
+    <p>Target & City Expansion Survey — June 2026</p>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- Partner Info -->
+<div class="card">
+  <div class="section-title"><span class="num">i</span> Partner Information</div>
+  <div class="form-group">
+    <label class="form-label">Partner Name <span class="required">*</span></label>
+    <input type="text" id="partnerName" placeholder="Enter your company name">
+    <div class="error-msg" id="errPartnerName">Please enter partner name</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Partner ID <span class="required">*</span></label>
+    <input type="text" id="partnerID" placeholder="Enter partner ID">
+    <div class="error-msg" id="errPartnerID">Please enter partner ID</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">City <span class="required">*</span></label>
+    <select id="city">
+      <option value="">Select your city</option>
+      <option>Riyadh</option><option>Jeddah</option><option>Makkah</option><option>Madinah</option>
+      <option>Dammam</option><option>Khobar</option><option>Ahsa</option><option>Jubail</option>
+      <option>Abha</option><option>Taif</option><option>Tabuk</option><option>Hail</option>
+      <option>Buraydah</option><option>Khamis Mushait</option><option>Najran</option><option>Jizan</option>
+      <option>Al Kharj</option><option>Yanbu</option>
+    </select>
+    <div class="error-msg" id="errCity">Please select a city</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">PMM Name <span class="required">*</span></label>
+    <input type="text" id="pmmName" placeholder="Your Keeta PMM name">
+    <div class="error-msg" id="errPmmName">Please enter PMM name</div>
+  </div>
+</div>
+
+<!-- Section 1: Target -->
+<div class="card">
+  <div class="section-title"><span class="num">1</span> Target & Performance</div>
+
+  <div class="form-group">
+    <label class="form-label">Q1. What's your next 3-month plan for capacity with Keeta? <span class="required">*</span></label>
+    <div class="option-group">
+      <div class="option-card" data-value="increase" onclick="selectOption(this,'q1'); showQ1Detail('increase')">
+        <input type="radio" name="q1" value="increase" id="q1-inc">
+        <label for="q1-inc">Increase riders</label>
+      </div>
+      <div class="option-card" data-value="decrease" onclick="selectOption(this,'q1'); showQ1Detail('decrease')">
+        <input type="radio" name="q1" value="decrease" id="q1-dec">
+        <label for="q1-dec">Decrease riders</label>
+      </div>
+      <div class="option-card" data-value="same" onclick="selectOption(this,'q1'); showQ1Detail('same')">
+        <input type="radio" name="q1" value="same" id="q1-same">
+        <label for="q1-same">Keep the same</label>
+      </div>
+    </div>
+    <div class="error-msg" id="errQ1">Please select an option</div>
+  </div>
+
+  <div class="conditional" id="q1-increase-detail">
+    <label class="form-label">How many riders do you plan to add?</label>
+    <input type="number" id="q1IncreaseNum" min="0" placeholder="Enter number">
+  </div>
+  <div class="conditional" id="q1-decrease-detail">
+    <label class="form-label">How many riders do you plan to decrease?</label>
+    <input type="number" id="q1DecreaseNum" min="0" placeholder="Enter number">
+    <label class="form-label" style="margin-top:12px;">Why do you want to decrease?</label>
+    <textarea id="q1DecreaseReason" placeholder="Reason for decrease..."></textarea>
+  </div>
+  <div class="conditional" id="q1-same-detail">
+    <label class="form-label">Why are you not adding riders? What prevents you?</label>
+    <textarea id="q1SameReason" placeholder="Reason for keeping same..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Q2. How well do you understand the criteria used to determine your monthly capacity target? <span class="required">*</span></label>
+    <div class="option-group">
+      <div class="option-card" data-value="Very clear" onclick="selectOption(this,'q2')"><input type="radio" name="q2" value="Very clear" id="q2-1"><label for="q2-1">Very clear</label></div>
+      <div class="option-card" data-value="Quite clear" onclick="selectOption(this,'q2')"><input type="radio" name="q2" value="Quite clear" id="q2-2"><label for="q2-2">Quite clear</label></div>
+      <div class="option-card" data-value="Not clear" onclick="selectOption(this,'q2')"><input type="radio" name="q2" value="Not clear" id="q2-3"><label for="q2-3">Not clear</label></div>
+    </div>
+    <div class="error-msg" id="errQ2">Please select an option</div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Q3. How well do you understand how your quarterly performance rating is determined? <span class="required">*</span></label>
+    <div class="option-group">
+      <div class="option-card" data-value="Very clear" onclick="selectOption(this,'q3')"><input type="radio" name="q3" value="Very clear" id="q3-1"><label for="q3-1">Very clear</label></div>
+      <div class="option-card" data-value="Quite clear" onclick="selectOption(this,'q3')"><input type="radio" name="q3" value="Quite clear" id="q3-2"><label for="q3-2">Quite clear</label></div>
+      <div class="option-card" data-value="Not clear" onclick="selectOption(this,'q3')"><input type="radio" name="q3" value="Not clear" id="q3-3"><label for="q3-3">Not clear</label></div>
+    </div>
+    <div class="error-msg" id="errQ3">Please select an option</div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Q4. Any suggestions to improve the target-setting or performance evaluation process?</label>
+    <textarea id="q4Suggestions" placeholder="Share your suggestions..."></textarea>
+  </div>
+</div>
+
+<!-- Section 2: City Expansion -->
+<div class="card">
+  <div class="section-title"><span class="num">2</span> City Expansion</div>
+
+  <div class="form-group">
+    <label class="form-label">Q5. Are you willing to develop across other cities? <span class="required">*</span></label>
+    <div class="option-group">
+      <div class="option-card" data-value="yes" onclick="selectOption(this,'q5'); showQ6(true)">
+        <input type="radio" name="q5" value="yes" id="q5-yes"><label for="q5-yes">Yes, I'm interested in expanding</label>
+      </div>
+      <div class="option-card" data-value="no" onclick="selectOption(this,'q5'); showQ6(false)">
+        <input type="radio" name="q5" value="no" id="q5-no"><label for="q5-no">No, not at this time</label>
+      </div>
+    </div>
+    <div class="error-msg" id="errQ5">Please select an option</div>
+  </div>
+
+  <div class="conditional" id="q6-block">
+    <label class="form-label">Q6. Please provide details for each city you want to expand to:</label>
+    <table class="city-table" id="cityTable">
+      <thead><tr>
+        <th>City</th><th>Cooperation on other platforms?</th><th>Capacity on other platforms</th><th>Capacity for Keeta</th><th>Start month</th><th></th>
+      </tr></thead>
+      <tbody id="cityTableBody"></tbody>
+    </table>
+    <div class="btn-group">
+      <button class="btn btn-secondary btn-sm" onclick="addCityRow()">+ Add City</button>
+      <button class="btn btn-danger btn-sm" onclick="clearCityRows()">Clear All</button>
+    </div>
+  </div>
+</div>
+
+<!-- Submit -->
+<div class="card" style="text-align:center;">
+  <button class="btn btn-primary" style="padding:14px 40px; font-size:1rem;" onclick="submitForm()">Submit Survey</button>
+  <div class="error-msg" id="errSubmit" style="margin-top:12px; text-align:center;"></div>
+</div>
+
+</div>
+</div>
+
+<!-- Success Page -->
+<div class="success-page" id="successPage">
+  <div class="icon">✅</div>
+  <h2>Survey Submitted!</h2>
+  <p>Thank you for completing the Keeta Partner Survey. Your responses have been saved.</p>
+  <div class="btn-group" style="justify-content:center;">
+    <button class="btn btn-primary" onclick="exportMyResponse()">📥 Download My Response</button>
+    <button class="btn btn-secondary" onclick="location.reload()">Submit Another</button>
+  </div>
+</div>
+
+<script>
+// ===== URL PARAMS =====
+const params = new URLSearchParams(location.search);
+if (params.get('partner')) document.getElementById('partnerName').value = params.get('partner');
+if (params.get('partnerid')) document.getElementById('partnerID').value = params.get('partnerid');
+if (params.get('city')) document.getElementById('city').value = params.get('city');
+if (params.get('pmm')) document.getElementById('pmmName').value = params.get('pmm');
+
+// ===== OPTION SELECTION =====
+function selectOption(el, name) {
+  document.querySelectorAll('.option-card[data-value]').forEach(c => {
+    if (c.querySelector('input').name === name) c.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  updateProgress();
+}
+
+function showQ1Detail(val) {
+  document.getElementById('q1-increase-detail').classList.toggle('visible', val === 'increase');
+  document.getElementById('q1-decrease-detail').classList.toggle('visible', val === 'decrease');
+  document.getElementById('q1-same-detail').classList.toggle('visible', val === 'same');
+}
+
+function showQ6(show) {
+  document.getElementById('q6-block').classList.toggle('visible', show);
+  if (show && document.querySelectorAll('#cityTableBody tr').length === 0) addCityRow();
+}
+
+const cities = ['Riyadh','Jeddah','Makkah','Madinah','Dammam','Khobar','Ahsa','Jubail','Abha','Taif','Tabuk','Hail','Buraydah','Khamis Mushait','Najran','Jizan','Al Kharj','Yanbu'];
+const months = ['July 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
+
+function addCityRow() {
+  const tbody = document.getElementById('cityTableBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><select class="city-sel"><option value="">Select</option>${cities.map(c=>`<option>${c}</option>`).join('')}</select></td>
+    <td><select class="coop-sel"><option value="">Select</option><option>Yes</option><option>No</option></select></td>
+    <td><input type="number" class="other-cap" min="0" placeholder="0"></td>
+    <td><input type="number" class="keeta-cap" min="0" placeholder="0"></td>
+    <td><select class="month-sel"><option value="">Select</option>${months.map(m=>`<option>${m}</option>`).join('')}</select></td>
+    <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">×</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function clearCityRows() {
+  document.getElementById('cityTableBody').innerHTML = '';
+}
+
+// ===== PROGRESS =====
+function updateProgress() {
+  const total = 6;
+  let filled = 0;
+  if (document.getElementById('partnerName').value.trim()) filled++;
+  if (document.getElementById('partnerID').value.trim()) filled++;
+  if (document.getElementById('city').value) filled++;
+  if (document.getElementById('pmmName').value.trim()) filled++;
+  if (document.querySelector('input[name="q1"]:checked')) filled++;
+  if (document.querySelector('input[name="q5"]:checked')) filled++;
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+document.querySelectorAll('input, select, textarea').forEach(el => {
+  el.addEventListener('change', updateProgress);
+  el.addEventListener('input', updateProgress);
+});
+
+// ===== VALIDATION =====
+function validate() {
+  let ok = true;
+  const req = { partnerName:'errPartnerName', partnerID:'errPartnerID', city:'errCity', pmmName:'errPmmName' };
+  for (const [id, errId] of Object.entries(req)) {
+    const hasVal = document.getElementById(id).value.trim();
+    document.getElementById(errId).classList.toggle('visible', !hasVal);
+    if (!hasVal) ok = false;
+  }
+  if (!document.querySelector('input[name="q1"]:checked')) { document.getElementById('errQ1').classList.add('visible'); ok = false; }
+  else document.getElementById('errQ1').classList.remove('visible');
+  if (!document.querySelector('input[name="q2"]:checked')) { document.getElementById('errQ2').classList.add('visible'); ok = false; }
+  else document.getElementById('errQ2').classList.remove('visible');
+  if (!document.querySelector('input[name="q3"]:checked')) { document.getElementById('errQ3').classList.add('visible'); ok = false; }
+  else document.getElementById('errQ3').classList.remove('visible');
+  if (!document.querySelector('input[name="q5"]:checked')) { document.getElementById('errQ5').classList.add('visible'); ok = false; }
+  else document.getElementById('errQ5').classList.remove('visible');
+  return ok;
+}
+
+// ===== SUBMIT =====
+function submitForm() {
+  if (!validate()) {
+    document.getElementById('errSubmit').textContent = 'Please fill all required fields';
+    document.getElementById('errSubmit').classList.add('visible');
+    return;
+  }
+  document.getElementById('errSubmit').classList.remove('visible');
+
+  const q1 = document.querySelector('input[name="q1"]:checked').value;
+  const data = {
+    partnerName: document.getElementById('partnerName').value.trim(),
+    partnerID: document.getElementById('partnerID').value.trim(),
+    city: document.getElementById('city').value,
+    pmm: document.getElementById('pmmName').value.trim(),
+    targetPlan: q1,
+    riderChange: q1 === 'increase' ? (parseInt(document.getElementById('q1IncreaseNum').value)||0) : q1 === 'decrease' ? -(parseInt(document.getElementById('q1DecreaseNum').value)||0) : 0,
+    clarity: document.querySelector('input[name="q2"]:checked')?.value || '',
+    perfClarity: document.querySelector('input[name="q3"]:checked')?.value || '',
+    expand: document.querySelector('input[name="q5"]:checked')?.value || 'no',
+    suggestions: document.getElementById('q4Suggestions').value.trim(),
+    submittedAt: new Date().toISOString(),
+    expansionCities: []
+  };
+  if (q1 === 'decrease') data.decreaseReason = document.getElementById('q1DecreaseReason').value.trim();
+  if (q1 === 'same') data.sameReason = document.getElementById('q1SameReason').value.trim();
+
+  document.querySelectorAll('#cityTableBody tr').forEach(tr => {
+    const c = tr.querySelector('.city-sel')?.value;
+    if (!c) return;
+    data.expansionCities.push({
+      city: c,
+      coop: tr.querySelector('.coop-sel')?.value || '',
+      otherCap: parseInt(tr.querySelector('.other-cap')?.value) || 0,
+      keetaCap: parseInt(tr.querySelector('.keeta-cap')?.value) || 0,
+      month: tr.querySelector('.month-sel')?.value || ''
+    });
+  });
+
+  // Save to localStorage
+  let stored = JSON.parse(localStorage.getItem('keetaSurvey') || '[]');
+  stored.push(data);
+  localStorage.setItem('keetaSurvey', JSON.stringify(stored));
+
+  // Show success
+  document.getElementById('formPage').style.display = 'none';
+  document.getElementById('successPage').style.display = 'block';
+  document.getElementById('progressBar').style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+function exportMyResponse() {
+  const stored = JSON.parse(localStorage.getItem('keetaSurvey') || '[]');
+  if (!stored.length) return alert('No responses found');
+  const last = stored[stored.length - 1];
+  const blob = new Blob([JSON.stringify(last, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'my-survey-response.json'; a.click(); URL.revokeObjectURL(url);
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
