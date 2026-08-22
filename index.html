@@ -12153,8 +12153,8 @@ function parseSheetData(rows) {
   console.log('🏙️ Parsing City Level Data...');
     // Parse City Level Data with dynamic section anchors
   var cityNames = ['Al Ahsa', 'Dammam', 'Hafar Albatin', 'Jubail', 'Riyadh', 'Al Kharj', 
-                   'Buraydah', 'Hail', 'Jeddah', 'Madinah', 'Tabuk', 'Yanbu', 
-                   'Abha', 'Jazan', 'Makkah', 'Najran', 'Taif'];
+                   'Jeddah', 'Madinah', 'Tabuk', 'Yanbu', 'Makkah', 'Taif',
+                   'Abha', 'Buraydah', 'Hail', 'Jazan', 'Najran'];
   
     function normCity(s) { return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
     function findCityRowByName(name) {
@@ -13061,7 +13061,7 @@ function _renderPartnerCatInner(cat) {
 }
 
 function renderCityMetric(metric) {
-  var cities = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu','Abha','Jazan','Makkah','Najran','Taif'];
+  var cities = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Jeddah','Madinah','Tabuk','Yanbu','Makkah','Taif','Abha','Buraydah','Hail','Jazan','Najran'];
   
   var gapData = {
     mtd: [1.1,1.8,1.2,1.8,3.3,1.6,1.4,1.6,1.9,1.7,1.6,2.5,1.7,1.8,2.1,1.6,1.8],
@@ -13354,7 +13354,7 @@ function renderCityChart(metric, data, cities) {
 
 // Store city data globally for chart re-rendering
 var cityChartData = {};
-var cityNames = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Buraydah','Hail','Jeddah','Madinah','Tabuk','Yanbu','Abha','Jazan','Makkah','Najran','Taif'];
+var cityNames = ['Al Ahsa','Dammam','Hafar Albatin','Jubail','Riyadh','Al Kharj','Jeddah','Madinah','Tabuk','Yanbu','Makkah','Taif','Abha','Buraydah','Hail','Jazan','Najran'];
 
 function toggleCityChip(chip, metric) {
   chip.classList.toggle('active');
